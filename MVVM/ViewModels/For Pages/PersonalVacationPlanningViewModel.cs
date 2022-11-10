@@ -796,6 +796,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     }
                 }
             }
+
             //foreach (Calendar calendarItem in Calendars)
             //{
             //    int calendarMonth = calendarItem.DisplayDate.Month;
