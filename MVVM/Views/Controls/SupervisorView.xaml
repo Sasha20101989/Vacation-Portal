@@ -1,0 +1,14 @@
+﻿<UserControl x:Class="Vacation_Portal.MVVM.Views.Controls.SupervisorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d">
+    <Grid>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="ФИО" Margin="0,0,20,0"/>
+            <TextBox Text="Руководитель"/>
+            <!--<TextBox  x:Name="myTextBoxName" Text="124"/>-->
+        </StackPanel>
+    </Grid>
+</UserControl>
