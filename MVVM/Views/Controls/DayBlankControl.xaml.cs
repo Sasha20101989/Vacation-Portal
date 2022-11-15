@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,19 +10,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Vacation_Portal.MVVM.ViewModels.Base;
-using Vacation_Portal.MVVM.Views.Controls;
 
-namespace Vacation_Portal.MVVM.Views
+namespace Vacation_Portal.MVVM.Views.Controls
 {
     /// <summary>
-    /// Логика взаимодействия для PersonalVacationPlanningView.xaml
+    /// Логика взаимодействия для DayControl.xaml
     /// </summary>
-    public partial class PersonalVacationPlanningView : UserControl
+    public partial class DayBlankControl : UserControl
     {
-        
-
-        public PersonalVacationPlanningView()
+        public DayBlankControl()
         {
             InitializeComponent();
         }

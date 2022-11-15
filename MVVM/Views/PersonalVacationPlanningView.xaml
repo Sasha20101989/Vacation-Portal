@@ -158,18 +158,18 @@
 
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <Viewbox>
         <Grid Cursor="Hand">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
-            <Button Style="{StaticResource MaterialDesignFloatingActionButton}" 
+
+            <Button Style="{StaticResource MaterialDesignFloatingActionButton}"  Grid.Column="0" Grid.Row="1"
                     Width="20" Height="20"  
                     HorizontalAlignment="Left" VerticalAlignment="Bottom"
                     Margin="6,6,6,6"
@@ -178,7 +178,7 @@
                     IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
                 <md:PackIcon Kind="HelpCircleOutline"/>
             </Button>
-            
+
             <md:TransitioningContent OpeningEffectsOffset="0:0:0"
                         OpeningEffect="{md:TransitionEffect Kind=SlideInFromBottom, Duration=0:0:1.00}">
                 <StackPanel Grid.Row="0" Grid.Column="0">
@@ -186,12 +186,14 @@
                         Visibility="{Binding IsHR, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <controls:SupervisorView VerticalAlignment="Top" Margin="6,6,16,6"
                         Visibility="{Binding IsSupervisor, Converter={StaticResource BooleanToVisibilityConverter}}"/>-->
-                    <controls:PersonalView VerticalAlignment="Top" Margin="6,10,6,6"
+                    <Viewbox>
+                    <controls:PersonalView Margin="6,17,6,6"
                         Visibility="{Binding IsEmployee,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </Viewbox>
                 </StackPanel>
             </md:TransitioningContent>
-            
-            <Grid Grid.Row="0" Grid.Column="1">
+
+            <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -201,7 +203,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <Border Grid.Row="0" Grid.ColumnSpan="3" BorderBrush="{Binding BorderColorCalendar}" BorderThickness="2" CornerRadius="10">
+                <Border  Grid.Row="0" Grid.ColumnSpan="3" Margin="10" BorderBrush="{Binding BorderColorCalendar}" BorderThickness="2" CornerRadius="10">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -210,19 +212,19 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
-                        <md:Card md:ElevationAssist.Elevation="Dp5" UniformCornerRadius="10">
-                            <Viewbox Stretch="Uniform">
-                                <md:TransitioningContent OpeningEffectsOffset="0:0:0"
+                        <!--<md:Card md:ElevationAssist.Elevation="Dp5" UniformCornerRadius="10">-->
+
+                        <md:TransitioningContent OpeningEffectsOffset="0:0:0"
                                 OpeningEffect="{md:TransitionEffect FadeIn, Duration=0:0:1.20}">
-                                    <controls:FullCalendar/>
-                                </md:TransitioningContent>
-                            </Viewbox>
-                        </md:Card>
+
+                                <controls:FullCalendar HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                           
+                        </md:TransitioningContent>
+                        <!--</md:Card>-->
                         <md:Snackbar Grid.Row="1" 
-                             MessageQueue="{Binding MessageQueueCalendar}"/>
+                             MessageQueue="{Binding MessageQueueCalendar,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
                     </Grid>
                 </Border>
-
                 <Border  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="{Binding BorderColorSelectedGap}" BorderThickness="2" CornerRadius="10"  Padding="0 6 0 6">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -231,9 +233,11 @@
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock TextAlignment="Right" Cursor="Arrow" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       FontSize="14"
                                        Visibility="{Binding IsGapVisible,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" 
                                        Text="{Binding SelectedItem.Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                             <TextBlock TextAlignment="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10 0 0 0"
+                                       FontSize="14"
                                        Text="{Binding DisplayedDateString,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                             <Button HorizontalAlignment="Left" Foreground="Green" Width="24" Height="24" Margin="10 0 0 0"
                                     Style="{StaticResource MaterialDesignIconForegroundButton}" 
@@ -246,7 +250,7 @@
                     </Grid>
                 </Border>
             </Grid>
-            
+
         </Grid>
-    </Grid>
+    </Viewbox>
 </UserControl>

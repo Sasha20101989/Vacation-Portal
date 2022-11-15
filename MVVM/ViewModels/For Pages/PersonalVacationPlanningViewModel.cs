@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,9 +13,11 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using MaterialDesignThemes.Wpf;
 using Vacation_Portal.Commands.BaseCommands;
+using Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands;
 using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.Base;
+using Vacation_Portal.MVVM.Views;
 using Vacation_Portal.MVVM.Views.Controls;
 
 namespace Vacation_Portal.MVVM.ViewModels.For_Pages
@@ -24,38 +27,45 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #region Props
         private Lazy<Task> _initializeLazy;
 
-        private ObservableCollection<DateTime> _holidays;
-        public ObservableCollection<DateTime> Holidays
+
+        public BindingList<DateTime> Holidays { get; set; } = new BindingList<DateTime>();
+
+
+        public BindingList<DateTime> Weekends { get; set; } = new BindingList<DateTime>();
+
+        public BindingList<Calendar> Calendars { get; set; } = new BindingList<Calendar>();
+        public BindingList<DayBlankControl> BlankDays { get; set; } = new BindingList<DayBlankControl>();
+        public List<DayControl> DaysJanuary { get; set; } = new List<DayControl>();
+        public List<DayControl> DaysFebruary { get; set; } = new List<DayControl>();
+        public List<DayControl> DaysMath { get; set; } = new List<DayControl>();
+        public List<DayControl> DaysApril { get; set; } = new List<DayControl>();
+        public List<DayControl> DaysMay { get; set; } = new List<DayControl>();
+        public List<DayControl> DaysJune { get; set; } = new List<DayControl>();
+        public List<DayControl> DaysJuly { get; set; } = new List<DayControl>();
+        public List<DayControl> DaysAugust { get; set; } = new List<DayControl>();
+        public List<DayControl> DaysSeptember { get; set; } = new List<DayControl>();
+        public List<DayControl> DaysOktober { get; set; } = new List<DayControl>();
+        public List<DayControl> DaysNovember { get; set; } = new List<DayControl>();
+        public List<DayControl> DaysDecember { get; set; } = new List<DayControl>();
+        public List<List<DayControl>> Year;
+
+        public int ColumnOfWeek { get; set; }
+        public DateTime Day { get; set; }
+        private DateTime _currentDate;
+        public DateTime CurrentDate
         {
-            get
-            {
-                return _holidays;
-            }
+            get { return _currentDate; }
             set
             {
-                _holidays = value;
-                OnPropertyChanged(nameof(Holidays));
+                _currentDate = value;
+                OnPropertyChanged(nameof(CurrentDate));
             }
         }
+        public DateTime FirstSelectedDate { get; set; }
+        public DateTime SecondSelectedDate { get; set; }
 
-        private ObservableCollection<DateTime> _weekends;
-        public ObservableCollection<DateTime> Weekends
-        {
-            get
-            {
-                return _weekends;
-            }
-            set
-            {
-                _weekends = value;
-                OnPropertyChanged(nameof(Weekends));
-            }
-        }
-
-        public ObservableCollection<Calendar> Calendars { get; set; }
-
-        private ObservableCollection<DateTime> _selectedDates;
-        public ObservableCollection<DateTime> SelectedDates
+        private ObservableCollection<Vacation> _selectedDates;
+        public ObservableCollection<Vacation> SelectedDates
         {
             get { return _selectedDates; }
             set
@@ -93,7 +103,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 _displayedDateString = value;
                 OnPropertyChanged(nameof(DisplayedDateString));
-                if (DisplayedDateString!="")
+                if (DisplayedDateString != "")
                 {
                     IsGapVisible = true;
                 }
@@ -101,6 +111,18 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 {
                     IsGapVisible = false;
                 }
+            }
+        }
+
+        private int _clicksOnCalendar;
+        public int ClicksOnCalendar
+        {
+            get { return _clicksOnCalendar; }
+            set
+            {
+                _clicksOnCalendar = value;
+                OnPropertyChanged(nameof(ClicksOnCalendar));
+
             }
         }
 
@@ -114,7 +136,16 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 OnPropertyChanged(nameof(VacationTypes));
             }
         }
-
+        private List<Vacation> _vacationTypess;
+        public List<Vacation> VacationTypess
+        {
+            get { return _vacationTypess; }
+            set
+            {
+                _vacationTypess = value;
+                OnPropertyChanged(nameof(VacationTypess));
+            }
+        }
         private Thickness _recomendedMarginButton;
         public Thickness RecomendedMarginButton
         {
@@ -142,20 +173,23 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        private string _personName = string.Empty;
-        public string PersonName
+        #region Person props
+        private Person _person;
+        public Person Person
         {
             get
             {
-                return _personName;
+                return _person;
             }
             set
             {
-                _personName = value;
-                OnPropertyChanged(nameof(PersonName));
+                _person = value;
+                OnPropertyChanged(nameof(Person));
 
             }
         }
+
+        public string PersonName { get; set; }
 
         private bool _isHR = false;
         public bool IsHR
@@ -201,6 +235,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
             }
         }
+        #endregion Person props
 
         private string _dayAddition;
         public string DayAddition
@@ -212,9 +247,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             set
             {
                 _dayAddition = value;
-                OnPropertyChanged(nameof(PersonName));
+                OnPropertyChanged(nameof(Person));
             }
         }
+
         private string _dayString;
         public string DayString
         {
@@ -229,6 +265,18 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
+        private int _countSelectedDays;
+        public int CountSelectedDays
+        {
+            get => _countSelectedDays;
+            set
+            {
+                SetProperty(ref _countSelectedDays, value);
+                OnPropertyChanged(nameof(CountSelectedDays));
+            }
+        }
+
+        #region Button Interaction
         private bool _isGapVisible;
         public bool IsGapVisible
         {
@@ -288,7 +336,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
             }
         }
+        #endregion Button Interaction
 
+        #region Lerning props
         private double _saveProgress;
         public double SaveProgress
         {
@@ -318,7 +368,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
             }
         }
+        #endregion Lerning props
 
+        #region Vacation props
         private Vacation _selectedItem;
         public Vacation SelectedItem
         {
@@ -327,6 +379,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 SetProperty(ref _selectedItem, value);
                 OnPropertyChanged(nameof(SelectedItem));
+                clearCalendar();
             }
         }
 
@@ -340,7 +393,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 OnPropertyChanged(nameof(SelectedIndex));
             }
         }
-
+        #endregion Vacation props
 
         #region QueuesLern
         private SnackbarMessageQueue _messageQueueVacation;
@@ -373,6 +426,17 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 SetProperty(ref _messageQueueSelectedGap, value);
                 OnPropertyChanged(nameof(MessageQueueSelectedGap));
+            }
+        }
+
+        private SnackbarMessageQueue _messageQueuePLanedVacations;
+        public SnackbarMessageQueue MessageQueuePLanedVacations
+        {
+            get => _messageQueuePLanedVacations;
+            set
+            {
+                SetProperty(ref _messageQueuePLanedVacations, value);
+                OnPropertyChanged(nameof(MessageQueuePLanedVacations));
             }
         }
         #endregion QueuesLern
@@ -410,92 +474,189 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 OnPropertyChanged(nameof(BorderColorSelectedGap));
             }
         }
+
+        private Brush _borderColorPLanedVacations;
+        public Brush BorderColorPLanedVacations
+        {
+            get => _borderColorPLanedVacations;
+            set
+            {
+                SetProperty(ref _borderColorPLanedVacations, value);
+                OnPropertyChanged(nameof(BorderColorPLanedVacations));
+            }
+        }
         #endregion BorderLern
 
         #endregion Props
 
         #region Commands
-        public AnotherCommandImplementation LoadModelCommand { get; set; }
-        public AnotherCommandImplementation SaveCommand { get; set; }
-        public AnotherCommandImplementation StartLearning { get; set; }
-        public AnotherCommandImplementation AddToApprovalList { get; set; }
+        public ICommand LoadModel { get; set; }
+        public ICommand SaveDataModel { get; set; }
+        public ICommand StartLearning { get; set; }
+        public ICommand AddToApprovalList { get; set; }
         #endregion Commands
 
         #region Constructor
         public PersonalVacationPlanningViewModel(Person person)
         {
-            MessageQueueVacation = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
-            MessageQueueCalendar = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(11000));
-            MessageQueueSelectedGap = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(11000));
+            _person = person;
+            PersonName = _person.ToString();
 
-            _initializeLazy = new Lazy<Task>(() => Initialize(person));
-            _isEnabled = true;
+            _initializeLazy = new Lazy<Task>(() => Initialize());
+            _currentDate = DateTime.Now;
+            LoadModel = new LoadModelCommand(this);
+            SaveDataModel = new SaveDataModelCommand(this);
+            StartLearning = new StartLearningCommand(this);
+            AddToApprovalList = new AddToApprovalListCommand(this);
 
-            LoadModelCommand = new AnotherCommandImplementation(
-                async _ =>
-                {
-                    await Load(person);
-                });
-
-            SaveCommand = new AnotherCommandImplementation(_ =>
-            {
-                if (IsSaveComplete)
-                {
-                    IsSaveComplete = false;
-                    return;
-                }
-                if (SaveProgress != 0)
-                {
-                    return;
-                }
-                var started = DateTime.Now;
-                IsSaving = true;
-
-                new DispatcherTimer(
-                    TimeSpan.FromMilliseconds(50),
-                    DispatcherPriority.Normal,
-                    new EventHandler((o, e) =>
-                    {
-                        var totalDuration = started.AddSeconds(3).Ticks - started.Ticks;
-                        var currentProgress = DateTime.Now.Ticks - started.Ticks;
-                        var currentProgressPercent = 100.0 / totalDuration * currentProgress;
-
-                        SaveProgress = currentProgressPercent;
-
-                        if (SaveProgress >= 100)
-                        {
-                            IsSaveComplete = true;
-                            IsSaving = false;
-                            SaveProgress = 0;
-                            if (o is DispatcherTimer timer)
-                            {
-                                timer.Stop();
-                            }
-                        }
-                    }), Dispatcher.CurrentDispatcher);
-            });
-
-            StartLearning = new AnotherCommandImplementation(_ =>
-            {
-                LernVacation();
-            });
-
-            AddToApprovalList = new AnotherCommandImplementation(_ =>
-            {
-                foreach (var item in SelectedDates)
-                {
-                    Console.WriteLine(item);
-                }
-                clearSelectedDates();
-            });
-
-            _selectedDates = new ObservableCollection<DateTime>();
+            _selectedDates = new ObservableCollection<Vacation>();
             //_displayedDates = new ObservableCollection<SelectedGap>();
-            _weekends = new ObservableCollection<DateTime>();
-            _holidays = new ObservableCollection<DateTime>();
+            //_weekends = new ObservableCollection<DateTime>();
+            //_holidays = new ObservableCollection<DateTime>();
             _vacationTypes = new List<Vacation>();
-            LoadModelCommand.Execute(new object());
-            DisplayedDates.ListChanged += DisplayedDatesonListChanged; ;
+            _vacationTypess = new List<Vacation>();
+            LoadModel.Execute(new object());
+            DisplayedDates.ListChanged += DisplayedDatesonListChanged;
+            Calendars.ListChanged += Calendars_ListChanged;
+            SelectedDatesChanged += PersonalVacationPlanningViewModel_SelectedDatesChanged;
+
+            Year = new List<List<DayControl>>();
+            //for (int i = 0; i < 12; i++)
+            //{
+            //    DateTime startOftheYear = new DateTime(DateTime.Now.Year, i+1, 1);
+            //}
+            //DateTime now = DateTime.Now;
+            //DateTime startOftheMonth = new DateTime(now.Year, now.Month, 1);
+            //int days = DateTime.DaysInMonth(now.Year, now.Month);
+            //int daysOfWeek = Convert.ToInt32(startOftheMonth.DayOfWeek.ToString("d")) - 1;
+            //ColumnOfWeek = daysOfWeek;
+            //for (int i = 0; i < daysOfWeek; i++)
+            //{
+            //    DayBlankControl dayBlank = new DayBlankControl();
+            //    BlankDays.Add(dayBlank);
+            //}
+            //for (int i = 1; i <= days; i++)
+            //{
+            //    DayControl ucDays = new DayControl();
+            //    ucDays.days(i);
+            //}
+            for (int j = 1; j <= 12; j++)
+            {
+                DateTime startOftheMonth1 = new DateTime(CurrentDate.Year, j, 1);
+                int days = DateTime.DaysInMonth(CurrentDate.Year, j);
+                int daysOfWeek = Convert.ToInt32(CurrentDate.DayOfWeek.ToString("d")) - 1;
+                for (int i = 0; i < daysOfWeek; i++)
+                {
+                    DayBlankControl dayBlank = new DayBlankControl();
+                    BlankDays.Add(dayBlank);
+                }
+                for (int i = 1; i <= days; i++)
+                {
+                    DayControl ucDays = new DayControl();
+                    DateTime date = new DateTime(CurrentDate.Year, j, i);
+                    Day = date;
+                    ucDays.days(date);
+                    ucDays.PreviewMouseLeftButtonDown += UcDays_PreviewMouseLeftButtonDown;
+                    switch (j)
+                    {
+                        case 1:
+                            DaysJanuary.Add(ucDays);
+                            break;
+                        case 2:
+                            DaysFebruary.Add(ucDays);
+                            break;
+                        case 3:
+                            DaysMath.Add(ucDays);
+                            break;
+                        case 4:
+                            DaysApril.Add(ucDays);
+                            break;
+                        case 5:
+                            DaysMay.Add(ucDays);
+                            break;
+                        case 6:
+                            DaysJune.Add(ucDays);
+                            break;
+                        case 7:
+                            DaysJuly.Add(ucDays);
+                            break;
+                        case 8:
+                            DaysAugust.Add(ucDays);
+                            break;
+                        case 9:
+                            DaysSeptember.Add(ucDays);
+                            break;
+                        case 10:
+                            DaysOktober.Add(ucDays);
+                            break;
+                        case 11:
+                            DaysNovember.Add(ucDays);
+                            break;
+                        case 12:
+                            DaysDecember.Add(ucDays);
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void UcDays_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource is TextBlock)
+            {
+                ClicksOnCalendar++;
+                TextBlock obj = e.OriginalSource as TextBlock;
+                int day = Convert.ToInt32(obj.Text);
+                int month = Convert.ToInt32(obj.Tag);
+                DateTime newDate = new DateTime();
+                if (ClicksOnCalendar == 3)
+                {
+                    FirstSelectedDate = newDate;
+                    SecondSelectedDate = newDate;
+                    ClicksOnCalendar = 1;
+                }
+
+                if (ClicksOnCalendar == 1)
+                {
+                    FirstSelectedDate = new DateTime(CurrentDate.Year, month, day);
+                    CountSelectedDays = FirstSelectedDate.Subtract(FirstSelectedDate).Days + 1;
+                    DayAddition = getDayAddition(CountSelectedDays);
+                    DisplayedDateString = DayAddition +": " + FirstSelectedDate.ToString("d-MM-yyyy");
+                }
+                else
+                {
+                    SecondSelectedDate = new DateTime(CurrentDate.Year, month, day);
+                    CountSelectedDays = SecondSelectedDate.Subtract(FirstSelectedDate).Days + 1;
+                    DayAddition = getDayAddition(CountSelectedDays);
+                    if (SecondSelectedDate>FirstSelectedDate)
+                    {
+                        DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
+                    }
+                    else
+                    {
+                        DisplayedDateString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
+                    }
+                }
+                
+            }
+        }
+
+        private void PersonalVacationPlanningViewModel_SelectedDatesChanged(Calendar obj)
+        {
+
+        }
+
+        private void Calendars_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            if (e.ListChangedType == ListChangedType.ItemChanged)
+            {
+
+            }
+
+            if (e.ListChangedType == ListChangedType.ItemAdded)
+            {
+
+            }
         }
 
 
@@ -517,126 +678,19 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         }
 
         #region Lerns
-        private void LernVacation()
-        {
-            IsEnabled = false;
-            var started = DateTime.Now;
-            string message = "Выберете отпуск который хотите запланировать.";
 
-            new DispatcherTimer(
-            TimeSpan.FromMilliseconds(50),
-            DispatcherPriority.Normal,
-            new EventHandler((o, e) =>
-            {
-                var totalDuration = started.AddMilliseconds(5000).Ticks - started.Ticks;
-                var currentProgress = DateTime.Now.Ticks - started.Ticks;
-                var currentProgressPercent = 100.0 / totalDuration * currentProgress;
-
-                LearningProgress = currentProgressPercent;
-                var converter = new System.Windows.Media.BrushConverter();
-                BorderColorVacation = (Brush)converter.ConvertFromString("#FF0000");
-                Task.Factory.StartNew(() => MessageQueueVacation.Enqueue(message));
-
-                if (LearningProgress >= 100)
-                {
-                    BorderColorVacation = Brushes.Transparent;
-                    LearningProgress = 0;
-                    MessageQueueVacation.Clear();
-
-                    if (o is DispatcherTimer timer)
-                    {
-                        timer.Stop();
-                    }
-                    LernCalendar();
-                }
-            }), Dispatcher.CurrentDispatcher);
-        }
-
-        private void LernCalendar()
-        {
-            Task.Delay(1500);
-            var started = DateTime.Now;
-            string message = "Выберете кликом в календаре, первый и последний день промежутка, который хотите запланировать.";
-
-            new DispatcherTimer(
-            TimeSpan.FromMilliseconds(50),
-            DispatcherPriority.Normal,
-            new EventHandler((o, e) =>
-            {
-                var totalDuration = started.AddMilliseconds(11000).Ticks - started.Ticks;
-                var currentProgress = DateTime.Now.Ticks - started.Ticks;
-                var currentProgressPercent = 100.0 / totalDuration * currentProgress;
-
-                LearningProgress = currentProgressPercent;
-                var converter = new System.Windows.Media.BrushConverter();
-                BorderColorCalendar = (Brush)converter.ConvertFromString("#FF0000");
-                Task.Factory.StartNew(() => MessageQueueCalendar.Enqueue(message));
-
-                if (LearningProgress >= 100)
-                {
-                    BorderColorCalendar = Brushes.Transparent;
-                    LearningProgress = 0;
-                    MessageQueueCalendar.Clear();
-
-                    if (o is DispatcherTimer timer)
-                    {
-                        timer.Stop();
-                    }
-                    LearnViewPlanedDays();
-                }
-            }), Dispatcher.CurrentDispatcher);
-        }
-
-        private void LearnViewPlanedDays()
-        {
-
-            var started = DateTime.Now;
-            string message = "Убедитесь в том что вид отпуска, даты и колличество совпадет с вашим выбором и подтвердите кнопкой.";
-
-            new DispatcherTimer(
-            TimeSpan.FromMilliseconds(50),
-            DispatcherPriority.Normal,
-            new EventHandler((o, e) =>
-            {
-                var totalDuration = started.AddMilliseconds(11000).Ticks - started.Ticks;
-                var currentProgress = DateTime.Now.Ticks - started.Ticks;
-                var currentProgressPercent = 100.0 / totalDuration * currentProgress;
-
-                LearningProgress = currentProgressPercent;
-                var converter = new System.Windows.Media.BrushConverter();
-                BorderColorSelectedGap = (Brush)converter.ConvertFromString("#FF0000");
-                Task.Factory.StartNew(() => MessageQueueSelectedGap.Enqueue(message));
-
-                if (LearningProgress >= 100)
-                {
-                    BorderColorSelectedGap = Brushes.Transparent;
-                    LearningProgress = 0;
-                    MessageQueueSelectedGap.Clear();
-                    IsEnabled = true;
-                    if (o is DispatcherTimer timer)
-                    {
-                        timer.Stop();
-                    }
-                }
-            }), Dispatcher.CurrentDispatcher);
-        }
-
-        private void LearnCalendar()
-        {
-
-        }
         #endregion Lerns
 
         #region Task Lazy
-        public async Task Initialize(Person person)
+        public async Task Initialize()
         {
             await Task.Delay(100);
-            CheckRang(person).Await();
+            CheckRang().Await();
             RenderCalendars().Await();
             SetWindowSize(SystemParameters.FullPrimaryScreenWidth).Await();
         }
 
-        public async Task Load(Person person)
+        public async Task Load()
         {
             try
             {
@@ -644,43 +698,55 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
             catch (Exception)
             {
-                _initializeLazy = new Lazy<Task>(() => Initialize(person));
+                _initializeLazy = new Lazy<Task>(() => Initialize());
                 throw;
             }
         }
         #endregion Task Lazy
 
-        private async Task CheckRang(Person person)
+        private async Task CheckRang()
         {
             await Task.Delay(100);
 
-            if (person.Is_Supervisor)
+            if (Person.Is_Supervisor)
             {
                 IsSupervisor = true;
             }
-            else if (person.Is_HR)
+            else if (Person.Is_HR)
             {
                 IsHR = true;
             }
             else
             {
                 IsEmployee = true;
-                AddPersonNameInView(person.ToString()).Await();
             }
             //VacationTypes = await _метод получения данных
             //Holidays = await _метод получения данных
             //Weekends = await _метод получения данных
 
-            loadVacationTypes(person);
+            loadVacationTypes();
         }
 
-        private void loadVacationTypes(Person person)
+        private void loadVacationTypes()
         {
             var converter = new System.Windows.Media.BrushConverter();
-            VacationTypes.Add(new Vacation("Основной", "28", (Brush)converter.ConvertFromString("#9B4F2D")));
-            VacationTypes.Add(new Vacation("Ненормированность", "3", (Brush)converter.ConvertFromString("#2D6D9B")));
-            VacationTypes.Add(new Vacation("Вредность", "0", (Brush)converter.ConvertFromString("#9B2D84")));
-            VacationTypes.Add(new Vacation("Стаж", "2", (Brush)converter.ConvertFromString("#9B8C2D")));
+            VacationTypes.Add(new Vacation("Основной", 28, (Brush)converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
+            VacationTypes.Add(new Vacation("Ненормированность", 3, (Brush)converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
+            VacationTypes.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
+            VacationTypes.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
+
+            VacationTypess.Add(new Vacation("Основной", 28, (Brush)converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
+            VacationTypess.Add(new Vacation("Ненормированность", 3, (Brush)converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
+            VacationTypess.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
+            VacationTypess.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
+            VacationTypess.Add(new Vacation("Основной", 28, (Brush)converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
+            VacationTypess.Add(new Vacation("Ненормированность", 3, (Brush)converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
+            VacationTypess.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
+            VacationTypess.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
+            VacationTypess.Add(new Vacation("Основной", 28, (Brush)converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
+            VacationTypess.Add(new Vacation("Ненормированность", 3, (Brush)converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
+            VacationTypess.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
+            VacationTypess.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
         }
 
         private async Task SetWindowSize(double fullPrimaryScreenWidth)
@@ -697,7 +763,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             Holidays.Add(DateTime.Today.AddDays(-7));
             //Weekends.Add(DateTime.Today.AddDays(1));
 
-            Calendars = new ObservableCollection<Calendar>();
+            //Calendars = new BindingList<Calendar>();
 
             for (int i = 0; i < 12; i++)
             {
@@ -708,23 +774,92 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     CalendarDayButtonStyle = (Style)App.Current.FindResource("CalendarDayButtonStyle1"),
                     FontFamily = new FontFamily("Trebuchet MS"),
                     SelectionMode = (CalendarSelectionMode)SelectionMode.Multiple,
-                   //Margin = new Thickness(2),
+                    //Margin = new Thickness(2),
                     Name = $"CalendarMonth_{i + 1}",
                 };
 
                 calendar.DisplayDateStart = new DateTime(DateTime.Now.Year, i + 1, 1);
                 calendar.DisplayDateEnd = new DateTime(DateTime.Now.Year, i + 1, DateTime.DaysInMonth(DateTime.Now.Year, i + 1));
 
-                calendar.SelectedDatesChanged += Calendar_SelectedDatesChanged;
+                //calendar.SelectedDatesChanged += Calendar_SelectedDatesChanged;
+                calendar.GotFocus += Calendar_GotFocus;
 
                 Calendars.Add(calendar);
             }
-
+            
         }
-        private async Task AddPersonNameInView(string name)
+
+        private void Calendar_GotFocus(object sender, RoutedEventArgs e)
         {
-            await Task.Delay(100);
-            PersonName = name;
+            Button button = e.OriginalSource as Button;
+            string dateString = button.DataContext.ToString();
+            DateTime date = DateTime.Parse(dateString);
+
+            Vacation newVacation = new Vacation(SelectedItem.Name, SelectedDates.Count, SelectedItem.Color, date, date);
+            if (!SelectedDates.Contains(newVacation) && SelectedDates.Count != 2)
+            {
+                SelectedDates.Add(newVacation);
+                CountSelectedDays = SelectedDates[0].Date_Start.Subtract(SelectedDates[0].Date_end).Days + 1;
+
+                if (DisplayedDates.Count < 1)
+                {
+                    if (CountSelectedDays <= SelectedItem.Count)
+                    {
+                        DisplayedDates.Add(new SelectedGap(getDayAddition(SelectedDates.Count), SelectedDates[0].Date_Start, SelectedDates[0].Date_Start));
+                    }
+                }
+
+                if (SelectedDates.Count == 2)
+                {
+                    List<DateTime> monthFirstSelectedDays = new List<DateTime>();
+                    List<DateTime> monthSecondSelectedDays = new List<DateTime>();
+                    SelectedDates.Sort((a, b) => { return a.Date_Start.CompareTo(b.Date_Start); });
+                    CountSelectedDays = SelectedDates[1].Date_Start.Subtract(SelectedDates[0].Date_end).Days + 1;
+
+                    DayAddition = getDayAddition(CountSelectedDays);
+
+                    if (CountSelectedDays <= SelectedItem.Count)
+                    {
+                        DisplayedDates[0] = new SelectedGap(DayAddition, SelectedDates[0].Date_Start, SelectedDates[1].Date_end);
+
+                        for (int i = 0; i <= CountSelectedDays - 1; i++)
+                        {
+                            if (SelectedDates[0].Date_Start.Month == SelectedDates[0].Date_Start.AddDays(i).Month)
+                            {
+                                monthFirstSelectedDays.Add(SelectedDates[0].Date_Start.AddDays(i));
+                            }
+                            else
+                            {
+                                monthSecondSelectedDays.Add(SelectedDates[0].Date_Start.AddDays(i));
+                            }
+                        }
+
+                        foreach (Calendar calendarItem in Calendars)
+                        {
+                            int calendarMonth = calendarItem.DisplayDate.Month;
+
+                            if (calendarMonth == monthFirstSelectedDays[0].Month)
+                            {
+                                //calendarItem.BlackoutDates.Add(new CalendarDateRange(firstMonth[0], firstMonth[firstMonth.Count - 1]));
+                                calendarItem.SelectedDates.AddRange(monthFirstSelectedDays[0], monthFirstSelectedDays[monthFirstSelectedDays.Count - 1]);
+                                calendarItem.SelectedDatesChanged += CalendarItem_SelectedDatesChanged;
+                            }
+                            if (monthSecondSelectedDays.Count > 0 && calendarMonth == monthSecondSelectedDays[0].Month)
+                            {
+                                //calendarItem.BlackoutDates.Add(new CalendarDateRange(secondMonth[0], secondMonth[secondMonth.Count - 1]));
+                                calendarItem.SelectedDates.AddRange(monthSecondSelectedDays[0], monthSecondSelectedDays[monthSecondSelectedDays.Count - 1]);
+                            }
+                        }
+
+                        SelectedDates.Clear();
+                    }
+                }
+            }
+        }
+        public event Action<Calendar> SelectedDatesChanged;
+        private void CalendarItem_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SelectedDatesChanged?.Invoke((Calendar)sender);
         }
 
         public string getDayAddition(int days)
@@ -753,24 +888,51 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
 
         }
+
         private void Calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
         {
-
             Calendar calendar = sender as Calendar;
-            if (calendar.SelectedDate != null)
+            //0 1 2
+            if (calendar.SelectedDate != null && SelectedDates.Count != 2)
             {
-                DateTime startDate = (DateTime)calendar.SelectedDate;
-                if (!SelectedDates.Contains(startDate) && SelectedDates.Count != 2)
+                ClicksOnCalendar++;
+                //3
+                if (ClicksOnCalendar == 3)
                 {
-                    SelectedDates.Add(startDate);
-                    DayString = SelectedDates[0].ToString("dd.MM.yyyy");
+                    DisplayedDates.Clear();
+                    ClicksOnCalendar = 1;
+
+                    foreach (Calendar calendarItem in Calendars)
+                    {
+                        if (calendarItem != calendar)
+                        {
+                            calendarItem.SelectedDates.Clear();
+                        }
+
+                    }
+                }
+                DateTime startDate = (DateTime)calendar.SelectedDate;
+                Vacation newVacation = new Vacation(SelectedItem.Name, SelectedDates.Count, SelectedItem.Color, startDate, startDate);
+                //1 2
+                if (!SelectedDates.Contains(newVacation) && SelectedDates.Count != 2)
+                {
+                    SelectedDates.Add(new Vacation(SelectedItem.Name, SelectedDates.Count, SelectedItem.Color, startDate, startDate));
+
+                    //DayString = SelectedDates[0].Date_Start.ToString("dd.MM.yyyy");
+
+                    CountSelectedDays = SelectedDates[0].Date_Start.Subtract(SelectedDates[0].Date_end).Days + 1;
+                    //1
                     if (DisplayedDates.Count < 1)
                     {
-                        DisplayedDates.Add(new SelectedGap(getDayAddition(SelectedDates.Count), SelectedDates[0], SelectedDates[0]));
+                        //1
+                        if (CountSelectedDays <= SelectedItem.Count)
+                        {
+                            DisplayedDates.Add(new SelectedGap(getDayAddition(SelectedDates.Count), SelectedDates[0].Date_Start, SelectedDates[0].Date_Start));
+                        }
                     }
 
-                    
-
+                    //clearSelectedDates();
+                    //2
                     if (SelectedDates.Count == 2)
                     {
                         AddDaysOnUI(calendar);
@@ -778,25 +940,37 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 }
             }
         }
-        private void clearSelectedDates()
+        private void clearCalendar()
         {
             foreach (Calendar calendarItem in Calendars)
             {
-                int calendarMonth = calendarItem.DisplayDate.Month;
+                calendarItem.SelectedDates.Clear();
+            }
+            DisplayedDates.Clear();
+            SelectedDates.Clear();
+            DisplayedDateString = string.Empty;
+        }
+        private void clearSelectedDates()
+        {
+            if (SelectedDates.Count > 0)
+            {
+                foreach (Calendar calendarItem in Calendars)
+                {
+                    int calendarMonth = calendarItem.DisplayDate.Month;
 
-                if (calendarMonth != SelectedDates[0].Month)
-                {
-                    calendarItem.SelectedDates.Clear();
-                }
-                if (SelectedDates.Count > 1)
-                {
-                    if (calendarMonth != SelectedDates[1].Month && calendarMonth != SelectedDates[0].Month)
+                    if (calendarMonth != SelectedDates[0].Date_Start.Month)
                     {
                         calendarItem.SelectedDates.Clear();
                     }
+                    if (SelectedDates.Count > 1)
+                    {
+                        if (calendarMonth != SelectedDates[1].Date_Start.Month && calendarMonth != SelectedDates[0].Date_Start.Month)
+                        {
+                            calendarItem.SelectedDates.Clear();
+                        }
+                    }
                 }
             }
-
             //foreach (Calendar calendarItem in Calendars)
             //{
             //    int calendarMonth = calendarItem.DisplayDate.Month;
@@ -816,50 +990,70 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         }
         private void AddDaysOnUI(Calendar calendar)
         {
-            List<DateTime> firstMonth = new List<DateTime>();
-            List<DateTime> secondMonth = new List<DateTime>();
-            SelectedDates.Sort((a, b) => { return a.CompareTo(b); });
-            int countDays = SelectedDates[1].Subtract(SelectedDates[0]).Days;
+            List<DateTime> firstDay = new List<DateTime>();
+            List<DateTime> secondDay = new List<DateTime>();
+            SelectedDates.Sort((a, b) => { return a.Date_Start.CompareTo(b.Date_Start); });
+            CountSelectedDays = SelectedDates[1].Date_Start.Subtract(SelectedDates[0].Date_end).Days + 1;
 
-            DayAddition = getDayAddition(countDays + 1);
-            DisplayedDates[DisplayedDates.Count - 1] = new SelectedGap(DayAddition,SelectedDates[0], SelectedDates[1]);
+            DayAddition = getDayAddition(CountSelectedDays);
 
-            ObservableCollection<DateTime> preDatesWeekend = new ObservableCollection<DateTime>();
-
-            for (int i = 0; i <= countDays; i++)
+            if (CountSelectedDays <= SelectedItem.Count)
             {
-                if (SelectedDates[0].Month == SelectedDates[0].AddDays(i).Month)
+                DisplayedDates[0] = new SelectedGap(DayAddition, SelectedDates[0].Date_Start, SelectedDates[1].Date_end);
+
+                //ObservableCollection<DateTime> preDatesWeekend = new ObservableCollection<DateTime>();
+
+                for (int i = 0; i <= CountSelectedDays - 1; i++)
                 {
-                    firstMonth.Add(SelectedDates[0].AddDays(i));
-                    preDatesWeekend.Add(SelectedDates[0].AddDays(i));
-                    Weekends = preDatesWeekend;
+                    if (SelectedDates[0].Date_Start.Month == SelectedDates[0].Date_Start.AddDays(i).Month)
+                    {
+                        firstDay.Add(SelectedDates[0].Date_Start.AddDays(i));
+                        //preDatesWeekend.Add(SelectedDates[0].AddDays(i));
+                        //Weekends = preDatesWeekend;
+                    }
+                    else
+                    {
+                        secondDay.Add(SelectedDates[0].Date_Start.AddDays(i));
+                        // preDatesWeekend.Add(SelectedDates[0].AddDays(i));
+                        //Weekends = preDatesWeekend;
+                    }
                 }
-                else
+
+                foreach (Calendar calendarItem in Calendars)
                 {
-                    secondMonth.Add(SelectedDates[0].AddDays(i));
-                    preDatesWeekend.Add(SelectedDates[0].AddDays(i));
-                    Weekends = preDatesWeekend;
+                    int calendarMonth = calendarItem.DisplayDate.Month;
+
+                    if (calendarMonth == firstDay[0].Month)
+                    {
+                        //calendarItem.BlackoutDates.Add(new CalendarDateRange(firstMonth[0], firstMonth[firstMonth.Count - 1]));
+                        calendarItem.SelectedDates.AddRange(firstDay[0], firstDay[firstDay.Count - 1]);
+
+                    }
+                    if (secondDay.Count > 0 && calendarMonth == secondDay[0].Month)
+                    {
+                        //calendarItem.BlackoutDates.Add(new CalendarDateRange(secondMonth[0], secondMonth[secondMonth.Count - 1]));
+                        calendarItem.SelectedDates.AddRange(secondDay[0], secondDay[secondDay.Count - 1]);
+                    }
+                }
+
+                SelectedDates.Clear();
+            }
+            else
+            {
+                SelectedDates.Clear();
+                DisplayedDates.Clear();
+                ClicksOnCalendar = 1;
+                DisplayedDateString = string.Empty;
+                foreach (Calendar calendarItem in Calendars)
+                {
+                    if (calendarItem != calendar)
+                    {
+                        calendarItem.SelectedDates.Clear();
+                    }
+
                 }
             }
 
-            foreach (Calendar calendarItem in Calendars)
-            {
-                int calendarMonth = calendarItem.DisplayDate.Month;
-
-                if (calendarMonth == firstMonth[0].Month)
-                {
-                    //calendarItem.BlackoutDates.Add(new CalendarDateRange(firstMonth[0], firstMonth[firstMonth.Count - 1]));
-                    calendarItem.SelectedDates.AddRange(firstMonth[0], firstMonth[firstMonth.Count - 1]);
-
-                }
-                if (secondMonth.Count > 0 && calendarMonth == secondMonth[0].Month)
-                {
-                    //calendarItem.BlackoutDates.Add(new CalendarDateRange(secondMonth[0], secondMonth[secondMonth.Count - 1]));
-                    calendarItem.SelectedDates.AddRange(secondMonth[0], secondMonth[secondMonth.Count - 1]);
-                }
-            }
-
-            SelectedDates.Clear();
         }
 
     }

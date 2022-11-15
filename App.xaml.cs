@@ -23,6 +23,10 @@ namespace Vacation_Portal
                 .Build();
         }
 
+        protected override void OnExit(ExitEventArgs e)
+        {
+            _host.StopAsync();
+        }
         protected override void OnStartup(StartupEventArgs e)
         {
             _host.Start();

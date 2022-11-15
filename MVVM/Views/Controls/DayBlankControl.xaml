@@ -1,11 +1,12 @@
-﻿<UserControl x:Class="Vacation_Portal.MVVM.Views.SupervisorView"
+﻿<UserControl x:Class="Vacation_Portal.MVVM.Views.Controls.DayBlankControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Vacation_Portal.MVVM.Views"
+             xmlns:local="clr-namespace:Vacation_Portal.MVVM.Views.Controls"
              mc:Ignorable="d">
     <Grid>
-            
+        <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Width="24" Height="24" Margin="2">
+        </Button>
     </Grid>
 </UserControl>

@@ -2,7 +2,7 @@
 
 namespace Vacation_Portal.Commands.BaseCommands
 {
-    public abstract class ComandBase : CommandBase {
+    public abstract class AsyncComandBase : CommandBase {
 
         private bool isExecuting;
 

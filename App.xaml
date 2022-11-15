@@ -138,7 +138,7 @@
                         <DataTrigger.Binding>
                             <MultiBinding Converter="{StaticResource DateConverter}">
                                 <Binding />
-                                <Binding Path="DataContext.Holidays" RelativeSource="{RelativeSource AncestorType=Calendar}" UpdateSourceTrigger="PropertyChanged" />
+                                <Binding Path="DataContext.Holidays" RelativeSource="{RelativeSource AncestorType=Calendar}" UpdateSourceTrigger="PropertyChanged"  Mode="TwoWay"/>
                             </MultiBinding>
                         </DataTrigger.Binding>
                         <Setter Property="Background" Value="Pink" />
@@ -147,7 +147,7 @@
                         <DataTrigger.Binding>
                             <MultiBinding Converter="{StaticResource DateConverter}">
                                 <Binding />
-                                <Binding Path="DataContext.Weekends" RelativeSource="{RelativeSource AncestorType=Calendar}" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay"/>
+                                <Binding Path="DataContext.Weekends" RelativeSource="{RelativeSource AncestorType=Calendar}" UpdateSourceTrigger="PropertyChanged"  Mode="TwoWay"/>
                             </MultiBinding>
                         </DataTrigger.Binding>
                         <Setter Property="Background" Value="Red" />

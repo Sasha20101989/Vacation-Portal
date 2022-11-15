@@ -5,14 +5,364 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages"
              x:Class="Vacation_Portal.MVVM.Views.Controls.FullCalendar"  
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DataContext="{d:DesignInstance {x:Type vm:PersonalVacationPlanningViewModel}}"
              mc:Ignorable="d">
-    
-    <ItemsControl ItemsSource="{Binding Calendars}">
+    <UniformGrid Columns="4" Rows="3" FirstColumn="0">
+        <md:Card Padding="5" Margin="0 5 0 5" md:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <md:ColorZone>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Январь" TextAlignment="Center" Margin="3" Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </md:ColorZone>
+                <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0">
+                    <TextBlock Text="Пн" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Ср" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Чт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Пт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                </UniformGrid>
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding DaysJanuary,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="5" Columns="7" FirstColumn="{Binding ColumnOfWeek}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </md:Card>
+        <md:Card Padding="5" Margin="15 5 0 5" md:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <md:ColorZone>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Февраль" TextAlignment="Center" Margin="3" Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </md:ColorZone>
+                <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0">
+                    <TextBlock Text="Пн" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Ср" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Чт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Пт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                </UniformGrid>
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding DaysFebruary,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="5" Columns="7" FirstColumn="{Binding ColumnOfWeek}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </md:Card>
+        <md:Card Padding="5" Margin="15 5 0 5" md:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <md:ColorZone>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Март" TextAlignment="Center" Margin="3" Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </md:ColorZone>
+                <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0">
+                    <TextBlock Text="Пн" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Ср" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Чт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Пт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                </UniformGrid>
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding DaysMath,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="5" Columns="7" FirstColumn="{Binding ColumnOfWeek}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </md:Card>
+        <md:Card Padding="5" Margin="15 5 0 5" md:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <md:ColorZone>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Апрель" TextAlignment="Center" Margin="3" Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </md:ColorZone>
+                <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0">
+                    <TextBlock Text="Пн" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Ср" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Чт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Пт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                </UniformGrid>
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding DaysApril,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="5" Columns="7" FirstColumn="{Binding ColumnOfWeek}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </md:Card>
+        <md:Card Padding="5" Margin="0 10 0 5" md:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <md:ColorZone>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Май" TextAlignment="Center" Margin="3" Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </md:ColorZone>
+                <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0">
+                    <TextBlock Text="Пн" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Ср" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Чт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Пт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                </UniformGrid>
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding DaysMay,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="5" Columns="7" FirstColumn="{Binding ColumnOfWeek}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </md:Card>
+        <md:Card Padding="5" Margin="15 10 0 5" md:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <md:ColorZone>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Июнь" TextAlignment="Center" Margin="3" Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </md:ColorZone>
+                <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0">
+                    <TextBlock Text="Пн" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Ср" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Чт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Пт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                </UniformGrid>
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding DaysJune,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="5" Columns="7" FirstColumn="{Binding ColumnOfWeek}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </md:Card>
+        <md:Card Padding="5" Margin="15 10 0 5" md:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <md:ColorZone>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Июль" TextAlignment="Center" Margin="3" Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </md:ColorZone>
+                <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0">
+                    <TextBlock Text="Пн" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Ср" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Чт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Пт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                </UniformGrid>
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding DaysJuly,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="5" Columns="7" FirstColumn="{Binding ColumnOfWeek}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </md:Card>
+        <md:Card Padding="5" Margin="15 10 0 5" md:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <md:ColorZone>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Август" TextAlignment="Center" Margin="3" Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </md:ColorZone>
+                <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0">
+                    <TextBlock Text="Пн" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Ср" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Чт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Пт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                </UniformGrid>
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding DaysAugust,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="5" Columns="7" FirstColumn="{Binding ColumnOfWeek}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </md:Card>
+        <md:Card Padding="5" Margin="0 10 0 0" md:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <md:ColorZone>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Сентябрь" TextAlignment="Center" Margin="3" Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </md:ColorZone>
+                <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0">
+                    <TextBlock Text="Пн" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Ср" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Чт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Пт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                </UniformGrid>
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding DaysSeptember,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="5" Columns="7" FirstColumn="{Binding ColumnOfWeek}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </md:Card>
+        <md:Card Padding="5" Margin="15 10 0 0" md:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <md:ColorZone>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Октябрь" TextAlignment="Center" Margin="3" Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </md:ColorZone>
+                <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0">
+                    <TextBlock Text="Пн" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Ср" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Чт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Пт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                </UniformGrid>
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding DaysOktober,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="5" Columns="7" FirstColumn="{Binding ColumnOfWeek}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </md:Card>
+        <md:Card Padding="5" Margin="15 10 0 0" md:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <md:ColorZone>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Ноябрь" TextAlignment="Center" Margin="3" Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </md:ColorZone>
+                <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0">
+                    <TextBlock Text="Пн" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Ср" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Чт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Пт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                </UniformGrid>
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding DaysNovember,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="5" Columns="7" FirstColumn="{Binding ColumnOfWeek}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </md:Card>
+        <md:Card Padding="5" Margin="15 10 0 0" md:ElevationAssist.Elevation="Dp4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <md:ColorZone>
+                    <TextBlock Grid.Row="0" Text="Декабрь" TextAlignment="Center" Margin="3" Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                </md:ColorZone>
+                <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0">
+                    <TextBlock Text="Пн" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Ср" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Чт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Пт" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                </UniformGrid>
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding DaysDecember,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="5" Columns="7" FirstColumn="{Binding ColumnOfWeek}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </md:Card>
+    </UniformGrid>
+    <!--<ItemsControl ItemsSource="{Binding Calendars}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
                 <UniformGrid Rows="3" Columns="4" FirstColumn="0"/>
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
-    </ItemsControl>
+    </ItemsControl>-->
 </UserControl>
