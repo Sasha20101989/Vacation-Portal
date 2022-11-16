@@ -64,16 +64,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         }
         public DateTime FirstSelectedDate { get; set; }
         public DateTime SecondSelectedDate { get; set; }
-        private List<Vacation> _selectedVacation;
-        public List<Vacation> SelectedVacation
-        {
-            get { return _selectedVacation; }
-            set
-            {
-                _selectedVacation = value;
-                OnPropertyChanged(nameof(SelectedVacation));
-            }
-        }
+
         private ObservableCollection<Vacation> _vacationsToAproval;
         public ObservableCollection<Vacation> VacationsToAproval
         {
@@ -557,7 +548,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             AddToApprovalList = new AddToApprovalListCommand(this);
 
             _selectedDates = new ObservableCollection<Vacation>();
-            _selectedVacation = new List<Vacation>();
             _vacationsToAproval = new ObservableCollection<Vacation>();
 
             //_weekends = new ObservableCollection<DateTime>();
@@ -679,12 +669,13 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 {
                     FirstSelectedDate = new DateTime(CurrentDate.Year, SelectedMonth, SelectedDay);
                     CountSelectedDays = FirstSelectedDate.Subtract(FirstSelectedDate).Days + 1;
-                    DayAddition = getDayAddition(CountSelectedDays);
-                    DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.yyyy");
-                    SelectedVacation.Clear();
-                    _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, FirstSelectedDate, FirstSelectedDate);
-                    //SelectedItem.Count = CountSelectedDays;
-                    //Vacation vacation = new Vacation(SelectedItem.Name,CountSelectedDays, SelectedItem.Color, FirstSelectedDate, FirstSelectedDate);
+                    if (CountSelectedDays<=SelectedItem.Count)
+                    {
+                        DayAddition = getDayAddition(CountSelectedDays);
+                        DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.yyyy");
+                        _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, FirstSelectedDate, FirstSelectedDate);
+                        blockAndPaintButtons();
+                    }
                 }
                 else
                 {
@@ -692,28 +683,28 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     if (SecondSelectedDate > FirstSelectedDate)
                     {
                         CountSelectedDays = SecondSelectedDate.Subtract(FirstSelectedDate).Days + 1;
-                        DayAddition = getDayAddition(CountSelectedDays);
-                        DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
-                        _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, FirstSelectedDate, SecondSelectedDate);
-                        PrevPlannedItem = PlannedItem;
+                        if (CountSelectedDays <= SelectedItem.Count)
+                        {
+                            DayAddition = getDayAddition(CountSelectedDays);
+                            DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
+                            _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, FirstSelectedDate, SecondSelectedDate);
+                        }
                     }
                     else
                     {
                         CountSelectedDays = FirstSelectedDate.Subtract(SecondSelectedDate).Days + 1;
-                        DayAddition = getDayAddition(CountSelectedDays);
-                        DisplayedDateString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
-                        _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, SecondSelectedDate, FirstSelectedDate);
-                        PrevPlannedItem = PlannedItem;
+                        if (CountSelectedDays <= SelectedItem.Count)
+                        {
+                            DayAddition = getDayAddition(CountSelectedDays);
+                            DisplayedDateString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
+                            _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, SecondSelectedDate, FirstSelectedDate);
+                        }
                     }
-                    SelectedVacation.Clear();
-
-                    //SelectedItem.Count = CountSelectedDays;
-                    //Vacation vacation = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, FirstSelectedDate, SecondSelectedDate);
                 }
-                SelectedVacation.Add(SelectedItem);
-
-                blockAndPaintButtons();
-                
+                if (CountSelectedDays <= SelectedItem.Count)
+                {
+                    blockAndPaintButtons();
+                }
             }
         }
 
@@ -728,11 +719,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     foreach (var elem in buttons)
                     {
                         Button button = elem as Button;
-                        if (!VacationsToAproval.Contains(PrevPlannedItem) && PrevPlannedItem!=null)
-                        {
+                        
                             button.Background = Brushes.Transparent;
                             button.IsEnabled = true;
-                        }
+                        
                     }
                 }
             }
@@ -749,6 +739,23 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 range = PlannedItem.Date_end.To(PlannedItem.Date_Start);
             }
+
+            //List<DateTime> firstMonth = new List<DateTime>();
+            //List<DateTime> secondMonth = new List<DateTime>();
+
+            //foreach (DateTime date in range.Step(x => x.AddDays(1)))
+            //{
+
+            //    if (date.Month == PlannedItem.Date_Start.Month)
+            //    {
+            //        firstMonth.Add(date);
+            //    }
+            //    else
+            //    {
+            //        secondMonth.Add(date);
+            //    }
+
+            //}
 
             foreach (DateTime date in range.Step(x => x.AddDays(1)))
             {
@@ -776,7 +783,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         }
 
         private void clearVacationData() {
-            SelectedVacation.Clear();
             DisplayedDateString = "";
             ClicksOnCalendar = 0;
             clearColorAndBlocked();
