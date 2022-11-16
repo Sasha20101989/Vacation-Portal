@@ -23,9 +23,9 @@ namespace Vacation_Portal.MVVM.Views.Controls
             InitializeComponent();
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.ListView.Height = (this.ListView.ActualHeight / this.ListView.Items.Count) * 8.7;
-        }
+        //private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    this.ListView.Height = (this.ListView.ActualHeight / this.ListView.Items.Count) * 8.7;
+        //}
     }
 }

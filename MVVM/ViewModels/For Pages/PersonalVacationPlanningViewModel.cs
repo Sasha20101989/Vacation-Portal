@@ -7,11 +7,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using MaterialDesignThemes.Wpf;
+using MiscUtil.Collections;
+using MiscUtil.Collections.Extensions;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands;
 using Vacation_Portal.Extensions;
@@ -27,13 +30,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #region Props
         private Lazy<Task> _initializeLazy;
 
-
         public BindingList<DateTime> Holidays { get; set; } = new BindingList<DateTime>();
-
-
         public BindingList<DateTime> Weekends { get; set; } = new BindingList<DateTime>();
-
         public BindingList<Calendar> Calendars { get; set; } = new BindingList<Calendar>();
+
         public BindingList<DayBlankControl> BlankDays { get; set; } = new BindingList<DayBlankControl>();
         public List<DayControl> DaysJanuary { get; set; } = new List<DayControl>();
         public List<DayControl> DaysFebruary { get; set; } = new List<DayControl>();
@@ -48,8 +48,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public List<DayControl> DaysNovember { get; set; } = new List<DayControl>();
         public List<DayControl> DaysDecember { get; set; } = new List<DayControl>();
         public List<List<DayControl>> Year;
-
         public int ColumnOfWeek { get; set; }
+        public int SelectedDay { get; set; }
+        public int SelectedMonth { get; set; }
         public DateTime Day { get; set; }
         private DateTime _currentDate;
         public DateTime CurrentDate
@@ -63,6 +64,26 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         }
         public DateTime FirstSelectedDate { get; set; }
         public DateTime SecondSelectedDate { get; set; }
+        private List<Vacation> _selectedVacation;
+        public List<Vacation> SelectedVacation
+        {
+            get { return _selectedVacation; }
+            set
+            {
+                _selectedVacation = value;
+                OnPropertyChanged(nameof(SelectedVacation));
+            }
+        }
+        private ObservableCollection<Vacation> _vacationsToAproval;
+        public ObservableCollection<Vacation> VacationsToAproval
+        {
+            get { return _vacationsToAproval; }
+            set
+            {
+                _vacationsToAproval = value;
+                OnPropertyChanged(nameof(VacationsToAproval));
+            }
+        }
 
         private ObservableCollection<Vacation> _selectedDates;
         public ObservableCollection<Vacation> SelectedDates
@@ -136,16 +157,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 OnPropertyChanged(nameof(VacationTypes));
             }
         }
-        private List<Vacation> _vacationTypess;
-        public List<Vacation> VacationTypess
-        {
-            get { return _vacationTypess; }
-            set
-            {
-                _vacationTypess = value;
-                OnPropertyChanged(nameof(VacationTypess));
-            }
-        }
+
+        
         private Thickness _recomendedMarginButton;
         public Thickness RecomendedMarginButton
         {
@@ -379,7 +392,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 SetProperty(ref _selectedItem, value);
                 OnPropertyChanged(nameof(SelectedItem));
-                clearCalendar();
+                clearVacationData();
             }
         }
 
@@ -394,6 +407,40 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
         #endregion Vacation props
+
+        #region Planned Vacation props
+        private Vacation _plannedItem;
+        public Vacation PlannedItem
+        {
+            get => _plannedItem;
+            set
+            {
+                SetProperty(ref _plannedItem, value);
+                OnPropertyChanged(nameof(PlannedItem));
+            }
+        }
+        private Vacation _prevPlannedItem;
+        public Vacation PrevPlannedItem
+        {
+            get => _prevPlannedItem;
+            set
+            {
+                SetProperty(ref _prevPlannedItem, value);
+                OnPropertyChanged(nameof(PrevPlannedItem));
+            }
+        }
+
+        private int _plannedIndex;
+        public int PlannedIndex
+        {
+            get => _plannedIndex;
+            set
+            {
+                SetProperty(ref _plannedIndex, value);
+                OnPropertyChanged(nameof(PlannedIndex));
+            }
+        }
+        #endregion Planned Vacation props
 
         #region QueuesLern
         private SnackbarMessageQueue _messageQueueVacation;
@@ -510,176 +557,232 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             AddToApprovalList = new AddToApprovalListCommand(this);
 
             _selectedDates = new ObservableCollection<Vacation>();
-            //_displayedDates = new ObservableCollection<SelectedGap>();
+            _selectedVacation = new List<Vacation>();
+            _vacationsToAproval = new ObservableCollection<Vacation>();
+
             //_weekends = new ObservableCollection<DateTime>();
             //_holidays = new ObservableCollection<DateTime>();
             _vacationTypes = new List<Vacation>();
-            _vacationTypess = new List<Vacation>();
             LoadModel.Execute(new object());
-            DisplayedDates.ListChanged += DisplayedDatesonListChanged;
-            Calendars.ListChanged += Calendars_ListChanged;
-            SelectedDatesChanged += PersonalVacationPlanningViewModel_SelectedDatesChanged;
+        }
 
-            Year = new List<List<DayControl>>();
-            //for (int i = 0; i < 12; i++)
-            //{
-            //    DateTime startOftheYear = new DateTime(DateTime.Now.Year, i+1, 1);
-            //}
-            //DateTime now = DateTime.Now;
-            //DateTime startOftheMonth = new DateTime(now.Year, now.Month, 1);
-            //int days = DateTime.DaysInMonth(now.Year, now.Month);
-            //int daysOfWeek = Convert.ToInt32(startOftheMonth.DayOfWeek.ToString("d")) - 1;
-            //ColumnOfWeek = daysOfWeek;
-            //for (int i = 0; i < daysOfWeek; i++)
-            //{
-            //    DayBlankControl dayBlank = new DayBlankControl();
-            //    BlankDays.Add(dayBlank);
-            //}
-            //for (int i = 1; i <= days; i++)
-            //{
-            //    DayControl ucDays = new DayControl();
-            //    ucDays.days(i);
-            //}
-            for (int j = 1; j <= 12; j++)
+        private void addToMonth(int month, DayControl ucDays)
+        {
+            switch (month)
             {
-                DateTime startOftheMonth1 = new DateTime(CurrentDate.Year, j, 1);
-                int days = DateTime.DaysInMonth(CurrentDate.Year, j);
-                int daysOfWeek = Convert.ToInt32(CurrentDate.DayOfWeek.ToString("d")) - 1;
-                for (int i = 0; i < daysOfWeek; i++)
-                {
-                    DayBlankControl dayBlank = new DayBlankControl();
-                    BlankDays.Add(dayBlank);
-                }
-                for (int i = 1; i <= days; i++)
-                {
-                    DayControl ucDays = new DayControl();
-                    DateTime date = new DateTime(CurrentDate.Year, j, i);
-                    Day = date;
-                    ucDays.days(date);
-                    ucDays.PreviewMouseLeftButtonDown += UcDays_PreviewMouseLeftButtonDown;
-                    switch (j)
-                    {
-                        case 1:
-                            DaysJanuary.Add(ucDays);
-                            break;
-                        case 2:
-                            DaysFebruary.Add(ucDays);
-                            break;
-                        case 3:
-                            DaysMath.Add(ucDays);
-                            break;
-                        case 4:
-                            DaysApril.Add(ucDays);
-                            break;
-                        case 5:
-                            DaysMay.Add(ucDays);
-                            break;
-                        case 6:
-                            DaysJune.Add(ucDays);
-                            break;
-                        case 7:
-                            DaysJuly.Add(ucDays);
-                            break;
-                        case 8:
-                            DaysAugust.Add(ucDays);
-                            break;
-                        case 9:
-                            DaysSeptember.Add(ucDays);
-                            break;
-                        case 10:
-                            DaysOktober.Add(ucDays);
-                            break;
-                        case 11:
-                            DaysNovember.Add(ucDays);
-                            break;
-                        case 12:
-                            DaysDecember.Add(ucDays);
-                            break;
-                    }
-                }
+                case 1:
+                    DaysJanuary.Add(ucDays);
+                    break;
+                case 2:
+                    DaysFebruary.Add(ucDays);
+                    break;
+                case 3:
+                    DaysMath.Add(ucDays);
+                    break;
+                case 4:
+                    DaysApril.Add(ucDays);
+                    break;
+                case 5:
+                    DaysMay.Add(ucDays);
+                    break;
+                case 6:
+                    DaysJune.Add(ucDays);
+                    break;
+                case 7:
+                    DaysJuly.Add(ucDays);
+                    break;
+                case 8:
+                    DaysAugust.Add(ucDays);
+                    break;
+                case 9:
+                    DaysSeptember.Add(ucDays);
+                    break;
+                case 10:
+                    DaysOktober.Add(ucDays);
+                    break;
+                case 11:
+                    DaysNovember.Add(ucDays);
+                    break;
+                case 12:
+                    DaysDecember.Add(ucDays);
+                    break;
             }
+        }
+
+        private List<DayControl> getMonth(int month)
+        {
+            List<DayControl> result = null;
+            switch (month)
+            {
+                case 1:
+                     result = DaysJanuary;
+                    break;
+                case 2:
+                    result = DaysFebruary;
+                    break;
+                case 3:
+                    result=DaysMath;
+                    break;
+                case 4:
+                    result=DaysApril;
+                    break;
+                case 5:
+                    result=DaysMay;
+                    break;
+                case 6:
+                    result=DaysJune;
+                    break;
+                case 7:
+                    result=DaysJuly;
+                    break;
+                case 8:
+                    result=DaysAugust;
+                    break;
+                case 9:
+                    result=DaysSeptember;
+                    break;
+                case 10:
+                    result=DaysOktober;
+                    break;
+                case 11:
+                   result= DaysNovember;
+                    break;
+                case 12:
+                    result=DaysDecember;
+                    break;
+            }
+            return result;
         }
 
         private void UcDays_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            
             if (e.OriginalSource is TextBlock)
             {
                 ClicksOnCalendar++;
                 TextBlock obj = e.OriginalSource as TextBlock;
-                int day = Convert.ToInt32(obj.Text);
-                int month = Convert.ToInt32(obj.Tag);
+               
+                SelectedDay = Convert.ToInt32(obj.Text);
+                SelectedMonth = Convert.ToInt32(obj.Tag);
                 DateTime newDate = new DateTime();
+
                 if (ClicksOnCalendar == 3)
                 {
+                    blockAndPaintButtons();
                     FirstSelectedDate = newDate;
                     SecondSelectedDate = newDate;
                     ClicksOnCalendar = 1;
+                    clearColorAndBlocked();
                 }
 
                 if (ClicksOnCalendar == 1)
                 {
-                    FirstSelectedDate = new DateTime(CurrentDate.Year, month, day);
+                    FirstSelectedDate = new DateTime(CurrentDate.Year, SelectedMonth, SelectedDay);
                     CountSelectedDays = FirstSelectedDate.Subtract(FirstSelectedDate).Days + 1;
                     DayAddition = getDayAddition(CountSelectedDays);
-                    DisplayedDateString = DayAddition +": " + FirstSelectedDate.ToString("d-MM-yyyy");
+                    DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.yyyy");
+                    SelectedVacation.Clear();
+                    _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, FirstSelectedDate, FirstSelectedDate);
+                    //SelectedItem.Count = CountSelectedDays;
+                    //Vacation vacation = new Vacation(SelectedItem.Name,CountSelectedDays, SelectedItem.Color, FirstSelectedDate, FirstSelectedDate);
                 }
                 else
                 {
-                    SecondSelectedDate = new DateTime(CurrentDate.Year, month, day);
-                    CountSelectedDays = SecondSelectedDate.Subtract(FirstSelectedDate).Days + 1;
-                    DayAddition = getDayAddition(CountSelectedDays);
-                    if (SecondSelectedDate>FirstSelectedDate)
+                    SecondSelectedDate = new DateTime(CurrentDate.Year, SelectedMonth, SelectedDay);
+                    if (SecondSelectedDate > FirstSelectedDate)
                     {
+                        CountSelectedDays = SecondSelectedDate.Subtract(FirstSelectedDate).Days + 1;
+                        DayAddition = getDayAddition(CountSelectedDays);
                         DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
+                        _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, FirstSelectedDate, SecondSelectedDate);
+                        PrevPlannedItem = PlannedItem;
                     }
                     else
                     {
+                        CountSelectedDays = FirstSelectedDate.Subtract(SecondSelectedDate).Days + 1;
+                        DayAddition = getDayAddition(CountSelectedDays);
                         DisplayedDateString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
+                        _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, SecondSelectedDate, FirstSelectedDate);
+                        PrevPlannedItem = PlannedItem;
                     }
+                    SelectedVacation.Clear();
+
+                    //SelectedItem.Count = CountSelectedDays;
+                    //Vacation vacation = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, FirstSelectedDate, SecondSelectedDate);
                 }
+                SelectedVacation.Add(SelectedItem);
+
+                blockAndPaintButtons();
                 
             }
         }
 
-        private void PersonalVacationPlanningViewModel_SelectedDatesChanged(Calendar obj)
+        private void clearColorAndBlocked()
         {
-
+            foreach (List<DayControl> month in Year)
+            {
+                foreach (DayControl item in month)
+                {
+                    Grid parentItem = item.Content as Grid;
+                    UIElementCollection buttons = parentItem.Children as UIElementCollection;
+                    foreach (var elem in buttons)
+                    {
+                        Button button = elem as Button;
+                        if (!VacationsToAproval.Contains(PrevPlannedItem) && PrevPlannedItem!=null)
+                        {
+                            button.Background = Brushes.Transparent;
+                            button.IsEnabled = true;
+                        }
+                    }
+                }
+            }
         }
 
-        private void Calendars_ListChanged(object sender, ListChangedEventArgs e)
+        private void blockAndPaintButtons()
         {
-            if (e.ListChangedType == ListChangedType.ItemChanged)
+            Range<DateTime> range;
+            if (PlannedItem.Date_end> PlannedItem.Date_Start)
             {
-
+                range = PlannedItem.Date_Start.To(PlannedItem.Date_end);
+            }
+            else
+            {
+                range = PlannedItem.Date_end.To(PlannedItem.Date_Start);
             }
 
-            if (e.ListChangedType == ListChangedType.ItemAdded)
+            foreach (DateTime date in range.Step(x => x.AddDays(1)))
             {
-
+                foreach (List<DayControl> month in Year)
+                {
+                    foreach (DayControl item in month)
+                    {
+                        Grid parentItem = item.Content as Grid;
+                        UIElementCollection buttons = parentItem.Children as UIElementCollection;
+                        foreach (var elem in buttons)
+                        {
+                            Button button = elem as Button;
+                            var buttonTextBlock = button.Content as TextBlock;
+                            int buttonDay = Convert.ToInt32(buttonTextBlock.Text);
+                            int buttonMonth = Convert.ToInt32(buttonTextBlock.Tag);
+                            if (date.Day == buttonDay && date.Month == buttonMonth)
+                            {
+                                button.IsEnabled = false;
+                                button.Background = PlannedItem.Color;
+                            }
+                        }
+                    }
+                }
             }
         }
 
+        private void clearVacationData() {
+            SelectedVacation.Clear();
+            DisplayedDateString = "";
+            ClicksOnCalendar = 0;
+            clearColorAndBlocked();
+        }
 
         #endregion Constructor
-
-        private void DisplayedDatesonListChanged(object sender, ListChangedEventArgs e)
-        {
-            if (e.ListChangedType == ListChangedType.ItemChanged)
-            {
-                DisplayedDateString = DisplayedDates[0].ToString();
-            }
-
-            if (e.ListChangedType == ListChangedType.ItemAdded)
-            {
-                string str = DisplayedDates[0].ToString();
-                int position = str.LastIndexOf("-");
-                DisplayedDateString = str.Substring(0, position - 1);
-            }
-        }
-
-        #region Lerns
-
-        #endregion Lerns
 
         #region Task Lazy
         public async Task Initialize()
@@ -735,18 +838,18 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             VacationTypes.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
             VacationTypes.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
 
-            VacationTypess.Add(new Vacation("Основной", 28, (Brush)converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
-            VacationTypess.Add(new Vacation("Ненормированность", 3, (Brush)converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
-            VacationTypess.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
-            VacationTypess.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
-            VacationTypess.Add(new Vacation("Основной", 28, (Brush)converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
-            VacationTypess.Add(new Vacation("Ненормированность", 3, (Brush)converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
-            VacationTypess.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
-            VacationTypess.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
-            VacationTypess.Add(new Vacation("Основной", 28, (Brush)converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
-            VacationTypess.Add(new Vacation("Ненормированность", 3, (Brush)converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
-            VacationTypess.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
-            VacationTypess.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
+            //VacationTypess.Add(new Vacation("Основной", 28, (Brush)converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
+            //VacationTypess.Add(new Vacation("Ненормированность", 3, (Brush)converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
+            //VacationTypess.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
+            //VacationTypess.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
+            //VacationTypess.Add(new Vacation("Основной", 28, (Brush)converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
+            //VacationTypess.Add(new Vacation("Ненормированность", 3, (Brush)converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
+            //VacationTypess.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
+            //VacationTypess.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
+            //VacationTypess.Add(new Vacation("Основной", 28, (Brush)converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
+            //VacationTypess.Add(new Vacation("Ненормированность", 3, (Brush)converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
+            //VacationTypess.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
+            //VacationTypess.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
         }
 
         private async Task SetWindowSize(double fullPrimaryScreenWidth)
@@ -763,103 +866,31 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             Holidays.Add(DateTime.Today.AddDays(-7));
             //Weekends.Add(DateTime.Today.AddDays(1));
 
-            //Calendars = new BindingList<Calendar>();
+            Year = new List<List<DayControl>>();
 
-            for (int i = 0; i < 12; i++)
+            for (int j = 1; j <= 12; j++)
             {
-                Calendar calendar = new Calendar
+                DateTime startOftheMonth1 = new DateTime(CurrentDate.Year, j, 1);
+                int days = DateTime.DaysInMonth(CurrentDate.Year, j);
+                int daysOfWeek = Convert.ToInt32(CurrentDate.DayOfWeek.ToString("d")) - 1;
+                for (int i = 0; i < daysOfWeek; i++)
                 {
-                    DisplayDate = new DateTime(DateTime.Now.Year, i + 1, DateTime.DaysInMonth(DateTime.Now.Year, i + 1)),
-                    Style = (Style)App.Current.FindResource("CalendarStyle1"),
-                    CalendarDayButtonStyle = (Style)App.Current.FindResource("CalendarDayButtonStyle1"),
-                    FontFamily = new FontFamily("Trebuchet MS"),
-                    SelectionMode = (CalendarSelectionMode)SelectionMode.Multiple,
-                    //Margin = new Thickness(2),
-                    Name = $"CalendarMonth_{i + 1}",
-                };
-
-                calendar.DisplayDateStart = new DateTime(DateTime.Now.Year, i + 1, 1);
-                calendar.DisplayDateEnd = new DateTime(DateTime.Now.Year, i + 1, DateTime.DaysInMonth(DateTime.Now.Year, i + 1));
-
-                //calendar.SelectedDatesChanged += Calendar_SelectedDatesChanged;
-                calendar.GotFocus += Calendar_GotFocus;
-
-                Calendars.Add(calendar);
-            }
-            
-        }
-
-        private void Calendar_GotFocus(object sender, RoutedEventArgs e)
-        {
-            Button button = e.OriginalSource as Button;
-            string dateString = button.DataContext.ToString();
-            DateTime date = DateTime.Parse(dateString);
-
-            Vacation newVacation = new Vacation(SelectedItem.Name, SelectedDates.Count, SelectedItem.Color, date, date);
-            if (!SelectedDates.Contains(newVacation) && SelectedDates.Count != 2)
-            {
-                SelectedDates.Add(newVacation);
-                CountSelectedDays = SelectedDates[0].Date_Start.Subtract(SelectedDates[0].Date_end).Days + 1;
-
-                if (DisplayedDates.Count < 1)
-                {
-                    if (CountSelectedDays <= SelectedItem.Count)
-                    {
-                        DisplayedDates.Add(new SelectedGap(getDayAddition(SelectedDates.Count), SelectedDates[0].Date_Start, SelectedDates[0].Date_Start));
-                    }
+                    DayBlankControl dayBlank = new DayBlankControl();
+                    BlankDays.Add(dayBlank);
                 }
-
-                if (SelectedDates.Count == 2)
+                List<DayControl> Days = new List<DayControl>();
+                for (int i = 1; i <= days; i++)
                 {
-                    List<DateTime> monthFirstSelectedDays = new List<DateTime>();
-                    List<DateTime> monthSecondSelectedDays = new List<DateTime>();
-                    SelectedDates.Sort((a, b) => { return a.Date_Start.CompareTo(b.Date_Start); });
-                    CountSelectedDays = SelectedDates[1].Date_Start.Subtract(SelectedDates[0].Date_end).Days + 1;
-
-                    DayAddition = getDayAddition(CountSelectedDays);
-
-                    if (CountSelectedDays <= SelectedItem.Count)
-                    {
-                        DisplayedDates[0] = new SelectedGap(DayAddition, SelectedDates[0].Date_Start, SelectedDates[1].Date_end);
-
-                        for (int i = 0; i <= CountSelectedDays - 1; i++)
-                        {
-                            if (SelectedDates[0].Date_Start.Month == SelectedDates[0].Date_Start.AddDays(i).Month)
-                            {
-                                monthFirstSelectedDays.Add(SelectedDates[0].Date_Start.AddDays(i));
-                            }
-                            else
-                            {
-                                monthSecondSelectedDays.Add(SelectedDates[0].Date_Start.AddDays(i));
-                            }
-                        }
-
-                        foreach (Calendar calendarItem in Calendars)
-                        {
-                            int calendarMonth = calendarItem.DisplayDate.Month;
-
-                            if (calendarMonth == monthFirstSelectedDays[0].Month)
-                            {
-                                //calendarItem.BlackoutDates.Add(new CalendarDateRange(firstMonth[0], firstMonth[firstMonth.Count - 1]));
-                                calendarItem.SelectedDates.AddRange(monthFirstSelectedDays[0], monthFirstSelectedDays[monthFirstSelectedDays.Count - 1]);
-                                calendarItem.SelectedDatesChanged += CalendarItem_SelectedDatesChanged;
-                            }
-                            if (monthSecondSelectedDays.Count > 0 && calendarMonth == monthSecondSelectedDays[0].Month)
-                            {
-                                //calendarItem.BlackoutDates.Add(new CalendarDateRange(secondMonth[0], secondMonth[secondMonth.Count - 1]));
-                                calendarItem.SelectedDates.AddRange(monthSecondSelectedDays[0], monthSecondSelectedDays[monthSecondSelectedDays.Count - 1]);
-                            }
-                        }
-
-                        SelectedDates.Clear();
-                    }
+                    DayControl ucDays = new DayControl();
+                    DateTime date = new DateTime(CurrentDate.Year, j, i);
+                    Day = date;
+                    ucDays.days(date);
+                    ucDays.PreviewMouseLeftButtonDown += UcDays_PreviewMouseLeftButtonDown;
+                    addToMonth(j, ucDays);
+                    Days.Add(ucDays);
                 }
+                Year.Add(Days);
             }
-        }
-        public event Action<Calendar> SelectedDatesChanged;
-        private void CalendarItem_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
-        {
-            SelectedDatesChanged?.Invoke((Calendar)sender);
         }
 
         public string getDayAddition(int days)
@@ -885,173 +916,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     return days + " Дня";
                 default:
                     return days + " Дней";
-            }
-
-        }
-
-        private void Calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Calendar calendar = sender as Calendar;
-            //0 1 2
-            if (calendar.SelectedDate != null && SelectedDates.Count != 2)
-            {
-                ClicksOnCalendar++;
-                //3
-                if (ClicksOnCalendar == 3)
-                {
-                    DisplayedDates.Clear();
-                    ClicksOnCalendar = 1;
-
-                    foreach (Calendar calendarItem in Calendars)
-                    {
-                        if (calendarItem != calendar)
-                        {
-                            calendarItem.SelectedDates.Clear();
-                        }
-
-                    }
-                }
-                DateTime startDate = (DateTime)calendar.SelectedDate;
-                Vacation newVacation = new Vacation(SelectedItem.Name, SelectedDates.Count, SelectedItem.Color, startDate, startDate);
-                //1 2
-                if (!SelectedDates.Contains(newVacation) && SelectedDates.Count != 2)
-                {
-                    SelectedDates.Add(new Vacation(SelectedItem.Name, SelectedDates.Count, SelectedItem.Color, startDate, startDate));
-
-                    //DayString = SelectedDates[0].Date_Start.ToString("dd.MM.yyyy");
-
-                    CountSelectedDays = SelectedDates[0].Date_Start.Subtract(SelectedDates[0].Date_end).Days + 1;
-                    //1
-                    if (DisplayedDates.Count < 1)
-                    {
-                        //1
-                        if (CountSelectedDays <= SelectedItem.Count)
-                        {
-                            DisplayedDates.Add(new SelectedGap(getDayAddition(SelectedDates.Count), SelectedDates[0].Date_Start, SelectedDates[0].Date_Start));
-                        }
-                    }
-
-                    //clearSelectedDates();
-                    //2
-                    if (SelectedDates.Count == 2)
-                    {
-                        AddDaysOnUI(calendar);
-                    }
-                }
-            }
-        }
-        private void clearCalendar()
-        {
-            foreach (Calendar calendarItem in Calendars)
-            {
-                calendarItem.SelectedDates.Clear();
-            }
-            DisplayedDates.Clear();
-            SelectedDates.Clear();
-            DisplayedDateString = string.Empty;
-        }
-        private void clearSelectedDates()
-        {
-            if (SelectedDates.Count > 0)
-            {
-                foreach (Calendar calendarItem in Calendars)
-                {
-                    int calendarMonth = calendarItem.DisplayDate.Month;
-
-                    if (calendarMonth != SelectedDates[0].Date_Start.Month)
-                    {
-                        calendarItem.SelectedDates.Clear();
-                    }
-                    if (SelectedDates.Count > 1)
-                    {
-                        if (calendarMonth != SelectedDates[1].Date_Start.Month && calendarMonth != SelectedDates[0].Date_Start.Month)
-                        {
-                            calendarItem.SelectedDates.Clear();
-                        }
-                    }
-                }
-            }
-            //foreach (Calendar calendarItem in Calendars)
-            //{
-            //    int calendarMonth = calendarItem.DisplayDate.Month;
-
-            //    if (calendarMonth != SelectedDates[0].Month)
-            //    {
-            //        calendarItem.SelectedDates.Clear();
-            //    }
-            //    if (SelectedDates.Count > 1)
-            //    {
-            //        if (calendarMonth != SelectedDates[1].Month && calendarMonth != SelectedDates[0].Month)
-            //        {
-            //            calendarItem.SelectedDates.Clear();
-            //        }
-            //    }
-            //}
-        }
-        private void AddDaysOnUI(Calendar calendar)
-        {
-            List<DateTime> firstDay = new List<DateTime>();
-            List<DateTime> secondDay = new List<DateTime>();
-            SelectedDates.Sort((a, b) => { return a.Date_Start.CompareTo(b.Date_Start); });
-            CountSelectedDays = SelectedDates[1].Date_Start.Subtract(SelectedDates[0].Date_end).Days + 1;
-
-            DayAddition = getDayAddition(CountSelectedDays);
-
-            if (CountSelectedDays <= SelectedItem.Count)
-            {
-                DisplayedDates[0] = new SelectedGap(DayAddition, SelectedDates[0].Date_Start, SelectedDates[1].Date_end);
-
-                //ObservableCollection<DateTime> preDatesWeekend = new ObservableCollection<DateTime>();
-
-                for (int i = 0; i <= CountSelectedDays - 1; i++)
-                {
-                    if (SelectedDates[0].Date_Start.Month == SelectedDates[0].Date_Start.AddDays(i).Month)
-                    {
-                        firstDay.Add(SelectedDates[0].Date_Start.AddDays(i));
-                        //preDatesWeekend.Add(SelectedDates[0].AddDays(i));
-                        //Weekends = preDatesWeekend;
-                    }
-                    else
-                    {
-                        secondDay.Add(SelectedDates[0].Date_Start.AddDays(i));
-                        // preDatesWeekend.Add(SelectedDates[0].AddDays(i));
-                        //Weekends = preDatesWeekend;
-                    }
-                }
-
-                foreach (Calendar calendarItem in Calendars)
-                {
-                    int calendarMonth = calendarItem.DisplayDate.Month;
-
-                    if (calendarMonth == firstDay[0].Month)
-                    {
-                        //calendarItem.BlackoutDates.Add(new CalendarDateRange(firstMonth[0], firstMonth[firstMonth.Count - 1]));
-                        calendarItem.SelectedDates.AddRange(firstDay[0], firstDay[firstDay.Count - 1]);
-
-                    }
-                    if (secondDay.Count > 0 && calendarMonth == secondDay[0].Month)
-                    {
-                        //calendarItem.BlackoutDates.Add(new CalendarDateRange(secondMonth[0], secondMonth[secondMonth.Count - 1]));
-                        calendarItem.SelectedDates.AddRange(secondDay[0], secondDay[secondDay.Count - 1]);
-                    }
-                }
-
-                SelectedDates.Clear();
-            }
-            else
-            {
-                SelectedDates.Clear();
-                DisplayedDates.Clear();
-                ClicksOnCalendar = 1;
-                DisplayedDateString = string.Empty;
-                foreach (Calendar calendarItem in Calendars)
-                {
-                    if (calendarItem != calendar)
-                    {
-                        calendarItem.SelectedDates.Clear();
-                    }
-
-                }
             }
 
         }

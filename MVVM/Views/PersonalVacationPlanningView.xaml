@@ -231,17 +231,16 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center"
+                                    Visibility="{Binding IsGapVisible,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock TextAlignment="Right" Cursor="Arrow" HorizontalAlignment="Right" VerticalAlignment="Center"
                                        FontSize="14"
-                                       Visibility="{Binding IsGapVisible,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}" 
                                        Text="{Binding SelectedItem.Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                             <TextBlock TextAlignment="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10 0 0 0"
                                        FontSize="14"
                                        Text="{Binding DisplayedDateString,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                             <Button HorizontalAlignment="Left" Foreground="Green" Width="24" Height="24" Margin="10 0 0 0"
                                     Style="{StaticResource MaterialDesignIconForegroundButton}" 
-                                    Visibility="{Binding IsGapVisible,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}"
                                     Command="{Binding AddToApprovalList}">
                                 <md:PackIcon Kind="Check"  Width="20" Height="20"/>
                             </Button>

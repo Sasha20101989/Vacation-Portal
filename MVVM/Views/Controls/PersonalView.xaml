@@ -8,7 +8,7 @@
              xmlns:md="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
              xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance vm:PersonalVacationPlanningViewModel}" Loaded="UserControl_Loaded" >
+             d:DataContext="{d:DesignInstance vm:PersonalVacationPlanningViewModel}">
     <UserControl.Resources>
         <ResourceDictionary>
 
@@ -283,21 +283,28 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
-                            <ListView Grid.Row="0" Margin="3" Name="ListView"
-                                      ItemsSource="{Binding VacationTypess, UpdateSourceTrigger=PropertyChanged}" 
-                                      SelectedIndex="{Binding SelectedIndex, UpdateSourceTrigger=PropertyChanged}"
-                                      SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}"
+                        <ListView Grid.Row="0" Margin="3" Name="ListView" SelectionMode="Single"
+                                      ItemsSource="{Binding VacationsToAproval, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
+                                      SelectedIndex="{Binding PlannedIndex, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                      SelectedItem="{Binding PlannedItem, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                       ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                      ScrollViewer.CanContentScroll="False">
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn DisplayMemberBinding="{Binding Name}" Header="Вид отпуска"></GridViewColumn>
-                                        <GridViewColumn DisplayMemberBinding="{Binding Count}" Header="Остаток"></GridViewColumn>
-                                        <GridViewColumn DisplayMemberBinding="{Binding Color}" Header="Цвет"></GridViewColumn>
-                                        <GridViewColumn Header="">
+                                      ScrollViewer.CanContentScroll="False" Style="{StaticResource MaterialDesignListView}">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignGridViewItem}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn DisplayMemberBinding="{Binding Name}" Header="Вид отпуска"></GridViewColumn>
+                                    <GridViewColumn DisplayMemberBinding="{Binding Count}" Header="Количество"></GridViewColumn>
+                                    <GridViewColumn DisplayMemberBinding="{Binding Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
+                                    <GridViewColumn DisplayMemberBinding="{Binding Date_end,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
+                                    <GridViewColumn Header="">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="red" Width="24" Height="24">
+                                                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="{Binding Color}" Width="24" Height="24">
                                                         <md:PackIcon Kind="Close"  Width="20" Height="20"></md:PackIcon>
                                                     </Button>
                                                 </DataTemplate>

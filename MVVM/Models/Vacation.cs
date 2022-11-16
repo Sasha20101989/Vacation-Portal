@@ -32,6 +32,23 @@ namespace Vacation_Portal.MVVM.Models
         {
             return $"{Count}: {Date_Start.ToString("dd.MM.yyyy")} - {Date_end.ToString("dd.MM.yyyy")}";
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Vacation vacation &&
+                   Name == vacation.Name &&
+                   _count == vacation._count &&
+                   Count == vacation.Count &&
+                   EqualityComparer<Brush>.Default.Equals(Color, vacation.Color) &&
+                   Date_Start == vacation.Date_Start &&
+                   Date_end == vacation.Date_end;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, _count, Count, Color, Date_Start, Date_end);
+        }
+
         public Vacation(string name, int count, Brush color, DateTime date_Start, DateTime date_end)
         {
             Name = name;
