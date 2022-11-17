@@ -8,7 +8,7 @@
              xmlns:md="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
              xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance vm:PersonalVacationPlanningViewModel}">
+             d:DataContext="{d:DesignInstance vm:PersonalVacationPlanningViewModel}" Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <ResourceDictionary>
 
@@ -226,12 +226,12 @@
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
-                                <ListBox Grid.Row="0" Margin="2 1 1 6"
+                            <ListBox Grid.Row="0" Margin="2 1 1 2"
                                      SelectedIndex="{Binding SelectedIndex, UpdateSourceTrigger=PropertyChanged}"
                                      SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}"
                                      ItemsSource="{Binding VacationTypes, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource MaterialDesignChoiceChipAccentOutlineListBox}">
-                                    <ListBox.Resources>
+                                <ListBox.Resources>
                                         <DataTemplate DataType="{x:Type models:Vacation}">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
@@ -244,18 +244,19 @@
                                                     <RowDefinition/>
                                                 </Grid.RowDefinitions>
                                                 <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Name}"
-                                                   Width="140" Padding="2"
-                                                   TextAlignment="Center"
+                                                           Width="140"
+                                                           TextAlignment="Center"
                                                            FontSize="13"/>
                                                 <Rectangle Margin="8 0 0 0" Grid.Column="0" Grid.Row="1" Width="9" Height="9" Fill="{Binding Color,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" RadiusX="10" RadiusY="10"/>
-                                                <TextBlock TextAlignment="Center" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding Count,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay, StringFormat={}Остаток дней: {0}}" TextTrimming="CharacterEllipsis" Margin="3" FontSize="10"/>
+                                                <TextBlock TextAlignment="Center" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding Count,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay, StringFormat={}Остаток дней: {0}}" TextTrimming="CharacterEllipsis" FontSize="10"/>
                                             </Grid>
                                         </DataTemplate>
                                     </ListBox.Resources>
                                     <ListBox.ItemContainerStyle>
                                         <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignChoiceChipAccentOutlineListBoxItem}">
                                             <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}"/>
-                                            <Setter Property="Visibility" Value="Visible" />
+                                        <Setter Property="Margin" Value="25 0 0 0"/>
+                                        <Setter Property="Visibility" Value="Visible" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Count}" Value="0">
                                                     <Setter Property="IsEnabled" Value="False" />
@@ -287,7 +288,7 @@
                                       ItemsSource="{Binding VacationsToAproval, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
                                       SelectedIndex="{Binding PlannedIndex, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                       SelectedItem="{Binding PlannedItem, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
-                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto" FontSize="12"
                                       ScrollViewer.CanContentScroll="False" Style="{StaticResource MaterialDesignListView}">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignGridViewItem}">
@@ -297,11 +298,11 @@
                             </ListView.ItemContainerStyle>
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn DisplayMemberBinding="{Binding Name}" Header="Вид отпуска"></GridViewColumn>
-                                    <GridViewColumn DisplayMemberBinding="{Binding Count}" Header="Количество"></GridViewColumn>
-                                    <GridViewColumn DisplayMemberBinding="{Binding Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
-                                    <GridViewColumn DisplayMemberBinding="{Binding Date_end,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
-                                    <GridViewColumn Header="">
+                                    <GridViewColumn Width="140" DisplayMemberBinding="{Binding Name}" Header="Вид отпуска"></GridViewColumn>
+                                    <GridViewColumn Width="140" DisplayMemberBinding="{Binding Count}" Header="Количество"></GridViewColumn>
+                                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
+                                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_end,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
+                                    <GridViewColumn Width="40" Header="">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="{Binding Color}" Width="24" Height="24">

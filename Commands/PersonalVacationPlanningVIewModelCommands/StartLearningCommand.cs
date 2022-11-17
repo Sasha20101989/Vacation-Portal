@@ -31,11 +31,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
         }
         public override void Execute(object parameter)
         {
-            _viewModel.MessageQueueVacation = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
-            _viewModel.MessageQueueCalendar = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
-            _viewModel.MessageQueueSelectedGap = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
-            _viewModel.MessageQueuePLanedVacations = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
-
             LernVacation("Выберете отпуск который хотите запланировать.");
         }
 

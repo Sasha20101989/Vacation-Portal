@@ -180,7 +180,7 @@
             </Button>
 
             <md:TransitioningContent OpeningEffectsOffset="0:0:0"
-                        OpeningEffect="{md:TransitionEffect Kind=SlideInFromBottom, Duration=0:0:1.00}">
+                        OpeningEffect="{md:TransitionEffect Kind=SlideInFromLeft, Duration=0:0:1.00}">
                 <StackPanel Grid.Row="0" Grid.Column="0">
                     <!--<controls:HRView VerticalAlignment="Top" Margin="6,6,16,6"
                         Visibility="{Binding IsHR, Converter={StaticResource BooleanToVisibilityConverter}}"/>
@@ -215,7 +215,7 @@
                         <!--<md:Card md:ElevationAssist.Elevation="Dp5" UniformCornerRadius="10">-->
 
                         <md:TransitioningContent OpeningEffectsOffset="0:0:0"
-                                OpeningEffect="{md:TransitionEffect FadeIn, Duration=0:0:1.20}">
+                                OpeningEffect="{md:TransitionEffect Kind=SlideInFromRight, Duration=0:0:1.20}">
 
                                 <controls:FullCalendar HorizontalAlignment="Left" VerticalAlignment="Top"/>
                            
