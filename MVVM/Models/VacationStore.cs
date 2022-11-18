@@ -11,7 +11,7 @@ namespace Vacation_Portal.MVVM.Models
         private readonly Department _department;
         private Lazy<Task> _initializeLazy;
 
-        private readonly List<Settings> _userSettings;
+        private List<Settings> UserSettings { get; set; } = new List<Settings>();
 
 
         //#region Collections
@@ -46,7 +46,7 @@ namespace Vacation_Portal.MVVM.Models
         {
             _department = department;
             _initializeLazy = new Lazy<Task>(Initialize);
-            _userSettings = new List<Settings>();
+            
             //_shifts = new List<Shift>();
             //_parts = new List<Part>();
             //_shops = new List<Shop>();
@@ -83,21 +83,21 @@ namespace Vacation_Portal.MVVM.Models
             await Task.Delay(100);
         }
 
-        public void LoadSettings()
+        public async void LoadSettings()
         {
             /*
              *Load uniq settings for user interface
              *Font Size
              *Color
             */
-            IEnumerable<Settings> userSettings = _department.GetSettingsUI(Environment.UserName);
-            _userSettings.Clear();
-            _userSettings.AddRange(userSettings);
+            IEnumerable<Settings> userSettings = await _department.GetSettingsUI(Environment.UserName);
+            UserSettings.Clear();
+            UserSettings.AddRange(userSettings);
 
-            if (_userSettings.Count == 1)
+            if (UserSettings.Count == 1)
             {
                 //OnSettingsLoad(_userSettings[0]);
-                OnSettingsUILoad(_userSettings[0]);
+                OnSettingsUILoad(UserSettings[0]);
             }
         }
         private void OnSettingsUILoad(Settings settings)

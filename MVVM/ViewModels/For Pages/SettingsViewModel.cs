@@ -18,7 +18,6 @@ namespace Vacation_Portal.MVVM.ViewModels.ForPages
             ITheme theme = _paletteHelper.GetTheme();
             _primaryColor = theme.PrimaryMid.Color;
             SelectedColor = _primaryColor;
-            _fontSize = 16;
         }
 
         private ColorScheme _activeScheme;
@@ -63,18 +62,6 @@ namespace Vacation_Portal.MVVM.ViewModels.ForPages
 
                 _paletteHelper.ChangePrimaryColor(color);
                 _primaryColor = color;
-            }
-        }
-
-        private double _fontSize;
-        public double FontSize
-        {
-            get { return _fontSize; }
-            set
-            {
-                _fontSize = value;
-                _mainWindowViewModel.FontSize = _fontSize;
-                OnPropertyChanged(nameof(FontSize));
             }
         }
     }

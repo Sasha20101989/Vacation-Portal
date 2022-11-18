@@ -19,20 +19,20 @@ namespace Vacation_Portal.Services.Providers
         {
             _sqlDbConnectionFactory = sqlDbConnectionFactory;
         }
-        public IEnumerable<Settings> GetSettingsUI(string account)
+        public async Task<IEnumerable<Settings>> GetSettingsUI(string account)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             object parameters = new
             {
                 Account = account
             };
-            IEnumerable<SettingsDTO> settingsDTOs = database.Query<SettingsDTO>("usp_Load_Settings_For_User", parameters, commandType: CommandType.StoredProcedure);
+            IEnumerable<SettingsDTO> settingsDTOs = await database.QueryAsync<SettingsDTO>("usp_Load_Settings_For_User", parameters, commandType: CommandType.StoredProcedure);
             return settingsDTOs.Select(ToSettings);
         }
 
         private Settings ToSettings(SettingsDTO dto)
         {
-            return new Settings(dto.Account, dto.Font_Size, dto.Color);
+            return new Settings(dto.Account, dto.Color);
         }
     }
 }

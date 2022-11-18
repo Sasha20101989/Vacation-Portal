@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -10,6 +11,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using Vacation_Portal.Commands.BaseCommands;
+using Vacation_Portal.Commands.NotificationCommands;
 using Vacation_Portal.Commands.ThemeInteractionCommands;
 using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
@@ -33,15 +35,14 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #endregion
 
         #region Addons
-        private readonly PaletteHelper _paletteHelper = new PaletteHelper();
-        private Color? _primaryColor;
+        private readonly PaletteHelper PaletteHelper = new PaletteHelper();
+        private Color? PrimaryColor { get; set; }
         private readonly MainWindowViewModel _viewModel;
         private readonly VacationSummary _vacationSummary;
-        private Department _department;
-        private readonly List<Department> _departmentsForPerson;
-        private readonly List<Person> _personDescriptions = new List<Person>();
+        private Department Department { get; set; }
+        private List<Department> DepartmentsForPerson { get; set; } = new List<Department>();
+        private List<Person> PersonDescriptions { get; set; } = new List<Person>();
         private ICollectionView _menuItemsView;
-        public string IsAdmin => _adminString;
         #endregion
 
         #region Commands implementation
@@ -51,46 +52,18 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public AnotherCommandImplementation MovePrevPageCommand { get; set; }
         public AnotherCommandImplementation MoveNextPageCommand { get; set; }
 
-        public AnotherCommandImplementation DismissAllNotificationsCommand { get; set; }
-        public AnotherCommandImplementation AddNewNotificationCommand { get; set; }
+        public ICommand DismissAllNotificationsCommand { get; set; }
+        public ICommand AddNewNotificationCommand { get; set; }
 
         #endregion
-        
+
         #region Actions
         public event Action<MenuItem> SelectedItemChanged;
         #endregion
 
-        #region Properties
+        #region Props
 
-        private bool _isLoading;
-        public bool IsLoading
-        {
-            get
-            {
-                return _isLoading;
-            }
-            set
-            {
-                _isLoading = value;
-                OnPropertyChanged(nameof(IsLoading));
-
-            }
-        }
-
-        private string _adminString;
-        public string AdminString
-        {
-            get
-            {
-                return _adminString;
-            }
-            set
-            {
-                _adminString = value;
-                OnPropertyChanged(nameof(AdminString));
-            }
-        }
-
+        #region Theme props
         private ColorScheme _activeScheme;
         public ColorScheme ActiveScheme
         {
@@ -124,32 +97,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        private void ChangeCustomColor(object obj)
-        {
-            var color = (Color)obj;
-
-            if (ActiveScheme == ColorScheme.Primary)
-            {
-
-                _paletteHelper.ChangePrimaryColor(color);
-                _primaryColor = color;
-            }
-        }
-
-        private DateTime _selectedDate;
-        public DateTime SelectedDate
-        {
-            get
-            {
-                return _selectedDate;
-            }
-            set
-            {
-                _selectedDate = value;
-                OnPropertyChanged(nameof(SelectedDate));
-            }
-        }
-
         private bool _isCheckedTheme;
         public bool IsCheckedTheme
         {
@@ -163,7 +110,36 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 OnPropertyChanged(nameof(IsCheckedTheme));
             }
         }
+        #endregion Theme props
 
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get
+            {
+                return _isLoading;
+            }
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+
+            }
+        }
+
+        private string _adminString = string.Empty;
+        public string AdminString
+        {
+            get
+            {
+                return _adminString;
+            }
+            set
+            {
+                _adminString = value;
+                OnPropertyChanged(nameof(AdminString));
+            }
+        }
 
         private string _searchKeyword;
         public string SearchKeyword
@@ -179,16 +155,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        private VacationStore _vacationStore;
-        public VacationStore VacationStore
-        {
-            get { return _vacationStore; }
-            set
-            {
-                _vacationStore = value;
-                OnPropertyChanged(nameof(VacationStore));
-            }
-        }
+        public VacationStore VacationStore { get; set; }
         private MenuItem _selectedItem;
         public MenuItem SelectedItem
         {
@@ -228,160 +195,30 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        private double _fontSize;
-        public double FontSize
-        {
-            get { return _fontSize; }
-            set
-            {
-                _fontSize = value;
-                OnPropertyChanged(nameof(FontSize));
-            }
-        }
-
-        private ObservableCollection<MenuItem> _menuItems;
-        public ObservableCollection<MenuItem> MenuItems {
-            get => _menuItems;
-            set
-            {
-                SetProperty(ref _menuItems, value);
-                OnPropertyChanged(nameof(MenuItems));
-            }
-        }
-        public ObservableCollection<MenuItem> MainMenuItems { get; set; }
+        public ObservableCollection<MenuItem> MenuItems { get; set; } = new ObservableCollection<MenuItem>();
+        public ObservableCollection<MenuItem> MainMenuItems { get; set; } = new ObservableCollection<MenuItem>();
 
         #endregion
 
         public MainWindowViewModel(VacationSummary vacationSummary)
         {
-            ITheme theme = _paletteHelper.GetTheme();
-            _primaryColor = theme.PrimaryMid.Color;
-            SelectedColor = _primaryColor;
+            ITheme theme = PaletteHelper.GetTheme();
+            PrimaryColor = theme.PrimaryMid.Color;
+            SelectedColor = PrimaryColor;
 
-            _adminString = string.Empty;
-            _fontSize = 16;
-            _departmentsForPerson = new List<Department>();
             _vacationSummary = vacationSummary;
             _viewModel = this;
-            MenuItems = new ObservableCollection<MenuItem>();
-            MainMenuItems = new ObservableCollection<MenuItem>();
 
-            CreateHomePage().Await();
+            MenuItems.Add(new MenuItem(HomePage, typeof(HomeView), selectedIcon: PackIconKind.Home, unselectedIcon: PackIconKind.HomeOutline));
 
-            ThemeChangeCommand = new ThemeChangeCommand(_viewModel);
-        }
+            CreateOtherPages().Await();
 
-        private bool MenuItemsFilter(object obj)
-        {
-            if (string.IsNullOrWhiteSpace(_searchKeyword))
-            {
-                return true;
-            }
-
-            return obj is MenuItem item
-                   && item.Name.ToLower().Contains(_searchKeyword.ToLower());
-        }
-
-        private void OnSettingsLoad(Settings settings)
-        {
-            _isLoading = true;
-            Color color = (Color)ColorConverter.ConvertFromString(settings.Color);
-            SelectedColor = color;
-            FontSize = settings.FontSize;
-            _isLoading = false;
-        }
-
-        private void OnSelectedItemChanged(MenuItem selectedItem)
-        {
-            SelectedItemChanged?.Invoke(selectedItem);
-        }
-
-        private async Task CreateHomePage()
-        {
-            await Task.Delay(300);
-            MenuItems = new ObservableCollection<MenuItem>(new[]
-                {
-                new MenuItem(
-            HomePage,
-            typeof(HomeView),
-            selectedIcon: PackIconKind.Home,
-            unselectedIcon: PackIconKind.HomeOutline)
-            });
-            CreateCommands().Await();
-        }
-        private async Task CreateOtherPages()
-        {
-            await Task.Delay(300);
-            var persons = _vacationSummary.GetUser(Environment.UserName);
-            if (persons != null)
-            {
-                _personDescriptions.AddRange(persons);
-
-                if (_personDescriptions.Count != 0)
-                {
-                    bool isSupervisor = _personDescriptions[0].Is_Supervisor;
-                    bool isHR = _personDescriptions[0].Is_HR;
-                    var department = _vacationSummary.GetDepartmentForUser(_personDescriptions[0].Account);
-                    if (department != null)
-                    {//временное использование
-                        _departmentsForPerson.AddRange(department);
-
-                        _department = new Department(_departmentsForPerson[0].Name, _vacationSummary);
-                        _vacationStore = new VacationStore(_department);
-
-                        foreach (var item in GenerateMenuItems(_viewModel, _department, _vacationStore, _personDescriptions[0]).OrderBy(i => i.Name))
-                        {
-                            if (!MenuItems.Contains(item))
-                            {
-                                MenuItems.Add(item);
-                            }
-                        }
-
-                        MenuItem personalItem = MenuItems.FirstOrDefault(x => x.Name == PersonalVacationPlanning);
-                        CreateMainMenuItems(personalItem);
-
-                        if (isSupervisor)
-                        {
-                            _adminString = "Аккаунт руководителя";
-                            MenuItem supervisorItem = MenuItems.FirstOrDefault(x => x.Name == SupervisorPage);
-                            CreateMainMenuItems(supervisorItem);
-                        }
-                        else if (isHR)
-                        {
-                            _adminString = "Аккаунт HR сотрудника";
-                            MenuItem hRItem = MenuItems.FirstOrDefault(x => x.Name == SupervisorPage);
-                            CreateMainMenuItems(hRItem);
-                        }
-
-                        _vacationStore.SettingsUILoad += OnSettingsLoad;
-                        _vacationStore.LoadSettings();
-                    }
-                }
-            }
-            _menuItemsView = CollectionViewSource.GetDefaultView(MenuItems);
-            _menuItemsView.Filter = MenuItemsFilter;
-        }
-        private async Task CreateCommands()
-        {
-            await Task.Delay(300);
             HomeCommand = new AnotherCommandImplementation(
             _ =>
             {
                 SearchKeyword = string.Empty;
                 SelectedIndex = 0;
             });
-
-            MoveToSettingsCommand = new AnotherCommandImplementation(
-                _ =>
-                {
-                    SearchKeyword = string.Empty;
-                    SelectedItem = new MenuItem(
-                    SettingsPage,
-                    typeof(SettingsView),
-                    selectedIcon: PackIconKind.Cog,
-                    unselectedIcon: PackIconKind.CogOutline,
-                    new SettingsViewModel(_viewModel));
-                });
 
             MovePrevPageCommand = new AnotherCommandImplementation(
                 _ =>
@@ -403,35 +240,112 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                },
                _ => SelectedIndex < MenuItems.Count - 1);
 
-            DismissAllNotificationsCommand = new AnotherCommandImplementation(
+            MoveToSettingsCommand = new AnotherCommandImplementation(
                 _ =>
                 {
-                    if (SelectedIndex >= 0)
+                    SearchKeyword = string.Empty;
+                    int index = 0;
+                    for (int i = 0; i < MenuItems.Count; i++)
                     {
-                        MenuItems.ElementAt(SelectedIndex).DismissAllNotifications();
+                        if (MenuItems[i].Name == SettingsPage)
+                        {
+                            index = i;
+                            break;
+                        }
                     }
-                });//, _ => MenuItems[SelectedIndex].Notifications != null
-            AddNewNotificationCommand = new AnotherCommandImplementation(
-                _ =>
-                {
-                    MenuItems.ElementAt(SelectedIndex).AddNewNotification();
+
+                    SelectedIndex = index;
                 });
 
-            
+            AddNewNotificationCommand = new AddNewNotificationCommand(_viewModel);
+            DismissAllNotificationsCommand = new DismissAllNotificationsCommand(_viewModel);
+            ThemeChangeCommand = new ThemeChangeCommand(_viewModel);
 
             AddNewNotificationCommand.Execute(new object());
 
-            CreateOtherPages().Await();
-            // _menuItemsView.Refresh();
+            _menuItemsView = CollectionViewSource.GetDefaultView(MenuItems);
+            _menuItemsView.Filter = MenuItemsFilter;
+
+            
         }
 
-        private ObservableCollection<MenuItem> CreateMainMenuItems(MenuItem menuItem)
+        private void OnSettingsLoad(Settings settings)
         {
-            MainMenuItems.Add(menuItem);
-            return MainMenuItems;
+            _isLoading = true;
+            Color color = (Color)ColorConverter.ConvertFromString(settings.Color);
+            SelectedColor = color;
+            _isLoading = false;
         }
 
-        private static IEnumerable<MenuItem> GenerateMenuItems(MainWindowViewModel viewModel,
+        private void OnSelectedItemChanged(MenuItem selectedItem)
+        {
+            SelectedItemChanged?.Invoke(selectedItem);
+        }
+
+        private async Task CreateOtherPages()
+        {
+            IEnumerable<Person> persons = await _vacationSummary.GetUser(Environment.UserName);
+            IEnumerable<Department> department = await _vacationSummary.GetDepartmentForUser(Environment.UserName);
+            if (persons != null && department != null)
+            {
+                PersonDescriptions.AddRange(persons);
+                DepartmentsForPerson.AddRange(department);
+
+                Department = new Department(DepartmentsForPerson[0].Name, _vacationSummary);
+                VacationStore = new VacationStore(Department);
+                VacationStore.SettingsUILoad += OnSettingsLoad;
+                VacationStore.LoadSettings();
+
+                foreach (Task <MenuItem> task in GenerateMenuItems(_viewModel, Department, VacationStore, PersonDescriptions[0]))
+                {
+                    MenuItem menuItem = await task;
+                    if (!MenuItems.Contains(menuItem))
+                    {
+                        MenuItems.Add(menuItem);
+                    }
+                }
+
+                MenuItems.Add(new MenuItem(SettingsPage, typeof(SettingsView), selectedIcon: PackIconKind.Cog, unselectedIcon: PackIconKind.CogOutline, new SettingsViewModel(_viewModel)));
+
+                MenuItem personalItem = MenuItems.FirstOrDefault(x => x.Name == PersonalVacationPlanning);
+                MainMenuItems = CreateMainMenuItems(personalItem);
+
+                if (PersonDescriptions[0].Is_Supervisor)
+                {
+                    AdminString = "Аккаунт руководителя";
+                    MenuItem supervisorItem = MenuItems.FirstOrDefault(x => x.Name == SupervisorPage);
+                    MainMenuItems = CreateMainMenuItems(supervisorItem);
+                }
+                else if (PersonDescriptions[0].Is_HR)
+                {
+                    AdminString = "Аккаунт HR сотрудника";
+                    MenuItem hRItem = MenuItems.FirstOrDefault(x => x.Name == SupervisorPage);
+                    MainMenuItems = CreateMainMenuItems(hRItem);
+                }
+            }
+
+        }
+
+        private IEnumerable<Task<MenuItem>> GenerateMenuItems(MainWindowViewModel viewModel, Department department, VacationStore vacationStore, Person person)
+        {
+            yield return CreateMainItems(person);
+        }
+
+        private async Task<MenuItem> CreateMainItems(Person person)
+        {
+            await Task.Delay(100);
+
+            MenuItem menuItem = new MenuItem(
+            PersonalVacationPlanning,
+            typeof(PersonalVacationPlanningView),
+            selectedIcon: PackIconKind.BagPersonalTag,
+            unselectedIcon: PackIconKind.BagPersonalTagOutline,
+            new PersonalVacationPlanningViewModel(person));
+
+            return menuItem;
+        }
+
+        private IEnumerable<Task<MenuItem>> GenerateMenuItemsAsync(MainWindowViewModel viewModel,
                                                                Department department,
                                                                VacationStore vacationStore,
                                                                Person person)
@@ -455,12 +369,102 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             //    selectedIcon: PackIconKind.AccountsGroup,
             //    unselectedIcon: PackIconKind.AccountsGroupOutline);
             //}
-            yield return new MenuItem(
+
+
+            /*
+             async Task<Foo> DoSomethingAsync(string url)
+             {
+                 ...
+             }       
+             // producing IAsyncEnumerable<T>
+             async IAsyncEnumerable<Foo> DownLoadAllURL(string[] strs)
+             {
+                 foreach (string url in strs)
+                 {
+                     yield return await DoSomethingAsync(url);
+                 }
+             }
+             ...
+             // using
+             await foreach (Foo foo in DownLoadAllURL(new string[] { "url1", "url2" }))
+             {
+                 Use(foo);
+             }
+             We can achieve the same behavior at C# 5 but with a different semantics:
+             
+             async Task<Foo> DoSomethingAsync(string url)
+             {
+                 ...
+             }
+             IEnumerable<Task<Foo>> DownLoadAllURL(string[] strs)
+             {
+                 foreach (string url in strs)
+                 {
+                     yield return DoSomethingAsync(url);
+                 }
+             }
+             
+             // using
+             foreach (Task<Foo> task in DownLoadAllURL(new string[] { "url1", "url2" }))
+             {
+                 Foo foo = await task;
+                 Use(foo);
+             }
+            */
+            //await new MenuItem(
+            //PersonalVacationPlanning,
+            //typeof(PersonalVacationPlanningView),
+            //selectedIcon: PackIconKind.BagPersonalTag,
+            //unselectedIcon: PackIconKind.BagPersonalTagOutline,
+            //new PersonalVacationPlanningViewModel(person));
+
+
+            yield return CreateMainMenuItems(person);
+        }
+
+        private async Task<MenuItem> CreateMainMenuItems(Person person)
+        {
+            await Task.Delay(100);
+
+            MenuItem menuItem = new MenuItem(
             PersonalVacationPlanning,
             typeof(PersonalVacationPlanningView),
             selectedIcon: PackIconKind.BagPersonalTag,
             unselectedIcon: PackIconKind.BagPersonalTagOutline,
             new PersonalVacationPlanningViewModel(person));
+
+            return menuItem;
         }
+
+        #region Utils
+        private ObservableCollection<MenuItem> CreateMainMenuItems(MenuItem menuItem)
+        {
+            MainMenuItems.Add(menuItem);
+            return MainMenuItems;
+        }
+
+        private void ChangeCustomColor(object obj)
+        {
+            var color = (Color)obj;
+
+            if (ActiveScheme == ColorScheme.Primary)
+            {
+
+                PaletteHelper.ChangePrimaryColor(color);
+                PrimaryColor = color;
+            }
+        }
+
+        private bool MenuItemsFilter(object obj)
+        {
+            if (string.IsNullOrWhiteSpace(_searchKeyword))
+            {
+                return true;
+            }
+
+            return obj is MenuItem item
+                   && item.Name.ToLower().Contains(_searchKeyword.ToLower());
+        }
+        #endregion
     }
 }

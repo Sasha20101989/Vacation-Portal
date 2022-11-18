@@ -13,9 +13,9 @@ namespace Vacation_Portal.MVVM.Models
             _vacationSummary = vacationSummary;
         }
 
-        public IEnumerable<Settings> GetSettingsUI(string user)
+        public async Task<IEnumerable<Settings>> GetSettingsUI(string user)
         {
-            return _vacationSummary.GetSettingsUI(user);
+            return await _vacationSummary.GetSettingsUI(user);
         }
 
         //public async Task<IEnumerable<Production>> GetAllProductions () {

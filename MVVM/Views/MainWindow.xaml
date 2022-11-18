@@ -10,7 +10,7 @@
         d:DataContext="{d:DesignInstance vm:MainWindowViewModel}"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"    
-        FontSize="{Binding FontSize,UpdateSourceTrigger=PropertyChanged}"
+        FontSize="16"
         FontFamily="Verdana"
         Style="{StaticResource MaterialDesignWindow}"
         WindowState="Maximized">
@@ -373,7 +373,7 @@
                                Stretch="Uniform"
                                Width="36" Height="36"/>-->
 
-                        <TextBlock DockPanel.Dock="Left" Text="{Binding IsAdmin}"
+                        <TextBlock DockPanel.Dock="Left" Text="{Binding AdminString}"
                                    HorizontalAlignment="Center" VerticalAlignment="Center"
                                    Margin="10 0 10 0" TextWrapping="Wrap"
                                    Style="{StaticResource MaterialDesignTextBlock}"/>

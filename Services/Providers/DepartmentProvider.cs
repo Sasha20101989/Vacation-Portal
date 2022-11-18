@@ -23,7 +23,7 @@ namespace Vacation_Portal.Services.Providers
         }
 
 
-        public IEnumerable<Department> GetDepartmentForUser(string account)
+        public async Task<IEnumerable<Department>> GetDepartmentForUser(string account)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             object parameters = new
@@ -32,7 +32,7 @@ namespace Vacation_Portal.Services.Providers
             };
             try
             {
-                IEnumerable<DepartmentDTO> departmentDTOs = database.Query<DepartmentDTO>("usp_Load_Departments_For_User", parameters, commandType: CommandType.StoredProcedure);
+                IEnumerable<DepartmentDTO> departmentDTOs = await database.QueryAsync<DepartmentDTO>("usp_Load_Departments_For_User", parameters, commandType: CommandType.StoredProcedure);
                 return departmentDTOs.Select(ToDepartment);
             }
             catch (Exception ex)

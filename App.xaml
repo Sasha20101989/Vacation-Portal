@@ -347,7 +347,7 @@
             
             <ResourceDictionary.MergedDictionaries>
                 <!-- This is the current way to setup your app's initial theme --> 
-                <md:BundledTheme BaseTheme="Light" PrimaryColor="Red" SecondaryColor="Lime"
+                <md:BundledTheme BaseTheme="Light" PrimaryColor="Grey" SecondaryColor="Lime"
                                              ColorAdjustment="{md:ColorAdjustment}" />
 
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />

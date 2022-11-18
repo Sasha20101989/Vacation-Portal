@@ -19,19 +19,19 @@ namespace Vacation_Portal.MVVM.Models
             _shopProvider = shopProvider;
         }
 
-        public IEnumerable<Settings> GetSettingsUI(string user)
+        public async Task<IEnumerable<Settings>> GetSettingsUI(string user)
         {
-            return _settingsProvider.GetSettingsUI(user);
+            return await _settingsProvider.GetSettingsUI(user);
         }
 
-        public IEnumerable<Person> GetUser(string account)
+        public async Task <IEnumerable<Person>> GetUser(string account)
         {
-            return _userProvider.GetUser(account);
+            return await _userProvider.GetUser(account);
         }
 
-        public IEnumerable<Department> GetDepartmentForUser(string account)
+        public async Task<IEnumerable<Department>> GetDepartmentForUser(string account)
         {
-            return  _shopProvider.GetDepartmentForUser(account);
+            return await _shopProvider.GetDepartmentForUser(account);
         }
 
         ////вернём бесчисленное количество производств

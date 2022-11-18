@@ -30,11 +30,7 @@ namespace Vacation_Portal.MVVM.Views
         private void MenuOpen_Click(object sender, RoutedEventArgs e)
         {
             NavDrawer.IsLeftDrawerOpen = false;
-            if (ActualWidth > 1500)
-            {
-                NavRail.Visibility = Visibility.Collapsed;
-                MenuToggleButton.Visibility = Visibility.Collapsed;
-            }
+            //NavRail.Visibility = Visibility.Collapsed;
         }
 
         private void CLoseNotificationButton_Click(object sender, RoutedEventArgs e)

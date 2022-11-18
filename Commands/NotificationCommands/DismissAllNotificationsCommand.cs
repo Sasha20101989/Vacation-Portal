@@ -1,7 +1,8 @@
-﻿using Vacation_Portal.Commands.BaseCommands;
+﻿using System.Linq;
+using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 
-namespace UI.Commands.NotificationCommands
+namespace Vacation_Portal.Commands.NotificationCommands
 {
     public class DismissAllNotificationsCommand : CommandBase
     {
@@ -11,9 +12,16 @@ namespace UI.Commands.NotificationCommands
         {
             _mainWindowViewModel = mainWindowViewModel;
         }
+
+        public override bool CanExecute(object parameter)
+        {
+            return _mainWindowViewModel.MenuItems[_mainWindowViewModel.SelectedIndex].Notifications != null;
+        }
+
         public override void Execute(object parameter)
         {
-            _mainWindowViewModel.MenuItems[0].DismissAllNotifications();
+            //_mainWindowViewModel.MenuItems[0].DismissAllNotifications();
+            _mainWindowViewModel.MenuItems.ElementAt(_mainWindowViewModel.SelectedIndex).DismissAllNotifications();
         }
     }
 }

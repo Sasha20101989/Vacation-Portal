@@ -1,4 +1,5 @@
-﻿using Vacation_Portal.Commands.BaseCommands;
+﻿using System.Linq;
+using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 
 namespace Vacation_Portal.Commands.NotificationCommands
@@ -14,6 +15,10 @@ namespace Vacation_Portal.Commands.NotificationCommands
         public override void Execute(object parameter)
         {
             _mainWindowViewModel.MenuItems[0].AddNewNotification();
+            //if (_mainWindowViewModel.MenuItems.Count > 0)
+            //{
+            //    _mainWindowViewModel.MenuItems.ElementAt(_mainWindowViewModel.SelectedIndex).AddNewNotification();
+            //}
         }
     }
 }

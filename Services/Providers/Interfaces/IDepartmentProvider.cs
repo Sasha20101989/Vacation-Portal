@@ -6,6 +6,6 @@ namespace Vacation_Portal.Services.Providers.Interfaces
 {
     public interface IDepartmentProvider
     {
-        IEnumerable<Department> GetDepartmentForUser(string account);
+        Task<IEnumerable<Department>> GetDepartmentForUser(string account);
     }
 }

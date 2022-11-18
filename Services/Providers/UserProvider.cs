@@ -21,7 +21,7 @@ namespace Vacation_Portal.Services.Providers
         {
             _sqlDbConnectionFactory = sqlDbConnectionFactory;
         }
-        public IEnumerable<Person> GetUser(string account)
+        public async Task<IEnumerable<Person>> GetUser(string account)
         {
             using (IDbConnection database = _sqlDbConnectionFactory.Connect())
             {
@@ -31,7 +31,7 @@ namespace Vacation_Portal.Services.Providers
                 };
                 try
                 {
-                    IEnumerable<PersonDTO> userDTOs = database.Query<PersonDTO>("usp_Load_Description_For_User", parameters, commandType: CommandType.StoredProcedure);
+                    IEnumerable<PersonDTO> userDTOs = await database.QueryAsync<PersonDTO>("usp_Load_Description_For_User", parameters, commandType: CommandType.StoredProcedure);
                     return userDTOs.Select(ToUser);
                 }
                 catch (Exception ex)

@@ -5,31 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:Vacation_Portal.MVVM.Views"
-             DataContext="{Binding SettingsViewModel}"
+             xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages" 
+             d:DataContext="{d:DesignInstance vm:SettingsViewModel}"
              mc:Ignorable="d">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+
         <DockPanel Margin="16" Grid.Column="0">
             <md:ColorPicker
                             x:Name="ColorPicker"
                             Grid.Column="1"
                             Color="{Binding SelectedColor, Delay=25}"/>
         </DockPanel>
-        <DockPanel Margin="16" Grid.Column="1">
-            <StackPanel Orientation="Vertical">
-                <TextBlock HorizontalAlignment="Center" Text="{Binding FontSize,StringFormat={}Размер шрифта: {0}}"/>
-                <Slider Margin="15 0 15 0"
-                                       x:Name="FontSizeSlider"
-                                       Minimum="14"
-                                       Maximum="21"
-                                       IsSnapToTickEnabled="True"
-                                       TickFrequency="1"
-                                       Value="{Binding FontSize,UpdateSourceTrigger=PropertyChanged}" />
-            </StackPanel>
 
-        </DockPanel>
-    </Grid>
 </UserControl>

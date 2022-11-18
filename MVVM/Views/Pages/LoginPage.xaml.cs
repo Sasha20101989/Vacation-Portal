@@ -10,25 +10,25 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Vacation_Portal.MVVM.ViewModels.For_Pages;
 
-namespace Vacation_Portal.MVVM.Views.Controls
+namespace Vacation_Portal.MVVM.Views.Pages
 {
     /// <summary>
-    /// Логика взаимодействия для PersonalView.xaml
+    /// Логика взаимодействия для LoginPage.xaml
     /// </summary>
-    public partial class PersonalView : UserControl
+    public partial class LoginPage : Page
     {
-        public PersonalView()
+        public LoginPage()
         {
             InitializeComponent();
+            DataContext = ViewModel;
         }
+        public AuthenticationViewModel ViewModel => App.AuthenticationViewModel;
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (this.ListView.Height is double.NaN)
-            {
-                this.ListView.Height = this.ListView.ActualHeight * 7.75;
-            }          
+
         }
     }
 }

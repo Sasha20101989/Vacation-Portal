@@ -8,6 +8,6 @@ namespace Vacation_Portal.Services.Providers.Interfaces
 {
     public interface ISettingsProvider
     {
-        IEnumerable<Settings> GetSettingsUI(string account);
+        Task<IEnumerable<Settings>> GetSettingsUI(string account);
     }
 }

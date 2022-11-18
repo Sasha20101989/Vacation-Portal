@@ -9,6 +9,6 @@ namespace Vacation_Portal.Services.Providers.Interfaces
 {
     public interface IUserProvider
     {
-       IEnumerable<Person> GetUser(string account);
+        Task<IEnumerable<Person>> GetUser(string account);
     }
 }
