@@ -21,24 +21,36 @@ namespace Vacation_Portal.Services.Providers
             _sqlDbConnectionFactory = sqlDbConnectionFactory;
         }
 
-        public Person Person { get; set; }
+        public Person Person {get;set; }
+        public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
 
         public Task<IEnumerable<Department>> GetDepartmentsAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Settings>> GetSettingsAsync(string account)
+        public async Task<IEnumerable<Settings>> GetSettingsAsync(string account)
         {
-            throw new NotImplementedException();
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            object parameters = new
+            {
+                Account = account
+            };
+            IEnumerable<SettingsDTO> settingsDTOs = await database.QueryAsync<SettingsDTO>("usp_Load_Settings_For_User", parameters, commandType: CommandType.StoredProcedure);
+            return settingsDTOs.Select(ToSettings);
+        }
+
+        private Settings ToSettings(SettingsDTO dto)
+        {
+            return new Settings(dto.Account, dto.Color);
         }
 
         public Task<IEnumerable<Person>> GetUser(string account)
         {
             throw new NotImplementedException();
         }
-        
-        public async Task<Person> LoginAsync(string account)
+
+        public async Task<IEnumerable<PersonDTO>> LoginAsync(string account)
         {
             using (IDbConnection database = _sqlDbConnectionFactory.Connect())
             {
@@ -48,10 +60,10 @@ namespace Vacation_Portal.Services.Providers
                 };
                 try
                 {
-                    PersonDTO userDTOs = (PersonDTO)await database.QueryAsync<PersonDTO>("usp_Load_Description_For_User", parameters, commandType: CommandType.StoredProcedure);
-                    Person person = new Person(userDTOs.Name, userDTOs.Surname, userDTOs.Patronymic, userDTOs.Account, userDTOs.Department_Id, userDTOs.Is_Supervisor, userDTOs.Is_HR);
-                    Person = person;
-                    return person;
+                    IEnumerable<PersonDTO> userDTOs = await database.QueryAsync<PersonDTO>("usp_Load_Description_For_User", parameters, commandType: CommandType.StoredProcedure);
+                    Persons.AddRange(userDTOs);
+                    Person = new Person(Persons[0].Name, Persons[0].Surname, Persons[0].Patronymic, Persons[0].Account, Persons[0].Department_Id, Persons[0].Is_Supervisor, Persons[0].Is_HR);
+                    return userDTOs;
                 }
                 catch (Exception ex)
                 {
@@ -61,14 +73,11 @@ namespace Vacation_Portal.Services.Providers
 
             }
         }
-        public Person ToUser(PersonDTO dto)
-        {
-            return new Person(dto.Name, dto.Surname, dto.Patronymic, dto.Account, dto.Department_Id, dto.Is_Supervisor, dto.Is_HR);
-        }
 
         public Task LogoutAsync()
         {
             throw new NotImplementedException();
         }
+
     }
 }

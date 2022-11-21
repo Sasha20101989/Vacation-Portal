@@ -33,8 +33,8 @@ namespace Vacation_Portal.HostBuilders
         public static IHostBuilder AddMainWindow(this IHostBuilder hostBuilder)
         {
             hostBuilder.ConfigureServices((hostContext, services) => {
-                services.AddSingleton<VacationSummary>();
-                services.AddSingleton((s) => new MainWindowViewModel(s.GetRequiredService<VacationSummary>()));
+                //services.AddSingleton<VacationSummary>();
+                services.AddSingleton((s) => new MainWindowViewModel());
                 services.AddSingleton(s => new MainWindow()
                 {
                     DataContext = s.GetRequiredService<MainWindowViewModel>()

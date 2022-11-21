@@ -6,6 +6,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 {
    public class AuthenticationViewModel
     {
-
+        
     }
 }

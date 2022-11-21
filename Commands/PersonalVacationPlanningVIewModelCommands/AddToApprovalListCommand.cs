@@ -21,12 +21,10 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
     public class AddToApprovalListCommand : CommandBase
     {
         private readonly PersonalVacationPlanningViewModel _viewModel;
-        private readonly PersonalView _personalView;
 
         public AddToApprovalListCommand(PersonalVacationPlanningViewModel viewModel)
         {
             _viewModel = viewModel;
-            _personalView = new PersonalView();
         }
 
         public override void Execute(object parameter)

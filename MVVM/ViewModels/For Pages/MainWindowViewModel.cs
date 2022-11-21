@@ -6,10 +6,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using Vacation_Portal.Commands;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.Commands.NotificationCommands;
 using Vacation_Portal.Commands.ThemeInteractionCommands;
@@ -19,12 +21,12 @@ using Vacation_Portal.MVVM.ViewModels.Base;
 using Vacation_Portal.MVVM.ViewModels.ForPages;
 using Vacation_Portal.MVVM.Views;
 using Vacation_Portal.MVVM.Views.Controls;
+using Vacation_Portal.Services.Providers;
 
 namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 {
     public class MainWindowViewModel : ViewModelBase
     {
-
         #region Pages
         private static readonly string HomePage = "Главная страница";
         private static readonly string SettingsPage = "Настройки";
@@ -38,11 +40,11 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private readonly PaletteHelper PaletteHelper = new PaletteHelper();
         private Color? PrimaryColor { get; set; }
         private readonly MainWindowViewModel _viewModel;
-        private readonly VacationSummary _vacationSummary;
+        private readonly HomeViewModel HomeViewModel = new HomeViewModel();
         private Department Department { get; set; }
         private List<Department> DepartmentsForPerson { get; set; } = new List<Department>();
         private List<Person> PersonDescriptions { get; set; } = new List<Person>();
-        private ICollectionView _menuItemsView;
+        public ICollectionView MenuItemsView;
         #endregion
 
         #region Commands implementation
@@ -51,7 +53,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public AnotherCommandImplementation MoveToSettingsCommand { get; set; }
         public AnotherCommandImplementation MovePrevPageCommand { get; set; }
         public AnotherCommandImplementation MoveNextPageCommand { get; set; }
-
+        public ICommand LoginCommand { get; }
         public ICommand DismissAllNotificationsCommand { get; set; }
         public ICommand AddNewNotificationCommand { get; set; }
 
@@ -149,7 +151,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 if (SetProperty(ref _searchKeyword, value))
                 {
-                    _menuItemsView.Refresh();
+                    MenuItemsView.Refresh();
                 }
                 OnPropertyChanged(nameof(SearchKeyword));
             }
@@ -169,7 +171,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     Title = _selectedItem.Name;
                 }
                 OnPropertyChanged(nameof(SelectedItem));
-                OnSelectedItemChanged(SelectedItem);
             }
         }
 
@@ -195,24 +196,50 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        public ObservableCollection<MenuItem> MenuItems { get; set; } = new ObservableCollection<MenuItem>();
-        public ObservableCollection<MenuItem> MainMenuItems { get; set; } = new ObservableCollection<MenuItem>();
+        private ObservableCollection<MenuItem> _menuItems;
+        public ObservableCollection<MenuItem> MenuItems
+        {
+            get
+            {
+                return _menuItems;
+            }
+            set
+            {
+                _menuItems = value;
+                OnPropertyChanged(nameof(MenuItems));
+            }
+        }
+        private ObservableCollection<MenuItem> _mainMenuItems;
+        public ObservableCollection<MenuItem> MainMenuItems
+        {
+            get
+            {
+                return _mainMenuItems;
+            }
+            set
+            {
+                _mainMenuItems = value;
+                OnPropertyChanged(nameof(MainMenuItems));
+            }
+        }
 
         #endregion
 
-        public MainWindowViewModel(VacationSummary vacationSummary)
+        public MainWindowViewModel()
         {
+            
             ITheme theme = PaletteHelper.GetTheme();
             PrimaryColor = theme.PrimaryMid.Color;
             SelectedColor = PrimaryColor;
 
-            _vacationSummary = vacationSummary;
             _viewModel = this;
+            _menuItems = new ObservableCollection<MenuItem>();
+            _mainMenuItems = new ObservableCollection<MenuItem>();
 
-            MenuItems.Add(new MenuItem(HomePage, typeof(HomeView), selectedIcon: PackIconKind.Home, unselectedIcon: PackIconKind.HomeOutline));
+            MenuItems.Add(new MenuItem(HomePage, typeof(HomeView), selectedIcon: PackIconKind.Home, unselectedIcon: PackIconKind.HomeOutline, HomeViewModel));
+            HomeViewModel.IsLogginIn = true;
 
-            CreateOtherPages().Await();
-
+           
             HomeCommand = new AnotherCommandImplementation(
             _ =>
             {
@@ -257,190 +284,43 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     SelectedIndex = index;
                 });
 
+            LoginCommand = new LoginCommand(this);
             AddNewNotificationCommand = new AddNewNotificationCommand(_viewModel);
             DismissAllNotificationsCommand = new DismissAllNotificationsCommand(_viewModel);
             ThemeChangeCommand = new ThemeChangeCommand(_viewModel);
 
-            AddNewNotificationCommand.Execute(new object());
+            AddNewNotificationCommand.Execute(new object()); 
+            LoginCommand.Execute(new object());
+        }
+        public async Task GetUserAsync()
+        {
+            await App.API.LoginAsync(Environment.UserName);
+            await Task.Delay(3000);
+            OnLoginSuccesed(App.API.Person);
+        }
 
-            _menuItemsView = CollectionViewSource.GetDefaultView(MenuItems);
-            _menuItemsView.Filter = MenuItemsFilter;
-
+        private void OnLoginSuccesed(Person person)
+        {
+            //IsLoginSuccesed = true;
+            person.GetSettings();
+            person.SettingsLoad += OnPerson_SettingsLoad;
+            person.MenuItemsChanged += OnPerson_MenuItemsChanged;
+            person.AddPages(_viewModel);
             
         }
 
-        private void OnSettingsLoad(Settings settings)
+        private void OnPerson_MenuItemsChanged(ObservableCollection<MenuItem> obj)
         {
-            _isLoading = true;
-            Color color = (Color)ColorConverter.ConvertFromString(settings.Color);
+            MenuItemsView = CollectionViewSource.GetDefaultView(MenuItems);
+            MenuItemsView.Filter = MenuItemsFilter;
+            HomeViewModel.IsLogginIn = false;
+            HomeViewModel.IsLoginSuccesed = true;
+        }
+
+        private void OnPerson_SettingsLoad(Settings obj)
+        {
+            Color color = (Color)ColorConverter.ConvertFromString(App.API.Person.Settings.Color);
             SelectedColor = color;
-            _isLoading = false;
-        }
-
-        private void OnSelectedItemChanged(MenuItem selectedItem)
-        {
-            SelectedItemChanged?.Invoke(selectedItem);
-        }
-
-        private async Task CreateOtherPages()
-        {
-            IEnumerable<Person> persons = await _vacationSummary.GetUser(Environment.UserName);
-            IEnumerable<Department> department = await _vacationSummary.GetDepartmentForUser(Environment.UserName);
-            if (persons != null && department != null)
-            {
-                PersonDescriptions.AddRange(persons);
-                DepartmentsForPerson.AddRange(department);
-
-                Department = new Department(DepartmentsForPerson[0].Name, _vacationSummary);
-                VacationStore = new VacationStore(Department);
-                VacationStore.SettingsUILoad += OnSettingsLoad;
-                VacationStore.LoadSettings();
-
-                foreach (Task <MenuItem> task in GenerateMenuItems(_viewModel, Department, VacationStore, PersonDescriptions[0]))
-                {
-                    MenuItem menuItem = await task;
-                    if (!MenuItems.Contains(menuItem))
-                    {
-                        MenuItems.Add(menuItem);
-                    }
-                }
-
-                MenuItems.Add(new MenuItem(SettingsPage, typeof(SettingsView), selectedIcon: PackIconKind.Cog, unselectedIcon: PackIconKind.CogOutline, new SettingsViewModel(_viewModel)));
-
-                MenuItem personalItem = MenuItems.FirstOrDefault(x => x.Name == PersonalVacationPlanning);
-                MainMenuItems = CreateMainMenuItems(personalItem);
-
-                if (PersonDescriptions[0].Is_Supervisor)
-                {
-                    AdminString = "Аккаунт руководителя";
-                    MenuItem supervisorItem = MenuItems.FirstOrDefault(x => x.Name == SupervisorPage);
-                    MainMenuItems = CreateMainMenuItems(supervisorItem);
-                }
-                else if (PersonDescriptions[0].Is_HR)
-                {
-                    AdminString = "Аккаунт HR сотрудника";
-                    MenuItem hRItem = MenuItems.FirstOrDefault(x => x.Name == SupervisorPage);
-                    MainMenuItems = CreateMainMenuItems(hRItem);
-                }
-            }
-
-        }
-
-        private IEnumerable<Task<MenuItem>> GenerateMenuItems(MainWindowViewModel viewModel, Department department, VacationStore vacationStore, Person person)
-        {
-            yield return CreateMainItems(person);
-        }
-
-        private async Task<MenuItem> CreateMainItems(Person person)
-        {
-            await Task.Delay(100);
-
-            MenuItem menuItem = new MenuItem(
-            PersonalVacationPlanning,
-            typeof(PersonalVacationPlanningView),
-            selectedIcon: PackIconKind.BagPersonalTag,
-            unselectedIcon: PackIconKind.BagPersonalTagOutline,
-            new PersonalVacationPlanningViewModel(person));
-
-            return menuItem;
-        }
-
-        private IEnumerable<Task<MenuItem>> GenerateMenuItemsAsync(MainWindowViewModel viewModel,
-                                                               Department department,
-                                                               VacationStore vacationStore,
-                                                               Person person)
-        {
-            //это табельщик, может ставить отпуска всему подразделению
-            //if (isHRTabelAdmin)
-            //{
-            //    yield return new MenuItem(
-            //    HRPage,
-            //    typeof(HRView),
-            //    selectedIcon: PackIconKind.AccountsGroup,
-            //    unselectedIcon: PackIconKind.AccountsGroupOutline);
-            //}
-
-            //это окно администратора, с раздачей прав
-            //if (isHRAdmin)
-            //{
-            //    yield return new MenuItem(
-            //    HRPage,
-            //    typeof(HRView),
-            //    selectedIcon: PackIconKind.AccountsGroup,
-            //    unselectedIcon: PackIconKind.AccountsGroupOutline);
-            //}
-
-
-            /*
-             async Task<Foo> DoSomethingAsync(string url)
-             {
-                 ...
-             }       
-             // producing IAsyncEnumerable<T>
-             async IAsyncEnumerable<Foo> DownLoadAllURL(string[] strs)
-             {
-                 foreach (string url in strs)
-                 {
-                     yield return await DoSomethingAsync(url);
-                 }
-             }
-             ...
-             // using
-             await foreach (Foo foo in DownLoadAllURL(new string[] { "url1", "url2" }))
-             {
-                 Use(foo);
-             }
-             We can achieve the same behavior at C# 5 but with a different semantics:
-             
-             async Task<Foo> DoSomethingAsync(string url)
-             {
-                 ...
-             }
-             IEnumerable<Task<Foo>> DownLoadAllURL(string[] strs)
-             {
-                 foreach (string url in strs)
-                 {
-                     yield return DoSomethingAsync(url);
-                 }
-             }
-             
-             // using
-             foreach (Task<Foo> task in DownLoadAllURL(new string[] { "url1", "url2" }))
-             {
-                 Foo foo = await task;
-                 Use(foo);
-             }
-            */
-            //await new MenuItem(
-            //PersonalVacationPlanning,
-            //typeof(PersonalVacationPlanningView),
-            //selectedIcon: PackIconKind.BagPersonalTag,
-            //unselectedIcon: PackIconKind.BagPersonalTagOutline,
-            //new PersonalVacationPlanningViewModel(person));
-
-
-            yield return CreateMainMenuItems(person);
-        }
-
-        private async Task<MenuItem> CreateMainMenuItems(Person person)
-        {
-            await Task.Delay(100);
-
-            MenuItem menuItem = new MenuItem(
-            PersonalVacationPlanning,
-            typeof(PersonalVacationPlanningView),
-            selectedIcon: PackIconKind.BagPersonalTag,
-            unselectedIcon: PackIconKind.BagPersonalTagOutline,
-            new PersonalVacationPlanningViewModel(person));
-
-            return menuItem;
-        }
-
-        #region Utils
-        private ObservableCollection<MenuItem> CreateMainMenuItems(MenuItem menuItem)
-        {
-            MainMenuItems.Add(menuItem);
-            return MainMenuItems;
         }
 
         private void ChangeCustomColor(object obj)
@@ -455,7 +335,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        private bool MenuItemsFilter(object obj)
+        public bool MenuItemsFilter(object obj)
         {
             if (string.IsNullOrWhiteSpace(_searchKeyword))
             {
@@ -465,6 +345,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             return obj is MenuItem item
                    && item.Name.ToLower().Contains(_searchKeyword.ToLower());
         }
-        #endregion
+
     }
 }

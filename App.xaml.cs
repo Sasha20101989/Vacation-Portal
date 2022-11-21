@@ -3,10 +3,13 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Vacation_Portal.DbContext;
+using Vacation_Portal.DTOs;
 using Vacation_Portal.HostBuilders;
+using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 using Vacation_Portal.MVVM.Views;
 using Vacation_Portal.Services.Providers;
@@ -18,6 +21,7 @@ namespace Vacation_Portal
     {
         private readonly IHost _host;
         public static ILunchRepository API { get; private set; }
+        public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
         public static AuthenticationViewModel AuthenticationViewModel { get; } = new AuthenticationViewModel();
         public App()
         {      

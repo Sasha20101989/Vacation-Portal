@@ -299,10 +299,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #endregion Planned Vacation props
 
         #region QueuesLern
-        public SnackbarMessageQueue MessageQueueVacation { get; set; } = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
-        public SnackbarMessageQueue MessageQueueCalendar { get; set; } = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
-        public SnackbarMessageQueue MessageQueueSelectedGap { get; set; } = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
-        public SnackbarMessageQueue MessageQueuePLanedVacations { get; set; } = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
+        public SnackbarMessageQueue MessageQueueVacation { get; set; }
+        public SnackbarMessageQueue MessageQueueCalendar { get; set; }
+        public SnackbarMessageQueue MessageQueueSelectedGap { get; set; }
+        public SnackbarMessageQueue MessageQueuePLanedVacations { get; set; }
         #endregion QueuesLern
 
         #region BorderLern
@@ -361,17 +361,17 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #endregion Commands
 
         #region Constructor
-        public PersonalVacationPlanningViewModel(Person person)
+        public PersonalVacationPlanningViewModel()
         {
-            _person = person;
-            PersonName = _person.ToString();
-            
+            PersonName = App.API.Person.ToString();
+            Person = App.API.Person;
+            IsEmployee = true;
             LoadModel = new LoadModelCommand(this);
             SaveDataModel = new SaveDataModelCommand(this);
             StartLearning = new StartLearningCommand(this);
             AddToApprovalList = new AddToApprovalListCommand(this);
 
-            _initializeLazy = new Lazy<Task>(() => Initialize());
+            _initializeLazy = new Lazy<Task>(async() => await Initialize());
             LoadModel.Execute(new object());
         }
         #endregion Constructor
@@ -500,9 +500,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #region Task Lazy
         private async Task Initialize()
         {
-            await Task.Delay(100);
-            CheckRang().Await();
-            RenderCalendars().Await();
+            loadVacationTypes();
+            RenderCalendars();
         }
 
         public async Task Load()
@@ -513,7 +512,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
             catch (Exception)
             {
-                _initializeLazy = new Lazy<Task>(() => Initialize());
+                _initializeLazy = new Lazy<Task>(async() => await Initialize());
                 throw;
             }
         }
@@ -521,15 +520,13 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         #region OnStartup
 
-        private async Task CheckRang()
+        private void CheckRang()
         {
-            await Task.Delay(100);
-
-            if (Person.Is_Supervisor)
+            if (App.API.Person.Is_Supervisor)
             {
                 IsSupervisor = true;
             }
-            else if (Person.Is_HR)
+            else if (App.API.Person.Is_HR)
             {
                 IsHR = true;
             }
@@ -541,7 +538,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             //Holidays = await _метод получения данных
             //Weekends = await _метод получения данных
 
-            loadVacationTypes();
+            
         }
 
         private void loadVacationTypes()

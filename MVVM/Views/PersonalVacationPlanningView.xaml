@@ -183,9 +183,9 @@
                         OpeningEffect="{md:TransitionEffect Kind=SlideInFromLeft, Duration=0:0:1.00}">
                 <StackPanel Grid.Row="0" Grid.Column="0">
                     <!--<controls:HRView VerticalAlignment="Top" Margin="6,6,16,6"
-                        Visibility="{Binding IsHR, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        Visibility="{Binding Person.Is_HR, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <controls:SupervisorView VerticalAlignment="Top" Margin="6,6,16,6"
-                        Visibility="{Binding IsSupervisor, Converter={StaticResource BooleanToVisibilityConverter}}"/>-->
+                        Visibility="{Binding Person.Is_Supervisor, Converter={StaticResource BooleanToVisibilityConverter}}"/>-->
                     <Viewbox>
                     <controls:PersonalView Margin="6,17,6,6"
                         Visibility="{Binding IsEmployee,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}"/>

@@ -554,7 +554,7 @@
                             <RowDefinition Height="479*"/>
                         </Grid.RowDefinitions>
                         <Viewbox Grid.Row="1" VerticalAlignment="Top" Stretch="Uniform">
-                            <ListBox VerticalAlignment="Top" ItemsSource="{Binding MainMenuItems,UpdateSourceTrigger=PropertyChanged}" 
+                            <ListBox VerticalAlignment="Top" ItemsSource="{Binding MainMenuItems,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
                                      SelectedValue="{Binding SelectedItem}"
                                      Style="{StaticResource MaterialDesignNavigationListBox}">
                                 <ListBox.ItemContainerStyle>

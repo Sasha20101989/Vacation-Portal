@@ -13,11 +13,6 @@ namespace Vacation_Portal.Commands.NotificationCommands
             _mainWindowViewModel = mainWindowViewModel;
         }
 
-        public override bool CanExecute(object parameter)
-        {
-            return _mainWindowViewModel.MenuItems[_mainWindowViewModel.SelectedIndex].Notifications != null;
-        }
-
         public override void Execute(object parameter)
         {
             //_mainWindowViewModel.MenuItems[0].DismissAllNotifications();

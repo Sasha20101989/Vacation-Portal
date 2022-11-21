@@ -15,7 +15,7 @@ namespace Vacation_Portal.MVVM.Models
         public string Name { get; set; }
         private Thickness _marginRequirement = new Thickness (16);
 
-        public MenuItem (string name, Type contentType, PackIconKind selectedIcon, PackIconKind unselectedIcon, object dataContext = null) {
+        public MenuItem (string name, Type contentType, PackIconKind selectedIcon, PackIconKind unselectedIcon, object dataContext = null, Action action = null) {
             Name = name;
             _contentType = contentType;
             _dataContext = dataContext;
