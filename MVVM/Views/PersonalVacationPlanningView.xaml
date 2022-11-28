@@ -159,14 +159,14 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Viewbox>
-        <Grid Cursor="Hand">
+        <Grid Cursor="Arrow">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="*" MinHeight="35"/>
             </Grid.RowDefinitions>
 
             <Button Style="{StaticResource MaterialDesignFloatingActionButton}"  Grid.Column="0" Grid.Row="1"
@@ -187,7 +187,7 @@
                     <controls:SupervisorView VerticalAlignment="Top" Margin="6,6,16,6"
                         Visibility="{Binding Person.Is_Supervisor, Converter={StaticResource BooleanToVisibilityConverter}}"/>-->
                     <Viewbox>
-                    <controls:PersonalView Margin="6,17,6,6"
+                    <controls:PersonalView Margin="6,36,6,6"
                         Visibility="{Binding IsEmployee,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     </Viewbox>
                 </StackPanel>
@@ -216,8 +216,19 @@
 
                         <md:TransitioningContent OpeningEffectsOffset="0:0:0"
                                 OpeningEffect="{md:TransitionEffect Kind=SlideInFromRight, Duration=0:0:1.20}">
-
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock Text="1" Foreground="Red"/>
+                                    <TextBlock Text=" - выходной день"/>
+                                    <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" Background="#FCA795" Width="20" Height="20" TextAlignment="Center"/>
+                                    <TextBlock Text=" - праздничный день"/>
+                                    <TextBlock Margin="20 0 0 0" Text="1"/>
+                                    <TextBlock Text=" - рабочий день"/>
+                                </StackPanel>
+                                
                                 <controls:FullCalendar HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            </StackPanel>
+                                
                            
                         </md:TransitioningContent>
                         <!--</md:Card>-->
@@ -225,7 +236,7 @@
                              MessageQueue="{Binding MessageQueueCalendar,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
                     </Grid>
                 </Border>
-                <Border  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="{Binding BorderColorSelectedGap}" BorderThickness="2" CornerRadius="10"  Padding="0 6 0 6">
+                <Border  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="{Binding BorderColorSelectedGap}" BorderThickness="2" CornerRadius="10"  Padding="0 0 0 0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>

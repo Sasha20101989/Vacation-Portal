@@ -22,12 +22,10 @@ namespace Vacation_Portal
         private readonly IHost _host;
         public static ILunchRepository API { get; private set; }
         public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
-        public static AuthenticationViewModel AuthenticationViewModel { get; } = new AuthenticationViewModel();
         public App()
         {      
           Directory.SetCurrentDirectory(AppContext.BaseDirectory);
             _host = Host.CreateDefaultBuilder()
-                .AddServices()
                 .CreateDbConnectionFactory()
                 .AddMainWindow()
                 .Build();

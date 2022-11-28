@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
+using System.Windows;
 using System.Windows.Media;
 using MiscUtil.Collections;
-using MiscUtil.Collections.Extensions;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.MVVM.Models;
-using Vacation_Portal.MVVM.ViewModels.Base;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
-using Vacation_Portal.MVVM.Views.Controls;
 
 namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 {
     public class AddToApprovalListCommand : CommandBase
     {
         private readonly PersonalVacationPlanningViewModel _viewModel;
+        private string NameVacation { get; set; }
+        private DateTime FirstDate { get; set; }
+        private DateTime SecondDate { get; set; }
+        private int CountDays { get; set; }
+        public ObservableCollection<Vacation> VacationsToAprovalClone { get; set; } = new ObservableCollection<Vacation>();
+        public ObservableCollection<Vacation> VacationsToRemove { get; set; } = new ObservableCollection<Vacation>();
 
         public AddToApprovalListCommand(PersonalVacationPlanningViewModel viewModel)
         {
@@ -30,13 +29,16 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
         public override void Execute(object parameter)
         {
             int remainder = _viewModel.SelectedItem.Count - _viewModel.CountSelectedDays;
+            VacationsToAprovalClone.Clear();
+            VacationsToRemove.Clear();
             bool isMorePlanedDays = remainder >= 0;
             if (isMorePlanedDays)
             {
-                Range<DateTime> range =_viewModel.ReturnRange(_viewModel.PlannedItem);
+                Range<DateTime> range = _viewModel.ReturnRange(_viewModel.PlannedItem);
 
                 List<bool> isGoToNext = new List<bool>();
-
+                FirstDate = new DateTime();
+                SecondDate = new DateTime();
                 foreach (DateTime planedDate in range.Step(x => x.AddDays(1)))
                 {
                     for (int i = 0; i < _viewModel.VacationsToAproval.Count; i++)
@@ -63,9 +65,59 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 {
                     _viewModel.SelectedItem.Count -= _viewModel.CountSelectedDays;
                     _viewModel.VacationsToAproval.Add(_viewModel.PlannedItem);
-                    _viewModel.VacationsToAproval.OrderBy(i => i.Date_Start);
+
+                    _viewModel.DisplayedDateString = "";
+                    _viewModel.ClicksOnCalendar = 0;
+
+                    if (_viewModel.SelectedItem.Count == 0)
+                    {
+                        for (int i = 0; i < _viewModel.VacationTypes.Count; i++)
+                        {
+                            if (_viewModel.VacationTypes[i].Count > 0)
+                            {
+                                _viewModel.SelectedItem = _viewModel.VacationTypes[i];
+                                break;
+                            }
+                        }
+                    }
                 }
+                else
+                {
+                    MessageBox.Show("Залетел в ошибку");
+                }
+                _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
+                VacationsToAprovalClone = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
+
+                for (int i = VacationsToAprovalClone.Count - 1; i > 0; i--)
+                {
+                    //начинаем с последнего элемента
+                    //если дата начала текущего элемента минус 1 день, равна дате конца предыдущего элемена
+                    //то дата начала текущего элемента равна дате начала предыдущего лемента
+                    //удалить предыдущий элемент
+                    if (VacationsToAprovalClone[i].Date_Start.AddDays(-1) == VacationsToAprovalClone[i-1].Date_end)
+                    {
+                        
+                        VacationsToAprovalClone[i].Date_Start = VacationsToAprovalClone[i - 1].Date_Start;
+                        CountDays = GetCountDays(VacationsToAprovalClone[i]);
+                        VacationsToAprovalClone[i].Count = CountDays;
+                        VacationsToAprovalClone.Remove(VacationsToAprovalClone[i - 1]);
+                        
+                    }
+                }
+                _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
             }
+
+        }
+
+        private int GetCountDays(Vacation vacation)
+        {
+            Range<DateTime> range = _viewModel.ReturnRange(vacation);
+            int count = 0;
+            foreach (DateTime date in range.Step(x => x.AddDays(1)))
+            {
+                count++;
+            }
+            return count;
         }
     }
 }

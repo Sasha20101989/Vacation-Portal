@@ -30,10 +30,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #region Pages
         private static readonly string HomePage = "Главная страница";
         private static readonly string SettingsPage = "Настройки";
-        private static readonly string SupervisorPage = "Страница руководителя";
-        private static readonly string HRPage = "Страница HR сотрудника";
-        private static readonly string Табельщик = "Страница HR сотрудника";
-        private static readonly string PersonalVacationPlanning = "Страница персонального планирования отпуска";
+        //private static readonly string SupervisorPage = "Страница руководителя";
+        //private static readonly string HRPage = "Страница HR сотрудника";
+        //private static readonly string Табельщик = "Страница HR сотрудника";
+        //private static readonly string PersonalVacationPlanning = "Страница персонального планирования отпуска";
         #endregion
 
         #region Addons
@@ -41,9 +41,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private Color? PrimaryColor { get; set; }
         private readonly MainWindowViewModel _viewModel;
         private readonly HomeViewModel HomeViewModel = new HomeViewModel();
-        private Department Department { get; set; }
-        private List<Department> DepartmentsForPerson { get; set; } = new List<Department>();
-        private List<Person> PersonDescriptions { get; set; } = new List<Person>();
         public ICollectionView MenuItemsView;
         #endregion
 
@@ -57,10 +54,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public ICommand DismissAllNotificationsCommand { get; set; }
         public ICommand AddNewNotificationCommand { get; set; }
 
-        #endregion
-
-        #region Actions
-        public event Action<MenuItem> SelectedItemChanged;
         #endregion
 
         #region Props
@@ -157,7 +150,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        public VacationStore VacationStore { get; set; }
         private MenuItem _selectedItem;
         public MenuItem SelectedItem
         {
@@ -237,6 +229,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             _mainMenuItems = new ObservableCollection<MenuItem>();
 
             MenuItems.Add(new MenuItem(HomePage, typeof(HomeView), selectedIcon: PackIconKind.Home, unselectedIcon: PackIconKind.HomeOutline, HomeViewModel));
+            //MenuItems.Add(new MenuItem("отпуска", typeof(HolidaysView), selectedIcon: PackIconKind.BoxCog, unselectedIcon: PackIconKind.BoxCogOutline, new HolidaysViewModel()));
+            //MenuItems.Add(new MenuItem(PersonalVacationPlanning,typeof(PersonalVacationPlanningView),selectedIcon: PackIconKind.BagPersonalTag,unselectedIcon: PackIconKind.BagPersonalTagOutline,new PersonalVacationPlanningViewModel()));
+
             HomeViewModel.IsLogginIn = true;
 
            
@@ -301,12 +296,15 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         private void OnLoginSuccesed(Person person)
         {
-            //IsLoginSuccesed = true;
-            person.GetSettings();
-            person.SettingsLoad += OnPerson_SettingsLoad;
-            person.MenuItemsChanged += OnPerson_MenuItemsChanged;
+            if (person != null)
+            {
+                //IsLoginSuccesed = true;
+                person.GetSettings();
+                person.SettingsLoad += OnPerson_SettingsLoad;
+                person.MenuItemsChanged += OnPerson_MenuItemsChanged;
+                //person.AddPages(_viewModel);
+            }
             person.AddPages(_viewModel);
-            
         }
 
         private void OnPerson_MenuItemsChanged(ObservableCollection<MenuItem> obj)

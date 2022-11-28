@@ -155,7 +155,7 @@
     </UserControl.Resources>
     <Grid x:Name="Main">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
@@ -163,7 +163,7 @@
             <md:Badged.Badge>
                 <TextBlock Text="Сотрудник и типы отпуска" Margin="3" FontSize="10"/>
             </md:Badged.Badge>
-            <md:Card  x:Name="containerPerson" md:ElevationAssist.Elevation="Dp8" Width="{Binding ActualWidth, ElementName=cardPlannedDays, Mode=OneWay}">
+            <md:Card  x:Name="containerPerson" md:ElevationAssist.Elevation="Dp6" Width="{Binding ActualWidth, ElementName=cardPlannedDays, Mode=OneWay}">
                     <!--<md:Card.RenderTransform>
                     <ScaleTransform ScaleX="1" ScaleY="1"/>
                 </md:Card.RenderTransform>
@@ -204,8 +204,8 @@
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -213,20 +213,20 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBox Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding PersonName,UpdateSourceTrigger=PropertyChanged}" 
-                             IsReadOnly="True"
-                             HorizontalAlignment="Stretch"
-                             TextAlignment="Center" 
-                             Margin="10 6 10 5"
+                                 IsReadOnly="True"
+                                 HorizontalAlignment="Stretch"
+                                 TextAlignment="Center" 
+                                 Margin="10 6 10 5"
                                  FontSize="15"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
 
-                        <Border Grid.Row="1" Grid.RowSpan="2" BorderBrush="{Binding BorderColorVacation}" BorderThickness="2" CornerRadius="6" Margin="0 6 0 8">
+                        <Border Grid.Row="1" Grid.RowSpan="2" BorderBrush="{Binding BorderColorVacation}" BorderThickness="2" CornerRadius="6" Margin="0 6 0 4">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
-                            <ListBox Grid.Row="0" Margin="2 1 1 2"
+                            <ListBox Grid.Row="0" Margin="6" 
                                      SelectedIndex="{Binding SelectedIndex, UpdateSourceTrigger=PropertyChanged}"
                                      SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}"
                                      ItemsSource="{Binding VacationTypes, UpdateSourceTrigger=PropertyChanged}"
@@ -236,26 +236,28 @@
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="auto"/>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition/>
-                                                    <RowDefinition/>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="auto"/>
                                                 </Grid.RowDefinitions>
                                                 <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Name}"
-                                                           Width="140"
+                                                           Width="180"
                                                            TextAlignment="Center"
-                                                           FontSize="13"/>
+                                                           FontSize="16"/>
                                                 <Rectangle Margin="8 0 0 0" Grid.Column="0" Grid.Row="1" Width="9" Height="9" Fill="{Binding Color,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" RadiusX="10" RadiusY="10"/>
-                                                <TextBlock TextAlignment="Center" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding Count,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay, StringFormat={}Остаток дней: {0}}" TextTrimming="CharacterEllipsis" FontSize="10"/>
+                                                <TextBlock TextAlignment="Center" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding Count,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay, StringFormat={}Остаток дней: {0}}" TextTrimming="CharacterEllipsis" FontSize="15"/>
                                             </Grid>
                                         </DataTemplate>
                                     </ListBox.Resources>
                                     <ListBox.ItemContainerStyle>
-                                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignChoiceChipAccentOutlineListBoxItem}">
-                                            <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}"/>
-                                        <Setter Property="Margin" Value="25 0 0 0"/>
+                                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignNavigationAccentListBoxItem}">
+                                        <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}"/>
+                                        <Setter Property="Height" Value="69" />
+                                        <Setter Property="BorderThickness" Value="2" />
+                                        <Setter Property="BorderBrush" Value="{StaticResource PrimaryHueMidBrush}" />
                                         <Setter Property="Visibility" Value="Visible" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Count}" Value="0">
@@ -272,9 +274,9 @@
                 </md:Card>
             </md:Badged>
 
-        <md:Badged Grid.Row="1" BadgePlacementMode="Top"  Margin="0 10 0 0">
+        <md:Badged Grid.Row="1" BadgePlacementMode="Top"  Margin="0 7 0 0">
             <md:Badged.Badge>
-                <TextBlock Text="Сотрудник и типы отпуска" Margin="3" FontSize="10"/>
+                <TextBlock Text="Запланированные отпуска" Margin="3" FontSize="10"/>
             </md:Badged.Badge>
             <md:Card md:ElevationAssist.Elevation="Dp6" x:Name="cardPlannedDays">
                 <Border BorderBrush="{Binding BorderColorPLanedVacations}" BorderThickness="2" CornerRadius="10">
@@ -294,6 +296,11 @@
                                 <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignGridViewItem}">
                                     <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
                                     <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="IsSelected" Value="True"/>
+                                        </Trigger>
+                                    </Style.Triggers>
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.View>
@@ -305,7 +312,13 @@
                                     <GridViewColumn Width="40" Header="">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="{Binding Color}" Width="24" Height="24">
+                                                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="Red" Width="24" Height="24"
+                                                            Command="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=DataContext.CancelVacation}"
+                                                            CommandParameter="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=SelectedItem}">
                                                         <md:PackIcon Kind="Close"  Width="20" Height="20"></md:PackIcon>
                                                     </Button>
                                                 </DataTemplate>

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Input;
 using System.Windows.Media;
+using Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.Models
@@ -51,5 +53,6 @@ namespace Vacation_Portal.MVVM.Models
             Date_Start = date_Start;
             Date_end = date_end;
         }
+
     }
 }

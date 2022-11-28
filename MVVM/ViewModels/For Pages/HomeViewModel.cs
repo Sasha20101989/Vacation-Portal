@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using GalaSoft.MvvmLight;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.MVVM.Models;
+using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 {
@@ -21,7 +21,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             set
             {
                 _isLogginIn = value;
-                RaisePropertyChanged(nameof(IsLogginIn));
+                OnPropertyChanged(nameof(IsLogginIn));
             }
         }
 
@@ -35,7 +35,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             set
             {
                 _isLoginSuccesed = value;
-                RaisePropertyChanged(nameof(IsLoginSuccesed));
+                OnPropertyChanged(nameof(IsLoginSuccesed));
             }
         }
 

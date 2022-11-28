@@ -16,11 +16,11 @@ namespace Vacation_Portal.MVVM.Models
     public class Person
     {
         #region Pages
-        private static readonly string HomePage = "Главная страница";
-        private static readonly string SettingsPage = "Настройки";
+        private static readonly string SettingsPage = "Настройки приложения";
+        private static readonly string HolidaysPage = "Настройки выходных и праздников"; 
         private static readonly string SupervisorPage = "Страница руководителя";
-        private static readonly string HRPage = "Страница HR сотрудника";
-        private static readonly string Табельщик = "Страница HR сотрудника";
+        //private static readonly string HRPage = "Страница HR сотрудника";
+        //private static readonly string Табельщик = "Страница HR сотрудника";
         private static readonly string PersonalVacationPlanning = "Страница персонального планирования отпуска";
         #endregion
 
@@ -56,8 +56,8 @@ namespace Vacation_Portal.MVVM.Models
 
         public async void GetSettings()
         {
-            IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
-            OnSettingsLoad(settings);
+            //IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
+            //OnSettingsLoad(settings);
         }
         private void OnSettingsLoad(IEnumerable<Settings> settings)
         {
@@ -80,6 +80,7 @@ namespace Vacation_Portal.MVVM.Models
                     }
                 }
 
+                _viewModel.MenuItems.Add(new MenuItem(HolidaysPage, typeof(HolidaysView), selectedIcon: PackIconKind.BoxCog, unselectedIcon: PackIconKind.BoxCogOutline, new HolidaysViewModel())); _viewModel.MenuItems.Add(new MenuItem(SettingsPage, typeof(SettingsView), selectedIcon: PackIconKind.Cog, unselectedIcon: PackIconKind.CogOutline, new SettingsViewModel(_viewModel)));
                 _viewModel.MenuItems.Add(new MenuItem(SettingsPage, typeof(SettingsView), selectedIcon: PackIconKind.Cog, unselectedIcon: PackIconKind.CogOutline, new SettingsViewModel(_viewModel)));
 
                 MenuItem personalItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == PersonalVacationPlanning);

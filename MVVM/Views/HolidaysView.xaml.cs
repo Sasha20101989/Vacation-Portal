@@ -11,17 +11,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Vacation_Portal.MVVM.Views.Controls
+namespace Vacation_Portal.MVVM.Views
 {
     /// <summary>
-    /// Логика взаимодействия для DayControl.xaml
+    /// Логика взаимодействия для HolidaysView.xaml
     /// </summary>
-    public partial class DayBlankControl : UserControl
+    public partial class HolidaysView : UserControl
     {
-        public DayBlankControl()
+        public HolidaysView()
         {
             InitializeComponent();
         }
-
     }
 }

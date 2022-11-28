@@ -10,7 +10,7 @@
     <Grid>
         <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Width="24" Height="24" Margin="2">
             <Button.Content>
-                <TextBlock  x:Name="tbDay" TextAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}" FontSize="11">
+                <TextBlock  x:Name="tbDay" TextAlignment="Center" Foreground="{DynamicResource MaterialDesignBody}" FontSize="13">
                 </TextBlock>
             </Button.Content>
         </Button>
