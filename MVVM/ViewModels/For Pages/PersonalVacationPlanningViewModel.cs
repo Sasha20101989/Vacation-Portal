@@ -673,7 +673,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             OnCalendarDatesLoaded();
         }
         #endregion Constructor
-
+        public List<bool> WorkingDays = new List<bool>();
         #region Calendar Interaction
         private void UcDays_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -765,13 +765,14 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                         {
                             if (SelectedNameDay != "Праздник")
                             {
+                                
                                 DayAddition = getDayAddition(CountSelectedDays);
                                 DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
                                 _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, FirstSelectedDate, SecondSelectedDate);
                             }
                             else
                             {
-                                ShowAlert("Этот день является праздичным, закончите планирование отпуска с другим днём");
+                                ShowAlert("Этот день является праздичным, закончите планирование отпуска другим днём");
                             }
                         }
                         else
@@ -786,6 +787,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                         {
                             if (SelectedNameDay != "Праздник")
                             {
+                                
                                 DayAddition = getDayAddition(CountSelectedDays);
                                 DisplayedDateString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
                                 _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, SecondSelectedDate, FirstSelectedDate);
@@ -831,6 +833,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                                 }
                             }
                         }
+
                         if (!isGoToNext.Contains(false))
                         {
                             blockAndPaintButtons();
@@ -851,6 +854,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 }
                 else
                 {
+
                     ShowAlert("Выбранный промежуток больше доступного колличества дней");
                     blockAndPaintButtons();
                     FirstSelectedDate = newDate;
@@ -859,7 +863,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     CountSelectedDays = 0;
                     DisplayedDateString = "";
                     clearColorAndBlocked();
-                    PlannedItem = null;
+                    //PlannedItem = null;
                 }
             }
         }
@@ -933,26 +937,38 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         }
         private void blockAndPaintButtons()
         {
-            Range<DateTime> range = ReturnRange(PlannedItem);
-
-            foreach (DateTime date in range.Step(x => x.AddDays(1)))
+            if (PlannedItem != null)
             {
-                foreach (ObservableCollection<DayControl> month in Year)
+                Range<DateTime> range = ReturnRange(PlannedItem);
+
+                foreach (DateTime date in range.Step(x => x.AddDays(1)))
                 {
-                    foreach (DayControl item in month)
+                    foreach (ObservableCollection<DayControl> month in Year)
                     {
-                        Grid parentItem = item.Content as Grid;
-                        UIElementCollection buttons = parentItem.Children as UIElementCollection;
-                        foreach (var elem in buttons)
+                        foreach (DayControl item in month)
                         {
-                            Button button = elem as Button;
-                            var buttonTextBlock = button.Content as TextBlock;
-                            int buttonDay = Convert.ToInt32(buttonTextBlock.Text);
-                            int buttonMonth = Convert.ToInt32(buttonTextBlock.Tag);
-                            if (date.Day == buttonDay && date.Month == buttonMonth)
+                            Grid parentItem = item.Content as Grid;
+                            UIElementCollection buttons = parentItem.Children as UIElementCollection;
+                            foreach (var elem in buttons)
                             {
-                                //button.IsEnabled = false;
-                                button.Background = PlannedItem.Color;
+                                Button button = elem as Button;
+                                var buttonTextBlock = button.Content as TextBlock;
+                                int buttonDay = Convert.ToInt32(buttonTextBlock.Text);
+                                int buttonMonth = Convert.ToInt32(buttonTextBlock.Tag);
+                                string buttonNameOfDay = buttonTextBlock.ToolTip.ToString();
+                                if (date.Day == buttonDay && date.Month == buttonMonth)
+                                {
+                                    //button.IsEnabled = false;
+                                    if (buttonNameOfDay == "Праздник")
+                                    {
+                                        PlannedItem.Count--;
+                                        CountSelectedDays--;
+                                        DayAddition = getDayAddition(CountSelectedDays);
+                                        DisplayedDateString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
+                                    }
+
+                                    button.Background = PlannedItem.Color;
+                                }
                             }
                         }
                     }

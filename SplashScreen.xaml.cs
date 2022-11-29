@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Vacation_Portal.MVVM.Models;
+using Vacation_Portal.MVVM.ViewModels.Base;
 using Vacation_Portal.MVVM.Views;
 
 namespace Vacation_Portal
@@ -28,7 +30,37 @@ namespace Vacation_Portal
             InitializeComponent();
             _mainWindow = mainWindow;
         }
+        private string _status;
+        public string Status
+        {
+            get
+            {
+                return _status;
+            }
+            set
+            {
+                _status = value;
+                OnPropertyChanged(nameof(Status));
+            }
+        }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual bool SetProperty<T>(ref T member, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(member, value))
+            {
+                return false;
+            }
+            member = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             BackgroundWorker worker = new BackgroundWorker();
@@ -51,6 +83,7 @@ namespace Vacation_Portal
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
             //Task.Run(async () => await GetUserAsync());
+            
             for (int i = 0; i <= 100; i++)
             {
                 (sender as BackgroundWorker).ReportProgress(i);
