@@ -217,19 +217,18 @@
                         <md:TransitioningContent OpeningEffectsOffset="0:0:0"
                                 OpeningEffect="{md:TransitionEffect Kind=SlideInFromRight, Duration=0:0:1.20}">
                             <StackPanel>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <TextBlock Text="1" Foreground="Red"/>
-                                    <TextBlock Text=" - выходной день"/>
-                                    <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" Background="#FCA795" Width="20" Height="20" TextAlignment="Center"/>
-                                    <TextBlock Text=" - праздничный день"/>
-                                    <TextBlock Margin="20 0 0 0" Text="1"/>
-                                    <TextBlock Text=" - рабочий день"/>
-                                </StackPanel>
-                                
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <TextBlock Text="1" Foreground="Red"/>
+                                        <TextBlock Text=" - выходной день"/>
+                                        <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" Background="#FCA795" Width="20" Height="20" TextAlignment="Center"/>
+                                        <TextBlock Text=" - праздничный день"/>
+                                        <TextBlock Margin="20 0 0 0" Text="1"/>
+                                        <TextBlock Text=" - рабочий день"/>
+                                    </StackPanel>
+
                                 <controls:FullCalendar HorizontalAlignment="Left" VerticalAlignment="Top"/>
                             </StackPanel>
-                                
-                           
+
                         </md:TransitioningContent>
                         <!--</md:Card>-->
                         <md:Snackbar Grid.Row="1" 

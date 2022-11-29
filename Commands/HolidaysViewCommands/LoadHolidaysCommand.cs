@@ -16,7 +16,7 @@ namespace Vacation_Portal.Commands.HolidaysViewCommands
             _viewModel = viewModel;
         }
 
-        public override async void Execute(object parameter)
+        public override void Execute(object parameter)
         {
             _viewModel.IsLoading = true;
             MessageBox.Show("Произошла бы загрузка, но нет связи с базой");

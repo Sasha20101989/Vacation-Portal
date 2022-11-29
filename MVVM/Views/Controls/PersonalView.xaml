@@ -327,7 +327,14 @@
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                            <Button Grid.Row="1" Width="280" VerticalAlignment="Bottom"
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Width="280" VerticalAlignment="Bottom"
+                            Margin="3 0 3 6"
+                            Style="{DynamicResource MaterialDesignOutlinedLightButton}"
+                            Command="{Binding CheckVacations}" Content="Проверить"
+                            IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                            </Button>
+                            <Button Width="280" VerticalAlignment="Bottom"
                             Margin="3 0 3 6"
                             Style="{DynamicResource MaterialDesignOutlinedLightButton}"
                             md:ButtonProgressAssist.IsIndicatorVisible="{Binding IsSaving}"
@@ -374,7 +381,8 @@
                                     </TextBlock>
                                 </StackPanel>
                             </Button>
-                            <md:Snackbar  Grid.Row="2" MessageQueue="{Binding MessageQueuePLanedVacations,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" ActionButtonPlacement="SeparateLine"/>
+                        </StackPanel>
+                        <md:Snackbar  Grid.Row="2" MessageQueue="{Binding MessageQueuePLanedVacations,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" ActionButtonPlacement="SeparateLine"/>
                         </Grid>
                     </Border>
                 </md:Card>
