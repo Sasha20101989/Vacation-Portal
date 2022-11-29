@@ -2,7 +2,9 @@
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,7 +43,10 @@ namespace Vacation_Portal
             API = new LunchRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
 
             MainWindow = _host.Services.GetRequiredService<MainWindow>();
-            MainWindow.Show();
+
+            SplashScreen splashScreen = new SplashScreen(MainWindow);
+
+            splashScreen.Show();
 
             base.OnStartup(e);
         }

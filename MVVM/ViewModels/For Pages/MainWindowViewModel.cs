@@ -302,9 +302,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 person.GetSettings();
                 person.SettingsLoad += OnPerson_SettingsLoad;
                 person.MenuItemsChanged += OnPerson_MenuItemsChanged;
-                //person.AddPages(_viewModel);
+                person.AddPages(_viewModel);
             }
-            person.AddPages(_viewModel);
+            //person.AddPages(_viewModel);
         }
 
         private void OnPerson_MenuItemsChanged(ObservableCollection<MenuItem> obj)
