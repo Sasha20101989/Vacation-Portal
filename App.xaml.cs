@@ -2,31 +2,25 @@
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using Vacation_Portal.DbContext;
 using Vacation_Portal.DTOs;
 using Vacation_Portal.HostBuilders;
-using Vacation_Portal.MVVM.Models;
-using Vacation_Portal.MVVM.ViewModels.For_Pages;
 using Vacation_Portal.MVVM.Views;
 using Vacation_Portal.Services.Providers;
 using Vacation_Portal.Services.Providers.Interfaces;
 
 namespace Vacation_Portal
 {
-    sealed partial class App : Application
+    public sealed partial class App : Application
     {
         private readonly IHost _host;
         public static ILunchRepository API { get; private set; }
         public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
         public App()
-        {      
-          Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+        {
+            Directory.SetCurrentDirectory(AppContext.BaseDirectory);
             _host = Host.CreateDefaultBuilder()
                 .CreateDbConnectionFactory()
                 .AddMainWindow()

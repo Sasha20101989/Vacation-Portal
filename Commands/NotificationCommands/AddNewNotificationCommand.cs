@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Vacation_Portal.Commands.BaseCommands;
+﻿using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 
 namespace Vacation_Portal.Commands.NotificationCommands

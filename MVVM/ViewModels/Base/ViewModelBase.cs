@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Vacation_Portal.MVVM.ViewModels.Base
 {
@@ -12,7 +10,7 @@ namespace Vacation_Portal.MVVM.ViewModels.Base
 
         protected virtual bool SetProperty<T>(ref T member, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(member, value))
+            if(EqualityComparer<T>.Default.Equals(member, value))
             {
                 return false;
             }

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Vacation_Portal.MVVM.ViewModels
 {
-   public class HolidayViewModel
+    public class HolidayViewModel
     {
         public string TypeOfHoliday { get; set; }
         public DateTime Date { get; set; }

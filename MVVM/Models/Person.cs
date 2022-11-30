@@ -1,12 +1,8 @@
-﻿using System;
+﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Data;
-using System.Windows.Media;
-using MaterialDesignThemes.Wpf;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 using Vacation_Portal.MVVM.ViewModels.ForPages;
 using Vacation_Portal.MVVM.Views;
@@ -16,12 +12,12 @@ namespace Vacation_Portal.MVVM.Models
     public class Person
     {
         #region Pages
-        private static readonly string SettingsPage = "Настройки приложения";
-        private static readonly string HolidaysPage = "Настройки выходных и праздников"; 
-        private static readonly string SupervisorPage = "Страница руководителя";
+        private static readonly string _settingsPage = "Настройки приложения";
+        private static readonly string _holidaysPage = "Настройки выходных и праздников";
+        private static readonly string _supervisorPage = "Страница руководителя";
         //private static readonly string HRPage = "Страница HR сотрудника";
         //private static readonly string Табельщик = "Страница HR сотрудника";
-        private static readonly string PersonalVacationPlanning = "Страница персонального планирования отпуска";
+        private static readonly string _personalVacationPlanning = "Страница персонального планирования отпуска";
         #endregion
 
         public string Name { get; set; }
@@ -33,7 +29,7 @@ namespace Vacation_Portal.MVVM.Models
         public bool Is_HR { get; set; }
         public Settings Settings { get; set; }
 
-        private List<Settings> ListSettings = new List<Settings>();
+        //private readonly List<Settings> ListSettings = new List<Settings>();
 
         public event Action<Settings> SettingsLoad;
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
@@ -59,47 +55,46 @@ namespace Vacation_Portal.MVVM.Models
             //IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
             //OnSettingsLoad(settings);
         }
-        private void OnSettingsLoad(IEnumerable<Settings> settings)
-        {
-            ListSettings.AddRange(settings);
-            Settings = ListSettings[0];
-            SettingsLoad?.Invoke(Settings);
-        }
+        //private void OnSettingsLoad(IEnumerable<Settings> settings)
+        //{
+        //    ListSettings.AddRange(settings);
+        //    Settings = ListSettings[0];
+        //    SettingsLoad?.Invoke(Settings);
+        //}
 
         public void AddPages(MainWindowViewModel _viewModel)
         {
-            App.Current.Dispatcher.Invoke((Action)delegate
-            {
-                foreach (MenuItem menuItem in GenerateMenuItems())
-                {
-                    if (!_viewModel.MenuItems.Contains(menuItem))
-                    {
+            App.Current.Dispatcher.Invoke((Action) delegate
+             {
+                 foreach(MenuItem menuItem in GenerateMenuItems())
+                 {
+                     if(!_viewModel.MenuItems.Contains(menuItem))
+                     {
 
-                        _viewModel.MenuItems.Add(menuItem);
+                         _viewModel.MenuItems.Add(menuItem);
 
-                    }
-                }
+                     }
+                 }
 
-                _viewModel.MenuItems.Add(new MenuItem(HolidaysPage, typeof(HolidaysView), selectedIcon: PackIconKind.BoxCog, unselectedIcon: PackIconKind.BoxCogOutline, new HolidaysViewModel())); _viewModel.MenuItems.Add(new MenuItem(SettingsPage, typeof(SettingsView), selectedIcon: PackIconKind.Cog, unselectedIcon: PackIconKind.CogOutline, new SettingsViewModel(_viewModel)));
-                _viewModel.MenuItems.Add(new MenuItem(SettingsPage, typeof(SettingsView), selectedIcon: PackIconKind.Cog, unselectedIcon: PackIconKind.CogOutline, new SettingsViewModel(_viewModel)));
+                 _viewModel.MenuItems.Add(new MenuItem(_holidaysPage, typeof(HolidaysView), selectedIcon: PackIconKind.BoxCog, unselectedIcon: PackIconKind.BoxCogOutline, new HolidaysViewModel())); _viewModel.MenuItems.Add(new MenuItem(_settingsPage, typeof(SettingsView), selectedIcon: PackIconKind.Cog, unselectedIcon: PackIconKind.CogOutline, new SettingsViewModel(_viewModel)));
+                 _viewModel.MenuItems.Add(new MenuItem(_settingsPage, typeof(SettingsView), selectedIcon: PackIconKind.Cog, unselectedIcon: PackIconKind.CogOutline, new SettingsViewModel(_viewModel)));
 
-                MenuItem personalItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == PersonalVacationPlanning);
-                _viewModel.MainMenuItems = CreateMainMenuItems(personalItem, _viewModel);
+                 MenuItem personalItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _personalVacationPlanning);
+                 _viewModel.MainMenuItems = CreateMainMenuItems(personalItem, _viewModel);
 
-                if (Is_Supervisor)
-                {
-                    _viewModel.AdminString = "Аккаунт руководителя";
-                    MenuItem supervisorItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == SupervisorPage);
-                    _viewModel.MainMenuItems = CreateMainMenuItems(supervisorItem, _viewModel);
-                }
-                else if (Is_HR)
-                {
-                    _viewModel.AdminString = "Аккаунт HR сотрудника";
-                    MenuItem hRItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == SupervisorPage);
-                    _viewModel.MainMenuItems = CreateMainMenuItems(hRItem, _viewModel);
-                }
-                OnMenuItemsChanged(_viewModel.MenuItems);
-            });
+                 if(Is_Supervisor)
+                 {
+                     _viewModel.AdminString = "Аккаунт руководителя";
+                     MenuItem supervisorItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _supervisorPage);
+                     _viewModel.MainMenuItems = CreateMainMenuItems(supervisorItem, _viewModel);
+                 } else if(Is_HR)
+                 {
+                     _viewModel.AdminString = "Аккаунт HR сотрудника";
+                     MenuItem hRItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _supervisorPage);
+                     _viewModel.MainMenuItems = CreateMainMenuItems(hRItem, _viewModel);
+                 }
+                 OnMenuItemsChanged(_viewModel.MenuItems);
+             });
         }
         private void OnMenuItemsChanged(ObservableCollection<MenuItem> menuItems)
         {
@@ -114,7 +109,7 @@ namespace Vacation_Portal.MVVM.Models
         private IEnumerable<MenuItem> GenerateMenuItems()
         {
             yield return new MenuItem(
-            PersonalVacationPlanning,
+            _personalVacationPlanning,
             typeof(PersonalVacationPlanningView),
             selectedIcon: PackIconKind.BagPersonalTag,
             unselectedIcon: PackIconKind.BagPersonalTagOutline,

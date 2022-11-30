@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 
@@ -9,7 +6,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 {
     public class LoadModelCommand : AsyncComandBase
     {
-        PersonalVacationPlanningViewModel _viewModel;
+        private readonly PersonalVacationPlanningViewModel _viewModel;
         public LoadModelCommand(PersonalVacationPlanningViewModel viewModel)
         {
             _viewModel = viewModel;

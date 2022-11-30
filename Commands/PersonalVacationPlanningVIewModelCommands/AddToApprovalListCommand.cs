@@ -14,7 +14,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
     public class AddToApprovalListCommand : CommandBase
     {
         private readonly PersonalVacationPlanningViewModel _viewModel;
-        private readonly SampleError _sampleError = new SampleError();
         public ObservableCollection<Vacation> VacationsToAprovalClone { get; set; } = new ObservableCollection<Vacation>();
 
         public AddToApprovalListCommand(PersonalVacationPlanningViewModel viewModel)
@@ -130,7 +129,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 _viewModel.ShowAlert("В выбранном периоде, отсутствуют рабочие дни выбранного типа отпуска.");
                 _viewModel.SelectedItem.Count += _viewModel.CountSelectedDays;
                 _viewModel.VacationsToAproval.Remove(_viewModel.PlannedItem);
-                _viewModel.clearVacationData();
+                _viewModel.ClearVacationData();
             }
             //} else
             //{

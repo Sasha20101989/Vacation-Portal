@@ -1,15 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Vacation_Portal.MVVM.Views.Controls
 {
@@ -22,42 +13,42 @@ namespace Vacation_Portal.MVVM.Views.Controls
         {
             InitializeComponent();
         }
-        public void day(DateTime date)
+        public void Day(DateTime date)
         {
             tbDay.Text = date.Day.ToString("d");
             tbDay.Tag = date.Month;
             tbDay.ToolTip = "Рабочий";
         }
-        public void dayWork(DateTime date)
+        public void DayWork(DateTime date)
         {
             tbDay.Foreground = Brushes.Black;
             tbDay.Background = Brushes.Transparent;
             tbDay.ToolTip = "Рабочий в выходной";
         }
-        public void daysOff(DateTime date)
+        public void DaysOff(DateTime date)
         {
             string dayOfWeek = date.DayOfWeek.ToString();
-            if (dayOfWeek == "Saturday" || dayOfWeek == "Sunday")
+            if(dayOfWeek == "Saturday" || dayOfWeek == "Sunday")
             {
                 tbDay.Foreground = Brushes.Red;
                 tbDay.ToolTip = "Выходной";
             }
         }
-        public void dayOff(DateTime date)
+        public void DayOff(DateTime date)
         {
             tbDay.Foreground = Brushes.Red;
             tbDay.ToolTip = "Выходной";
         }
-        public void dayOffNotInPlan(DateTime date)
+        public void DayOffNotInPlan(DateTime date)
         {
             tbDay.Foreground = Brushes.Red;
             tbDay.ToolTip = "Внеплановый";
         }
-        public void holiday(DateTime date)
+        public void Holiday(DateTime date)
         {
-            var converter = new System.Windows.Media.BrushConverter();
+            BrushConverter converter = new System.Windows.Media.BrushConverter();
             tbDay.Foreground = Brushes.Red;
-            tbDay.Background = (Brush)converter.ConvertFromString("#FCA795");
+            tbDay.Background = (Brush) converter.ConvertFromString("#FCA795");
             tbDay.Width = 19;
             tbDay.Height = 18;
             tbDay.ToolTip = "Праздник";

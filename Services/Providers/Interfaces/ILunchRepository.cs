@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
 using System.Threading.Tasks;
 using Vacation_Portal.DTOs;
 using Vacation_Portal.MVVM.Models;
@@ -9,7 +7,7 @@ using Vacation_Portal.MVVM.ViewModels;
 
 namespace Vacation_Portal.Services.Providers.Interfaces
 {
-   public interface ILunchRepository
+    public interface ILunchRepository
     {
         Person Person { get; set; }
         List<HolidayViewModel> Holidays { get; set; }

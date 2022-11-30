@@ -2,28 +2,35 @@
 
 namespace Vacation_Portal.Commands.BaseCommands
 {
-    public abstract class AsyncComandBase : CommandBase {
+    public abstract class AsyncComandBase : CommandBase
+    {
 
-        private bool isExecuting;
+        private bool _isExecuting;
 
-        private bool IsExecuting {
-            get { return isExecuting; }
-            set { isExecuting = value; OnCanExecutedChanged (); }
+        private bool IsExecuting
+        {
+            get => _isExecuting;
+            set { _isExecuting = value; OnCanExecutedChanged(); }
         }
 
-        public override bool CanExecute (object parameter) {
-            return !IsExecuting && base.CanExecute (parameter);
+        public override bool CanExecute(object parameter)
+        {
+            return !IsExecuting && base.CanExecute(parameter);
         }
 
-        public override async void Execute (object parameter) {
+        public override async void Execute(object parameter)
+        {
             IsExecuting = true;
-            try {
-                await ExecuteAsync (parameter);
-            } finally {
+            try
+            {
+                await ExecuteAsync(parameter);
+            }
+            finally
+            {
                 IsExecuting = false;
             }
         }
-        public abstract Task ExecuteAsync (object parameter);
+        public abstract Task ExecuteAsync(object parameter);
 
     }
 }

@@ -1,24 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Input;
 using System.Windows.Media;
-using Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.Models
 {
-    public class Vacation: ViewModelBase
+    public class Vacation : ViewModelBase
     {
         public string Name { get; set; }
         //public int Count { get; set; }
         private int _count;
         public int Count
         {
-            get
-            {
-                return _count;
-            }
+            get => _count;
             set
             {
                 _count = value;
@@ -29,10 +22,9 @@ namespace Vacation_Portal.MVVM.Models
         public DateTime Date_Start { get; set; }
         public DateTime Date_end { get; set; }
 
-
         public override string ToString()
         {
-            return $"{Count}: {Date_Start.ToString("dd.MM.yyyy")} - {Date_end.ToString("dd.MM.yyyy")}";
+            return $"{Count}: {Date_Start:dd.MM.yyyy} - {Date_end:dd.MM.yyyy}";
         }
 
         public override bool Equals(object obj)
@@ -53,6 +45,5 @@ namespace Vacation_Portal.MVVM.Models
             Date_Start = date_Start;
             Date_end = date_end;
         }
-
     }
 }

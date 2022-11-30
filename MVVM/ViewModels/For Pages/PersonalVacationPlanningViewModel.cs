@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands;
+using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.Base;
 using Vacation_Portal.MVVM.ViewModels.Calendar;
@@ -38,6 +39,16 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
+        private List<VacationViewModel> _vacations = new List<VacationViewModel>();
+        public List<VacationViewModel> Vacations
+        {
+            get => _vacations;
+            set
+            {
+                _vacations = value;
+                OnPropertyChanged(nameof(Vacations));
+            }
+        }
         public List<ObservableCollection<DayControl>> Year { get; set; } = new List<ObservableCollection<DayControl>>();
         public ObservableCollection<CalendarViewModel> FullYear { get; set; } = new ObservableCollection<CalendarViewModel>();
 
@@ -209,19 +220,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public int ColumnOfWeekDecember { get; set; }
         public int CountRowsDecember { get; set; }
 
-
-        private ObservableCollection<VacationViewModel> _allDaysToAproval;
-        public ObservableCollection<VacationViewModel> AllDaysToAproval
-        {
-            get => _allDaysToAproval;
-            set
-            {
-                _allDaysToAproval = value;
-                OnPropertyChanged(nameof(AllDaysToAproval));
-
-            }
-        }
-
         private ObservableCollection<Vacation> _vacationsToAproval;
         public ObservableCollection<Vacation> VacationsToAproval
         {
@@ -243,7 +241,16 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 OnPropertyChanged(nameof(VacationTypes));
             }
         }
-
+        private ObservableCollection<string> _vacationUniqNames = new ObservableCollection<string>();
+        public ObservableCollection<string> VacationUniqNames
+        {
+            get => _vacationUniqNames;
+            set
+            {
+                _vacationUniqNames = value;
+                OnPropertyChanged(nameof(VacationUniqNames));
+            }
+        }
 
         #region Person props
         private Person _person;
@@ -301,7 +308,20 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private int SelectedMonth { get; set; }
         public string SelectedNameDay { get; private set; }
         public bool CalendarClickable { get; set; }
-        private DateTime CurrentDate { get; set; } = DateTime.Now;
+
+        private DateTime _currentDate = DateTime.Now;
+        public DateTime CurrentDate
+        {
+            get
+            {
+                return _currentDate;
+            }
+            set
+            {
+                _currentDate = value;
+                OnPropertyChanged(nameof(CurrentDate));
+            }
+        }
         private DateTime FirstSelectedDate { get; set; }
         private DateTime SecondSelectedDate { get; set; }
         private string DayAddition { get; set; }
@@ -315,13 +335,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 _displayedDateString = value;
                 OnPropertyChanged(nameof(DisplayedDateString));
-                if(DisplayedDateString != "")
-                {
-                    IsGapVisible = true;
-                } else
-                {
-                    IsGapVisible = false;
-                }
+                IsGapVisible = DisplayedDateString != "";
             }
         }
 
@@ -373,6 +387,33 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
             }
         }
+
+        private bool _isNextYearEnabled = true;
+        public bool IsNextYearEnabled
+        {
+            get
+            {
+                return _isNextYearEnabled;
+            }
+            set
+            {
+                _isNextYearEnabled = value;
+                OnPropertyChanged(nameof(IsNextYearEnabled));
+            }
+        }
+        private bool _isPreviousYearEnabled = false;
+        public bool IsPreviousYearEnabled
+        {
+            get
+            {
+                return _isPreviousYearEnabled;
+            }
+            set
+            {
+                _isPreviousYearEnabled = value;
+                OnPropertyChanged(nameof(IsPreviousYearEnabled));
+            }
+        }
         #endregion Button Interaction
 
         #region Lerning props
@@ -402,6 +443,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #endregion Lerning props
 
         #region Vacation props
+
+        public Vacation UpdatedVacation { get; set; }
+
         private Vacation _selectedItem;
         public Vacation SelectedItem
         {
@@ -410,14 +454,11 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 SetProperty(ref _selectedItem, value);
                 OnPropertyChanged(nameof(SelectedItem));
-                if(SelectedItem.Count > 0)
+                if(SelectedItem != null)
                 {
-                    CalendarClickable = true;
-                } else
-                {
-                    CalendarClickable = false;
+                    CalendarClickable = SelectedItem.Count > 0;
                 }
-                clearVacationData();
+                ClearVacationData();
             }
         }
 
@@ -529,6 +570,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public ICommand AddToApprovalList { get; set; }
         public ICommand CancelVacation { get; set; }
         public ICommand CheckVacations { get; set; }
+        public AnotherCommandImplementation MovePrevYearCommand { get; set; }
+        public AnotherCommandImplementation MoveNextYearCommand { get; set; }
         private bool CanExecuteSelectedCommand(object data)
         {
             return true;
@@ -558,7 +601,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         {
             _vacationsToAproval = new ObservableCollection<Vacation>();
             _vacationTypes = new ObservableCollection<Vacation>();
-            _allDaysToAproval = new ObservableCollection<VacationViewModel>();
             PersonName = App.API.Person.ToString();
             Person = App.API.Person;
             IsEmployee = true;
@@ -569,6 +611,24 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             AddToApprovalList = new AddToApprovalListCommand(this);
             CancelVacation = new RelayCommand(SelectedCommandHandler, CanExecuteSelectedCommand);
             _initializeLazy = new Lazy<Task>(async () => await Initialize());
+            MovePrevYearCommand = new AnotherCommandImplementation(
+               _ =>
+               {
+                   IsPreviousYearEnabled = false;
+                   IsNextYearEnabled = true;
+                   CurrentDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+                   //LoadVacationTypesForYear(); когда появится база
+                   LoadVacationTypesForYear2022();
+               });
+            MoveNextYearCommand = new AnotherCommandImplementation(
+               _ =>
+               {
+                   IsPreviousYearEnabled = true;
+                   IsNextYearEnabled = false;
+                   CurrentDate = new DateTime(DateTime.Now.Year + 1, DateTime.Now.Month, DateTime.Now.Day);
+                   //LoadVacationTypesForYear(); когда появится база
+                   LoadVacationTypesForYear2023();
+               });
             LoadModel.Execute(new object());
             App.API.OnHolidaysChanged += OnHolidaysChanged;
         }
@@ -628,11 +688,11 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
                 if(ClicksOnCalendar >= 3)
                 {
-                    blockAndPaintButtons();
+                    BlockAndPaintButtons();
                     FirstSelectedDate = newDate;
                     SecondSelectedDate = newDate;
                     ClicksOnCalendar = 1;
-                    clearColorAndBlocked();
+                    ClearColorAndBlocked();
                 }
 
                 if(ClicksOnCalendar == 1)
@@ -643,7 +703,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     {
                         if(SelectedNameDay != "Праздник")
                         {
-                            DayAddition = getDayAddition(CountSelectedDays);
+                            DayAddition = GetDayAddition(CountSelectedDays);
                             DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.yyyy");
                             _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, FirstSelectedDate, FirstSelectedDate);
                         } else
@@ -665,7 +725,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                             if(SelectedNameDay != "Праздник")
                             {
 
-                                DayAddition = getDayAddition(CountSelectedDays);
+                                DayAddition = GetDayAddition(CountSelectedDays);
                                 DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
                                 _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, FirstSelectedDate, SecondSelectedDate);
                             } else
@@ -684,7 +744,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                             if(SelectedNameDay != "Праздник")
                             {
 
-                                DayAddition = getDayAddition(CountSelectedDays);
+                                DayAddition = GetDayAddition(CountSelectedDays);
                                 DisplayedDateString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
                                 _plannedItem = new Vacation(SelectedItem.Name, CountSelectedDays, SelectedItem.Color, SecondSelectedDate, FirstSelectedDate);
                             } else
@@ -696,7 +756,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                             ShowAlert("Выбранный промежуток больше доступного колличества дней");
                         }
                     }
-
                 }
                 if(CountSelectedDays <= SelectedItem.Count)
                 {
@@ -730,36 +789,35 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
                         if(!isGoToNext.Contains(false))
                         {
-                            blockAndPaintButtons();
+                            BlockAndPaintButtons();
                         } else
                         {
                             ShowAlert("Пересечение отпусков не допустимо");
-                            blockAndPaintButtons();
+                            BlockAndPaintButtons();
                             FirstSelectedDate = newDate;
                             SecondSelectedDate = newDate;
                             ClicksOnCalendar = 0;
                             CountSelectedDays = 0;
                             DisplayedDateString = "";
-                            clearColorAndBlocked();
+                            ClearColorAndBlocked();
                         }
-
                     }
                 } else
                 {
 
                     ShowAlert("Выбранный промежуток больше доступного колличества дней");
-                    blockAndPaintButtons();
+                    BlockAndPaintButtons();
                     FirstSelectedDate = newDate;
                     SecondSelectedDate = newDate;
                     ClicksOnCalendar = 0;
                     CountSelectedDays = 0;
                     DisplayedDateString = "";
-                    clearColorAndBlocked();
+                    ClearColorAndBlocked();
                     //PlannedItem = null;
                 }
             }
         }
-        private void clearColorAndBlocked()
+        private void ClearColorAndBlocked()
         {
             foreach(ObservableCollection<DayControl> month in Year)
             {
@@ -772,12 +830,12 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                         Button button = elem as Button;
                         button.Background = Brushes.Transparent;
                         //button.IsEnabled = true;
-                        fillPlanedDays(button);
+                        FillPlanedDays(button);
                     }
                 }
             }
         }
-        private void fillPlanedDays(Button button)
+        private void FillPlanedDays(Button button)
         {
             TextBlock textBlock = button.Content as TextBlock;
             for(int i = 0; i < VacationsToAproval.Count; i++)
@@ -822,11 +880,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     }
                 }
             }
-
-
-
         }
-        private void blockAndPaintButtons()
+        private void BlockAndPaintButtons()
         {
             if(PlannedItem != null)
             {
@@ -854,7 +909,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                                     {
                                         PlannedItem.Count--;
                                         CountSelectedDays--;
-                                        DayAddition = getDayAddition(CountSelectedDays);
+                                        DayAddition = GetDayAddition(CountSelectedDays);
                                         DisplayedDateString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
                                     }
 
@@ -867,21 +922,19 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        public void clearVacationData()
+        public void ClearVacationData()
         {
             DisplayedDateString = "";
             ClicksOnCalendar = 0;
-            clearColorAndBlocked();
+            ClearColorAndBlocked();
         }
         #endregion Calendar Interaction
 
         #region Task Lazy
         private async Task Initialize()
         {
-
-            loadVacationTypes();
+            LoadVacationTypesForYear2022();//Передаем в параметр текущий год
             await Task.Run(async () => await RenderCalendars());
-
         }
 
         public async Task Load()
@@ -899,46 +952,96 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         #region OnStartup
 
-        private void CheckRang()
+        //private void CheckRang()
+        //{
+        //    if(App.API.Person.Is_Supervisor)
+        //    {
+        //        IsSupervisor = true;
+        //    } else if(App.API.Person.Is_HR)
+        //    {
+        //        IsHR = true;
+        //    } else
+        //    {
+        //        IsEmployee = true;
+        //    }
+
+        //    //Holidays = await _метод получения данных
+        //    //Weekends = await _метод получения данных
+        //}
+
+        private void LoadVacationTypesForYear2022()
         {
-            if(App.API.Person.Is_Supervisor)
+            //Vacations = await _метод получения данных(CurrentDate.Year);
+            //IEnumerable<Vacation> vacations = await App.API.GetVacationssAsync();
+            //Vacations.AddRange(vacations);
+            //OnVacationsLoaded(Vacations);
+            VacationTypes.Clear();
+            VacationUniqNames.Clear();
+            Vacations = new List<VacationViewModel>
             {
-                IsSupervisor = true;
-            } else if(App.API.Person.Is_HR)
+                new VacationViewModel("Основной", new DateTime(DateTime.Now.Year, 1, 1), new DateTime(DateTime.Now.Year, 1, 18)),
+                new VacationViewModel("Основной", new DateTime(DateTime.Now.Year, 1, 20), new DateTime(DateTime.Now.Year, 1, 29)),
+                new VacationViewModel("Ненормированность", new DateTime(DateTime.Now.Year, 2, 1), new DateTime(DateTime.Now.Year, 2, 3)),
+                new VacationViewModel("Вредность", new DateTime(DateTime.Now.Year, 3, 1), new DateTime(DateTime.Now.Year, 3, 7)),
+                new VacationViewModel("Стаж", new DateTime(DateTime.Now.Year, 4, 1), new DateTime(DateTime.Now.Year, 4, 2)),
+
+            };
+            BrushConverter converter = new System.Windows.Media.BrushConverter();
+            foreach(VacationViewModel item in Vacations)
             {
-                IsHR = true;
-            } else
-            {
-                IsEmployee = true;
+                int countDays = item.Count;
+                Brush vacationColor = null;
+                Vacation vacation;
+                if(!VacationUniqNames.Contains(item.Name))
+                {
+                    VacationUniqNames.Add(item.Name);
+                    if(item.Name == "Вредность")
+                    {
+                        MyColors color = MyColors.Вредность;
+                        vacationColor = (Brush) converter.ConvertFromString(color.ToDescriptionString());
+                    } else if(item.Name == "Ненормированность")
+                    {
+                        MyColors color = MyColors.Ненормированность;
+                        vacationColor = (Brush) converter.ConvertFromString(color.ToDescriptionString());
+                    } else if(item.Name == "Основной")
+                    {
+                        MyColors color = MyColors.Основной;
+                        vacationColor = (Brush) converter.ConvertFromString(color.ToDescriptionString());
+                    } else if(item.Name == "Стаж")
+                    {
+                        MyColors color = MyColors.Стаж;
+                        vacationColor = (Brush) converter.ConvertFromString(color.ToDescriptionString());
+                    }
+                    vacation = new Vacation(item.Name, countDays, vacationColor, DateTime.Now, DateTime.Now);
+                    VacationTypes.Add(vacation);
+                } else
+                {
+                    vacation = new Vacation(item.Name, item.Count, vacationColor, item.DateStart, item.DateEnd);
+                    UpdateVacation(vacation, countDays);
+                }
             }
-
-            //Holidays = await _метод получения данных
-            //Weekends = await _метод получения данных
-
-
         }
 
-        private void loadVacationTypes()
+        private void UpdateVacation(Vacation vacation, int count)
         {
-            //VacationTypes = await _метод получения данных
+            foreach(Vacation item in VacationTypes)
+            {
+                if(item.Name == vacation.Name)
+                {
+                    item.Count += count;
+                }
+            }
+        }
+
+        private void LoadVacationTypesForYear2023()
+        {
+            //VacationTypes = await _метод получения данных(CurrentDate.Year);
+            VacationTypes.Clear();
             BrushConverter converter = new System.Windows.Media.BrushConverter();
             VacationTypes.Add(new Vacation("Основной", 28, (Brush) converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
             VacationTypes.Add(new Vacation("Ненормированность", 3, (Brush) converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
             VacationTypes.Add(new Vacation("Вредность", 7, (Brush) converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
             VacationTypes.Add(new Vacation("Стаж", 2, (Brush) converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
-
-            //VacationTypess.Add(new Vacation("Основной", 28, (Brush)converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
-            //VacationTypess.Add(new Vacation("Ненормированность", 3, (Brush)converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
-            //VacationTypess.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
-            //VacationTypess.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
-            //VacationTypess.Add(new Vacation("Основной", 28, (Brush)converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
-            //VacationTypess.Add(new Vacation("Ненормированность", 3, (Brush)converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
-            //VacationTypess.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
-            //VacationTypess.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
-            //VacationTypess.Add(new Vacation("Основной", 28, (Brush)converter.ConvertFromString("#9B4F2D"), DateTime.Now, DateTime.Now));
-            //VacationTypess.Add(new Vacation("Ненормированность", 3, (Brush)converter.ConvertFromString("#2D6D9B"), DateTime.Now, DateTime.Now));
-            //VacationTypess.Add(new Vacation("Вредность", 0, (Brush)converter.ConvertFromString("#9B2D84"), DateTime.Now, DateTime.Now));
-            //VacationTypess.Add(new Vacation("Стаж", 2, (Brush)converter.ConvertFromString("#9B8C2D"), DateTime.Now, DateTime.Now));
         }
 
         private async Task RenderCalendars()
@@ -972,8 +1075,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                  DaysNovember.Clear();
                  DaysDecember.Clear();
 
-
-
                  for(int j = 1; j <= 12; j++)
                  {
                      int days = DateTime.DaysInMonth(CurrentDate.Year, j);
@@ -1003,10 +1104,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                              WorkDaysCount = days - DayOffCount;
                          }
 
-                         ucDays.day(date);
-                         ucDays.daysOff(date);
+                         ucDays.Day(date);
+                         ucDays.DaysOff(date);
                          ucDays.PreviewMouseLeftButtonDown += UcDays_PreviewMouseLeftButtonDown;
-
 
                          for(int k = 0; k < App.API.Holidays.Count; k++)
                          {
@@ -1015,12 +1115,12 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                              {
                                  if(holiday.TypeOfHoliday == "Выходной")
                                  {
-                                     ucDays.dayOff(date);
+                                     ucDays.DayOff(date);
                                      DayOffCount++;
                                      WorkDaysCount = days - DayOffCount;
                                  } else if(holiday.TypeOfHoliday == "Праздник")
                                  {
-                                     ucDays.holiday(date);
+                                     ucDays.Holiday(date);
                                      string d = date.DayOfWeek.ToString("d");
                                      if(d != "6" && d != "0")
                                      {
@@ -1034,11 +1134,11 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                                      DayOffCount++;
                                      UnscheduledCount++;
                                      WorkDaysCount = days - DayOffCount;
-                                     ucDays.dayOffNotInPlan(date);
+                                     ucDays.DayOffNotInPlan(date);
                                  } else if(holiday.TypeOfHoliday == "Рабочий в выходной")
                                  {
                                      WorkingOnHolidayCount++;
-                                     ucDays.dayWork(date);
+                                     ucDays.DayWork(date);
                                      DayOffCount--;
                                      WorkDaysCount = days - DayOffCount;
                                  }
@@ -1059,7 +1159,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
              });
         }
 
-
         #endregion OnStartup
 
         #region Utils
@@ -1068,7 +1167,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             _sampleError.ErrorName.Text = alert;
             Task<object> result = DialogHost.Show(_sampleError, "RootDialog", ExtendedClosingEventHandler);
         }
-        private string getDayAddition(int days)
+        private string GetDayAddition(int days)
         {
             if(days < 0)
             {
@@ -1092,19 +1191,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 default:
                     return days + " Дней";
             }
-
         }
         public Range<DateTime> ReturnRange(Vacation Item)
         {
-            Range<DateTime> range;
-
-            if(Item.Date_end > Item.Date_Start)
-            {
-                range = Item.Date_Start.To(Item.Date_end);
-            } else
-            {
-                range = Item.Date_end.To(Item.Date_Start);
-            }
+            Range<DateTime> range = Item.Date_end > Item.Date_Start ? Item.Date_Start.To(Item.Date_end) : Item.Date_end.To(Item.Date_Start);
             return range;
         }
         private void SelectedCommandHandler(object data)
@@ -1125,7 +1215,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 VacationsToAproval.Remove(deletedItem);
                 PlannedIndex = 0;
                 //SelectedItem = VacationTypes[index];
-                clearColorAndBlocked();
+                ClearColorAndBlocked();
             }
         }
         #endregion Utils

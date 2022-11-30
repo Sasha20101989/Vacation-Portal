@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Windows.Input;
 using Vacation_Portal.Commands.HolidaysViewCommands;
 using Vacation_Portal.MVVM.Models;
@@ -27,7 +26,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 OnPropertyChanged(nameof(SelectedItem));
                 ClearErrors(nameof(CurrentDate));
 
-                if (CurrentDate == null)
+                if(CurrentDate == null)
                 {
                     AddErrors("Выберете дату", nameof(CurrentDate));
                     ErrorMessage = "Выберете дату";
@@ -51,10 +50,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private bool _isSaving;
         public bool IsSaving
         {
-            get
-            {
-                return _isSaving;
-            }
+            get => _isSaving;
             set
             {
                 _isSaving = value;
@@ -65,10 +61,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private bool _isLoading;
         public bool IsLoading
         {
-            get
-            {
-                return _isLoading;
-            }
+            get => _isLoading;
             set
             {
                 _isLoading = value;
@@ -79,10 +72,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private string _errorMessage;
         public string ErrorMessage
         {
-            get
-            {
-                return _errorMessage;
-            }
+            get => _errorMessage;
             set
             {
                 _errorMessage = value;
@@ -96,10 +86,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private string _successMessage;
         public string SuccessMessage
         {
-            get
-            {
-                return _successMessage;
-            }
+            get => _successMessage;
             set
             {
                 _successMessage = value;
@@ -116,7 +103,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
         private void AddErrors(string errorMessage, string propertyName)
         {
-            if (!_propertyNameToErrorsDictionary.ContainsKey(propertyName))
+            if(!_propertyNameToErrorsDictionary.ContainsKey(propertyName))
             {
                 _propertyNameToErrorsDictionary.Add(propertyName, new List<string>());
             }
@@ -169,7 +156,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private DateTime _currentDate;
         public DateTime CurrentDate
         {
-            get { return _currentDate; }
+            get => _currentDate;
             set
             {
                 _currentDate = value;
@@ -181,10 +168,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private ObservableCollection<Holiday> _holidayTypes;
         public ObservableCollection<Holiday> HolidayTypes
         {
-            get
-            {
-                return _holidayTypes;
-            }
+            get => _holidayTypes;
             set
             {
                 _holidayTypes = value;
@@ -196,10 +180,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private ObservableCollection<HolidayViewModel> _holidays;
         public ObservableCollection<HolidayViewModel> Holidays
         {
-            get
-            {
-                return _holidays;
-            }
+            get => _holidays;
             set
             {
                 _holidays = value;
@@ -212,7 +193,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public ICommand Submit { get; }
         public ICommand Load { get; }
         public ICommand CancelHoliday { get; }
-        
+
         public HolidaysViewModel()
         {
             _holidayTypes = new ObservableCollection<Holiday>();

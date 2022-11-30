@@ -1,5 +1,5 @@
-﻿using System.Windows.Media;
-using MaterialDesignThemes.Wpf;
+﻿using MaterialDesignThemes.Wpf;
+using System.Windows.Media;
 using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.Base;
@@ -26,7 +26,7 @@ namespace Vacation_Portal.MVVM.ViewModels.ForPages
             get => _activeScheme;
             set
             {
-                if (_activeScheme != value)
+                if(_activeScheme != value)
                 {
                     _activeScheme = value;
                     OnPropertyChanged();
@@ -40,12 +40,12 @@ namespace Vacation_Portal.MVVM.ViewModels.ForPages
             get => _selectedColor;
             set
             {
-                if (_selectedColor != value)
+                if(_selectedColor != value)
                 {
                     _selectedColor = value;
                     OnPropertyChanged();
 
-                    if (value is Color color)
+                    if(value is Color color)
                     {
                         ChangeCustomColor(color);
                     }
@@ -55,9 +55,9 @@ namespace Vacation_Portal.MVVM.ViewModels.ForPages
 
         private void ChangeCustomColor(object obj)
         {
-            var color = (Color)obj;
+            Color color = (Color) obj;
 
-            if (ActiveScheme == ColorScheme.Primary)
+            if(ActiveScheme == ColorScheme.Primary)
             {
 
                 _paletteHelper.ChangePrimaryColor(color);

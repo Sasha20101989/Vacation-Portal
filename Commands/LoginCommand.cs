@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 
 namespace Vacation_Portal.Commands
 {
-   public class LoginCommand:AsyncComandBase
+    public class LoginCommand : AsyncComandBase
     {
-        private MainWindowViewModel _mainWindowViewModel;
+        private readonly MainWindowViewModel _mainWindowViewModel;
         public LoginCommand(MainWindowViewModel mainWindowViewModel)
         {
             _mainWindowViewModel = mainWindowViewModel;

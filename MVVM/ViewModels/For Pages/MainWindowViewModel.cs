@@ -1,12 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -18,18 +13,15 @@ using Vacation_Portal.Commands.ThemeInteractionCommands;
 using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.Base;
-using Vacation_Portal.MVVM.ViewModels.ForPages;
 using Vacation_Portal.MVVM.Views;
-using Vacation_Portal.MVVM.Views.Controls;
-using Vacation_Portal.Services.Providers;
 
 namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 {
     public class MainWindowViewModel : ViewModelBase
     {
         #region Pages
-        private static readonly string HomePage = "Главная страница";
-        private static readonly string SettingsPage = "Настройки";
+        private static readonly string _homePage = "Главная страница";
+        private static readonly string _settingsPage = "Настройки";
         //private static readonly string SupervisorPage = "Страница руководителя";
         //private static readonly string HRPage = "Страница HR сотрудника";
         //private static readonly string Табельщик = "Страница HR сотрудника";
@@ -37,10 +29,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #endregion
 
         #region Addons
-        private readonly PaletteHelper PaletteHelper = new PaletteHelper();
+        private readonly PaletteHelper _paletteHelper = new PaletteHelper();
         private Color? PrimaryColor { get; set; }
         private readonly MainWindowViewModel _viewModel;
-        private readonly HomeViewModel HomeViewModel = new HomeViewModel();
+        private readonly HomeViewModel _homeViewModel = new HomeViewModel();
         public ICollectionView MenuItemsView;
         #endregion
 
@@ -65,7 +57,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             get => _activeScheme;
             set
             {
-                if (_activeScheme != value)
+                if(_activeScheme != value)
                 {
                     _activeScheme = value;
                     OnPropertyChanged();
@@ -79,12 +71,12 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             get => _selectedColor;
             set
             {
-                if (_selectedColor != value)
+                if(_selectedColor != value)
                 {
                     _selectedColor = value;
                     OnPropertyChanged();
 
-                    if (value is Color color)
+                    if(value is Color color)
                     {
                         ChangeCustomColor(color);
                     }
@@ -95,10 +87,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private bool _isCheckedTheme;
         public bool IsCheckedTheme
         {
-            get
-            {
-                return _isCheckedTheme;
-            }
+            get => _isCheckedTheme;
             set
             {
                 _isCheckedTheme = value;
@@ -110,10 +99,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private bool _isLoading;
         public bool IsLoading
         {
-            get
-            {
-                return _isLoading;
-            }
+            get => _isLoading;
             set
             {
                 _isLoading = value;
@@ -125,10 +111,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private string _adminString = string.Empty;
         public string AdminString
         {
-            get
-            {
-                return _adminString;
-            }
+            get => _adminString;
             set
             {
                 _adminString = value;
@@ -142,7 +125,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             get => _searchKeyword;
             set
             {
-                if (SetProperty(ref _searchKeyword, value))
+                if(SetProperty(ref _searchKeyword, value))
                 {
                     MenuItemsView.Refresh();
                 }
@@ -158,7 +141,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
 
                 SetProperty(ref _selectedItem, value);
-                if (_selectedItem != null)
+                if(_selectedItem != null)
                 {
                     Title = _selectedItem.Name;
                 }
@@ -180,7 +163,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private string _title;
         public string Title
         {
-            get { return _title; }
+            get => _title;
             set
             {
                 _title = value;
@@ -191,10 +174,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private ObservableCollection<MenuItem> _menuItems;
         public ObservableCollection<MenuItem> MenuItems
         {
-            get
-            {
-                return _menuItems;
-            }
+            get => _menuItems;
             set
             {
                 _menuItems = value;
@@ -204,10 +184,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private ObservableCollection<MenuItem> _mainMenuItems;
         public ObservableCollection<MenuItem> MainMenuItems
         {
-            get
-            {
-                return _mainMenuItems;
-            }
+            get => _mainMenuItems;
             set
             {
                 _mainMenuItems = value;
@@ -219,8 +196,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         public MainWindowViewModel()
         {
-            
-            ITheme theme = PaletteHelper.GetTheme();
+
+            ITheme theme = _paletteHelper.GetTheme();
             PrimaryColor = theme.PrimaryMid.Color;
             SelectedColor = PrimaryColor;
 
@@ -228,13 +205,12 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             _menuItems = new ObservableCollection<MenuItem>();
             _mainMenuItems = new ObservableCollection<MenuItem>();
 
-            MenuItems.Add(new MenuItem(HomePage, typeof(HomeView), selectedIcon: PackIconKind.Home, unselectedIcon: PackIconKind.HomeOutline, HomeViewModel));
+            MenuItems.Add(new MenuItem(_homePage, typeof(HomeView), selectedIcon: PackIconKind.Home, unselectedIcon: PackIconKind.HomeOutline, _homeViewModel));
             //MenuItems.Add(new MenuItem("отпуска", typeof(HolidaysView), selectedIcon: PackIconKind.BoxCog, unselectedIcon: PackIconKind.BoxCogOutline, new HolidaysViewModel()));
             //MenuItems.Add(new MenuItem(PersonalVacationPlanning,typeof(PersonalVacationPlanningView),selectedIcon: PackIconKind.BagPersonalTag,unselectedIcon: PackIconKind.BagPersonalTagOutline,new PersonalVacationPlanningViewModel()));
 
-            HomeViewModel.IsLogginIn = true;
+            _homeViewModel.IsLogginIn = true;
 
-           
             HomeCommand = new AnotherCommandImplementation(
             _ =>
             {
@@ -245,8 +221,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             MovePrevPageCommand = new AnotherCommandImplementation(
                 _ =>
                 {
-                    if (!string.IsNullOrWhiteSpace(SearchKeyword))
+                    if(!string.IsNullOrWhiteSpace(SearchKeyword))
+                    {
                         SearchKeyword = string.Empty;
+                    }
 
                     SelectedIndex--;
                 },
@@ -255,8 +233,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             MoveNextPageCommand = new AnotherCommandImplementation(
                _ =>
                {
-                   if (!string.IsNullOrWhiteSpace(SearchKeyword))
+                   if(!string.IsNullOrWhiteSpace(SearchKeyword))
+                   {
                        SearchKeyword = string.Empty;
+                   }
 
                    SelectedIndex++;
                },
@@ -267,9 +247,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 {
                     SearchKeyword = string.Empty;
                     int index = 0;
-                    for (int i = 0; i < MenuItems.Count; i++)
+                    for(int i = 0; i < MenuItems.Count; i++)
                     {
-                        if (MenuItems[i].Name == SettingsPage)
+                        if(MenuItems[i].Name == _settingsPage)
                         {
                             index = i;
                             break;
@@ -284,7 +264,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             DismissAllNotificationsCommand = new DismissAllNotificationsCommand(_viewModel);
             ThemeChangeCommand = new ThemeChangeCommand(_viewModel);
 
-            AddNewNotificationCommand.Execute(new object()); 
+            AddNewNotificationCommand.Execute(new object());
             LoginCommand.Execute(new object());
         }
         public async Task GetUserAsync()
@@ -296,7 +276,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         private void OnLoginSuccesed(Person person)
         {
-            if (person != null)
+            if(person != null)
             {
                 //IsLoginSuccesed = true;
                 person.GetSettings();
@@ -311,38 +291,33 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         {
             MenuItemsView = CollectionViewSource.GetDefaultView(MenuItems);
             MenuItemsView.Filter = MenuItemsFilter;
-            HomeViewModel.IsLogginIn = false;
-            HomeViewModel.IsLoginSuccesed = true;
+            _homeViewModel.IsLogginIn = false;
+            _homeViewModel.IsLoginSuccesed = true;
         }
 
         private void OnPerson_SettingsLoad(Settings obj)
         {
-            Color color = (Color)ColorConverter.ConvertFromString(App.API.Person.Settings.Color);
+            Color color = (Color) ColorConverter.ConvertFromString(App.API.Person.Settings.Color);
             SelectedColor = color;
         }
 
         private void ChangeCustomColor(object obj)
         {
-            var color = (Color)obj;
+            Color color = (Color) obj;
 
-            if (ActiveScheme == ColorScheme.Primary)
+            if(ActiveScheme == ColorScheme.Primary)
             {
 
-                PaletteHelper.ChangePrimaryColor(color);
+                _paletteHelper.ChangePrimaryColor(color);
                 PrimaryColor = color;
             }
         }
 
         public bool MenuItemsFilter(object obj)
         {
-            if (string.IsNullOrWhiteSpace(_searchKeyword))
-            {
-                return true;
-            }
-
-            return obj is MenuItem item
-                   && item.Name.ToLower().Contains(_searchKeyword.ToLower());
+            return string.IsNullOrWhiteSpace(_searchKeyword)
+                   || (obj is MenuItem item
+                   && item.Name.ToLower().Contains(_searchKeyword.ToLower()));
         }
-
     }
 }

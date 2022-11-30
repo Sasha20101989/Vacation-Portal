@@ -187,7 +187,7 @@
                     <controls:SupervisorView VerticalAlignment="Top" Margin="6,6,16,6"
                         Visibility="{Binding Person.Is_Supervisor, Converter={StaticResource BooleanToVisibilityConverter}}"/>-->
                     <Viewbox>
-                    <controls:PersonalView Margin="6,36,6,6"
+                    <controls:PersonalView Margin="6,49,6,6"
                         Visibility="{Binding IsEmployee,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     </Viewbox>
                 </StackPanel>
@@ -217,15 +217,36 @@
                         <md:TransitioningContent OpeningEffectsOffset="0:0:0"
                                 OpeningEffect="{md:TransitionEffect Kind=SlideInFromRight, Duration=0:0:1.20}">
                             <StackPanel>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <TextBlock Text="1" Foreground="Red"/>
-                                        <TextBlock Text=" - выходной день"/>
-                                        <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" Background="#FCA795" Width="20" Height="20" TextAlignment="Center"/>
-                                        <TextBlock Text=" - праздничный день"/>
-                                        <TextBlock Margin="20 0 0 0" Text="1"/>
-                                        <TextBlock Text=" - рабочий день"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" VerticalAlignment="Center"/>
+                                        <TextBlock Text=" - выходной день" VerticalAlignment="Center"/>
+                                        <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" Background="#FCA795" Width="20" Height="18" TextAlignment="Center" VerticalAlignment="Center"/>
+                                        <TextBlock Text=" - праздничный день" VerticalAlignment="Center"/>
+                                        <TextBlock Margin="20 0 0 0" Text="1" VerticalAlignment="Center"/>
+                                        <TextBlock Text=" - рабочий день" VerticalAlignment="Center"/>
                                     </StackPanel>
-
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Margin="5 0 0 0" ToolTip="Предыдущий год"
+                                                Style="{StaticResource MaterialDesignToolButton}"
+                                                Content="{md:PackIcon Kind=ArrowLeft, Size=15}" 
+                                                IsEnabled="{Binding IsPreviousYearEnabled,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                Command="{Binding MovePrevYearCommand}"
+                                                Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"/>
+                                        <TextBlock Margin="10 0 10 0" Text="{Binding CurrentDate.Year}" Foreground="{DynamicResource PrimaryHueMidBrush}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
+                                        <Button Margin="0 0 5 0"  ToolTip="Следующий год"
+                                                Style="{StaticResource MaterialDesignToolButton}"
+                                                Content="{md:PackIcon Kind=ArrowRight, Size=15}" 
+                                                IsEnabled="{Binding IsNextYearEnabled,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                Command="{Binding MoveNextYearCommand}"
+                                                Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"/>
+                                    </StackPanel>
+                                </Grid>
                                 <controls:FullCalendar HorizontalAlignment="Left" VerticalAlignment="Top"/>
                             </StackPanel>
 

@@ -11,14 +11,16 @@ namespace Vacation_Portal.HostBuilders
     {
         public static IHostBuilder CreateDbConnectionFactory(this IHostBuilder hostBuilder)
         {
-            hostBuilder.ConfigureServices((hostContext, services) => {
+            hostBuilder.ConfigureServices((hostContext, services) =>
+            {
                 services.AddSingleton(new SqlDbConnectionFactory(hostContext.Configuration.GetConnectionString("Default")));
             });
             return hostBuilder;
-        }      
+        }
         public static IHostBuilder AddMainWindow(this IHostBuilder hostBuilder)
         {
-            hostBuilder.ConfigureServices((hostContext, services) => {
+            hostBuilder.ConfigureServices((hostContext, services) =>
+            {
                 //services.AddSingleton<VacationSummary>();
                 services.AddSingleton((s) => new MainWindowViewModel());
                 services.AddSingleton(s => new MainWindow()

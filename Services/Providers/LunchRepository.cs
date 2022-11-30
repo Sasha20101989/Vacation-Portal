@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Dapper;
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Vacation_Portal.DbContext;
-using Vacation_Portal.MVVM.Models;
-using Vacation_Portal.Services.Providers.Interfaces;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
-using System.Windows;
-using Dapper;
-using Vacation_Portal.DTOs;
-using Vacation_Portal.MVVM.ViewModels;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows;
+using Vacation_Portal.DbContext;
+using Vacation_Portal.DTOs;
+using Vacation_Portal.MVVM.Models;
+using Vacation_Portal.MVVM.ViewModels;
+using Vacation_Portal.Services.Providers.Interfaces;
 
 namespace Vacation_Portal.Services.Providers
 {
@@ -24,7 +24,7 @@ namespace Vacation_Portal.Services.Providers
 
         protected virtual bool SetProperty<T>(ref T member, T value, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(member, value))
+            if(EqualityComparer<T>.Default.Equals(member, value))
             {
                 return false;
             }
@@ -62,19 +62,17 @@ namespace Vacation_Portal.Services.Providers
             //Holidays.Add(new HolidayViewModel("Праздник", new DateTime(2022, 11, 6)));
         }
 
-        public Person Person {get;set; } = new Person("я", "я", "я", "ru13779", 1, false, false);
+        public Person Person { get; set; } = new Person("я", "я", "я", "ru13779", 1, false, false);
         private List<HolidayViewModel> _holidays;
-        public List<HolidayViewModel> Holidays {
-            get
-            {
-                return _holidays;
-            }
+        public List<HolidayViewModel> Holidays
+        {
+            get => _holidays;
             set
             {
                 _holidays = value;
                 OnPropertyChanged(nameof(Holidays));
             }
-        } 
+        }
         public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
         public Action<List<HolidayViewModel>> OnHolidaysChanged { get; set; }
 
@@ -118,25 +116,21 @@ namespace Vacation_Portal.Services.Providers
 
         public async Task<IEnumerable<PersonDTO>> LoginAsync(string account)
         {
-            using (IDbConnection database = _sqlDbConnectionFactory.Connect())
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            object parameters = new
             {
-                object parameters = new
-                {
-                    Account = account
-                };
-                try
-                {
-                    IEnumerable<PersonDTO> userDTOs = await database.QueryAsync<PersonDTO>("usp_Load_Description_For_User", parameters, commandType: CommandType.StoredProcedure);
-                    Persons.AddRange(userDTOs);
-                    Person = new Person(Persons[0].Name, Persons[0].Surname, Persons[0].Patronymic, Persons[0].Account, Persons[0].Department_Id, Persons[0].Is_Supervisor, Persons[0].Is_HR);
-                    return userDTOs;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                    return null;
-                }
-
+                Account = account
+            };
+            try
+            {
+                IEnumerable<PersonDTO> userDTOs = await database.QueryAsync<PersonDTO>("usp_Load_Description_For_User", parameters, commandType: CommandType.StoredProcedure);
+                Persons.AddRange(userDTOs);
+                Person = new Person(Persons[0].Name, Persons[0].Surname, Persons[0].Patronymic, Persons[0].Account, Persons[0].Department_Id, Persons[0].Is_Supervisor, Persons[0].Is_HR);
+                return userDTOs;
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
             }
         }
 
@@ -144,6 +138,5 @@ namespace Vacation_Portal.Services.Providers
         {
             throw new NotImplementedException();
         }
-
     }
 }

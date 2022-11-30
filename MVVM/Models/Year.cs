@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
+﻿using System.Collections.Generic;
 using Vacation_Portal.MVVM.Views.Controls;
 
 namespace Vacation_Portal.MVVM.Models
 {
-   public class Year
+    public class Year
     {
         public Year(List<DayControl> months)
         {

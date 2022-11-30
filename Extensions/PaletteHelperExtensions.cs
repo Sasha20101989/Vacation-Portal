@@ -1,7 +1,7 @@
-﻿using System.Windows.Media;
-using MaterialDesignColors;
+﻿using MaterialDesignColors;
 using MaterialDesignColors.ColorManipulation;
 using MaterialDesignThemes.Wpf;
+using System.Windows.Media;
 
 namespace Vacation_Portal.Extensions
 {

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Input;
 
 namespace Vacation_Portal.Commands.BaseCommands
@@ -16,15 +14,24 @@ namespace Vacation_Portal.Commands.BaseCommands
 
         public AnotherCommandImplementation(Action<object> execute, Func<object, bool> canExecute)
         {
-            if (execute is null) throw new ArgumentNullException(nameof(execute));
+            if(execute is null)
+            {
+                throw new ArgumentNullException(nameof(execute));
+            }
 
             _execute = execute;
             _canExecute = canExecute ?? (x => true);
         }
 
-        public bool CanExecute(object parameter) => _canExecute(parameter);
+        public bool CanExecute(object parameter)
+        {
+            return _canExecute(parameter);
+        }
 
-        public void Execute(object parameter) => _execute(parameter);
+        public void Execute(object parameter)
+        {
+            _execute(parameter);
+        }
 
         public event EventHandler CanExecuteChanged
         {
@@ -38,6 +45,9 @@ namespace Vacation_Portal.Commands.BaseCommands
             }
         }
 
-        public void Refresh() => CommandManager.InvalidateRequerySuggested();
+        public void Refresh()
+        {
+            CommandManager.InvalidateRequerySuggested();
+        }
     }
 }

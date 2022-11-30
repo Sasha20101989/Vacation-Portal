@@ -11,21 +11,21 @@ namespace Vacation_Portal.Commands.ThemeInteractionCommands
         public ThemeChangeCommand(MainWindowViewModel mainWindowViewModel)
         {
             _mainWindowViewModel = mainWindowViewModel;
-            var paletteHelper = new PaletteHelper();
-            var theme = paletteHelper.GetTheme();
+            PaletteHelper paletteHelper = new PaletteHelper();
+            ITheme theme = paletteHelper.GetTheme();
             mainWindowViewModel.IsCheckedTheme = theme.GetBaseTheme() == BaseTheme.Dark;
         }
 
         public override void Execute(object parameter)
         {
-            var isDarkTheme = _mainWindowViewModel.IsCheckedTheme ? _mainWindowViewModel.IsCheckedTheme = false : _mainWindowViewModel.IsCheckedTheme = true;
+            bool isDarkTheme = _mainWindowViewModel.IsCheckedTheme ? _mainWindowViewModel.IsCheckedTheme = false : _mainWindowViewModel.IsCheckedTheme = true;
             ModifyTheme(isDarkTheme);
         }
 
         private static void ModifyTheme(bool isDarkTheme)
         {
-            var paletteHelper = new PaletteHelper();
-            var theme = paletteHelper.GetTheme();
+            PaletteHelper paletteHelper = new PaletteHelper();
+            ITheme theme = paletteHelper.GetTheme();
 
             theme.SetBaseTheme(isDarkTheme ? Theme.Dark : Theme.Light);
             paletteHelper.SetTheme(theme);

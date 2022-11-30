@@ -5,7 +5,7 @@ namespace UI.Commands.NavigationCommands
 {
     public class GoToPrevPageCommand : CommandBase
     {
-        private MainWindowViewModel _mainWindowViewModel;
+        private readonly MainWindowViewModel _mainWindowViewModel;
 
         public GoToPrevPageCommand(MainWindowViewModel mainWindowViewModel)
         {
@@ -13,10 +13,12 @@ namespace UI.Commands.NavigationCommands
         }
         public override void Execute(object parameter)
         {
-            if (_mainWindowViewModel.SelectedIndex > 0)
+            if(_mainWindowViewModel.SelectedIndex > 0)
             {
-                if (!string.IsNullOrWhiteSpace(_mainWindowViewModel.SearchKeyword))
+                if(!string.IsNullOrWhiteSpace(_mainWindowViewModel.SearchKeyword))
+                {
                     _mainWindowViewModel.SearchKeyword = string.Empty;
+                }
 
                 _mainWindowViewModel.SelectedIndex--;
             }

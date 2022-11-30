@@ -9,7 +9,7 @@ namespace UI.Commands.NavigationCommands
 {
     public class GoToSettingsCommand : CommandBase
     {
-        private MainWindowViewModel _mainWindowViewModel;
+        private readonly MainWindowViewModel _mainWindowViewModel;
 
         public GoToSettingsCommand(MainWindowViewModel mainWindowViewModel)
         {
@@ -20,10 +20,10 @@ namespace UI.Commands.NavigationCommands
         {
             _mainWindowViewModel.SearchKeyword = string.Empty;
             _mainWindowViewModel.SelectedItem = new MenuItem(
-               "Settings", 
-               typeof(SettingsView), 
+               "Settings",
+               typeof(SettingsView),
                selectedIcon: PackIconKind.Cog,
-               unselectedIcon: PackIconKind.CogOutline, 
+               unselectedIcon: PackIconKind.CogOutline,
                new SettingsViewModel(_mainWindowViewModel));
         }
     }

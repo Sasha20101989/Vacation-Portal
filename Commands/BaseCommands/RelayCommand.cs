@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Input;
 
 namespace Vacation_Portal.Commands.BaseCommands
 {
     public class RelayCommand : ICommand
     {
-        private Action<object> _handler;
-        private Predicate<object> _canExecute;
+        private readonly Action<object> _handler;
+        private readonly Predicate<object> _canExecute;
 
         public RelayCommand(Action<object> handler, Predicate<object> canExecute)
         {
