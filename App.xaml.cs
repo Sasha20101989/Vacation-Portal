@@ -17,6 +17,7 @@ namespace Vacation_Portal
     {
         private readonly IHost _host;
         public static ILunchRepository API { get; private set; }
+        public static SplashScreen SplashScreen { get; set; }
         public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
         public App()
         {
@@ -35,12 +36,12 @@ namespace Vacation_Portal
         {
             _host.Start();
             API = new LunchRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
-
+            
             MainWindow = _host.Services.GetRequiredService<MainWindow>();
+            SplashScreen = new SplashScreen(MainWindow);
 
-            SplashScreen splashScreen = new SplashScreen(MainWindow);
 
-            splashScreen.Show();
+            SplashScreen.Show();
 
             base.OnStartup(e);
         }

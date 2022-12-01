@@ -28,7 +28,7 @@
                     <TextBlock Text="Vacation Portal" FontSize="28" FontWeight="Bold"
                                HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15 0 0 0"/>
                 </WrapPanel>
-                <TextBlock Text="Loading..." FontWeight="SemiBold"
+                <TextBlock x:Name="status" FontWeight="SemiBold"
                            HorizontalAlignment="Left" Margin="0 30 0 15"/>
                 <ProgressBar x:Name="progressBar" Value="0" Height="5" Width="280"/>
             </StackPanel>

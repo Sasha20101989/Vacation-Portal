@@ -29,7 +29,7 @@ namespace Vacation_Portal.MVVM.Models
         public bool Is_HR { get; set; }
         public Settings Settings { get; set; }
 
-        //private readonly List<Settings> ListSettings = new List<Settings>();
+        private readonly List<Settings> ListSettings = new List<Settings>();
 
         public event Action<Settings> SettingsLoad;
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
@@ -52,20 +52,29 @@ namespace Vacation_Portal.MVVM.Models
 
         public async void GetSettings()
         {
-            //IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
-            //OnSettingsLoad(settings);
+            App.Current.Dispatcher.Invoke((Action) delegate
+            {
+                App.SplashScreen.status.Text = "Ищу настройки вашего аккаунта...";
+            });
+            IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
+            OnSettingsLoad(settings);
         }
-        //private void OnSettingsLoad(IEnumerable<Settings> settings)
-        //{
-        //    ListSettings.AddRange(settings);
-        //    Settings = ListSettings[0];
-        //    SettingsLoad?.Invoke(Settings);
-        //}
+        private void OnSettingsLoad(IEnumerable<Settings> settings)
+        {
+            App.Current.Dispatcher.Invoke((Action) delegate
+            {
+                App.SplashScreen.status.Text = "Применяю настройки вашего аккаунта...";
+            }); 
+            ListSettings.AddRange(settings);
+            Settings = ListSettings[0];
+            SettingsLoad?.Invoke(Settings);
+        }
 
         public void AddPages(MainWindowViewModel _viewModel)
         {
             App.Current.Dispatcher.Invoke((Action) delegate
              {
+                 
                  foreach(MenuItem menuItem in GenerateMenuItems())
                  {
                      if(!_viewModel.MenuItems.Contains(menuItem))
@@ -76,7 +85,7 @@ namespace Vacation_Portal.MVVM.Models
                      }
                  }
 
-                 _viewModel.MenuItems.Add(new MenuItem(_holidaysPage, typeof(HolidaysView), selectedIcon: PackIconKind.BoxCog, unselectedIcon: PackIconKind.BoxCogOutline, new HolidaysViewModel())); _viewModel.MenuItems.Add(new MenuItem(_settingsPage, typeof(SettingsView), selectedIcon: PackIconKind.Cog, unselectedIcon: PackIconKind.CogOutline, new SettingsViewModel(_viewModel)));
+                 _viewModel.MenuItems.Add(new MenuItem(_holidaysPage, typeof(HolidaysView), selectedIcon: PackIconKind.BoxCog, unselectedIcon: PackIconKind.BoxCogOutline, new HolidaysViewModel())); 
                  _viewModel.MenuItems.Add(new MenuItem(_settingsPage, typeof(SettingsView), selectedIcon: PackIconKind.Cog, unselectedIcon: PackIconKind.CogOutline, new SettingsViewModel(_viewModel)));
 
                  MenuItem personalItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _personalVacationPlanning);

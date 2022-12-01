@@ -699,6 +699,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 {
                     FirstSelectedDate = new DateTime(CurrentDate.Year, SelectedMonth, SelectedDay);
                     CountSelectedDays = FirstSelectedDate.Subtract(FirstSelectedDate).Days + 1;
+                    //TODO: SelectedItem =null;
                     if(CountSelectedDays <= SelectedItem.Count)
                     {
                         if(SelectedNameDay != "Праздник")
@@ -979,7 +980,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             VacationUniqNames.Clear();
             Vacations = new List<VacationViewModel>
             {
-                new VacationViewModel("Основной", new DateTime(DateTime.Now.Year, 1, 1), new DateTime(DateTime.Now.Year, 1, 18)),
+                new VacationViewModel("Основной", new DateTime(DateTime.Now.Year, 1, 1), new DateTime(DateTime.Now.Year, 1, 11)),
                 new VacationViewModel("Основной", new DateTime(DateTime.Now.Year, 1, 20), new DateTime(DateTime.Now.Year, 1, 29)),
                 new VacationViewModel("Ненормированность", new DateTime(DateTime.Now.Year, 2, 1), new DateTime(DateTime.Now.Year, 2, 3)),
                 new VacationViewModel("Вредность", new DateTime(DateTime.Now.Year, 3, 1), new DateTime(DateTime.Now.Year, 3, 7)),
@@ -1195,6 +1196,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public Range<DateTime> ReturnRange(Vacation Item)
         {
             Range<DateTime> range = Item.Date_end > Item.Date_Start ? Item.Date_Start.To(Item.Date_end) : Item.Date_end.To(Item.Date_Start);
+            //TODO: исправить
             return range;
         }
         private void SelectedCommandHandler(object data)

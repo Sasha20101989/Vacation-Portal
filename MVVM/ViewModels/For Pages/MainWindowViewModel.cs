@@ -206,9 +206,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             _mainMenuItems = new ObservableCollection<MenuItem>();
 
             MenuItems.Add(new MenuItem(_homePage, typeof(HomeView), selectedIcon: PackIconKind.Home, unselectedIcon: PackIconKind.HomeOutline, _homeViewModel));
-            //MenuItems.Add(new MenuItem("отпуска", typeof(HolidaysView), selectedIcon: PackIconKind.BoxCog, unselectedIcon: PackIconKind.BoxCogOutline, new HolidaysViewModel()));
-            //MenuItems.Add(new MenuItem(PersonalVacationPlanning,typeof(PersonalVacationPlanningView),selectedIcon: PackIconKind.BagPersonalTag,unselectedIcon: PackIconKind.BagPersonalTagOutline,new PersonalVacationPlanningViewModel()));
-
+           
             _homeViewModel.IsLogginIn = true;
 
             HomeCommand = new AnotherCommandImplementation(
@@ -269,6 +267,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         }
         public async Task GetUserAsync()
         {
+            App.Current.Dispatcher.Invoke((Action) delegate
+            {
+                App.SplashScreen.status.Text = "Ищу вас в базе данных...";
+            });
             await App.API.LoginAsync(Environment.UserName);
             await Task.Delay(3000);
             OnLoginSuccesed(App.API.Person);
@@ -276,15 +278,15 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         private void OnLoginSuccesed(Person person)
         {
+            
             if(person != null)
             {
-                //IsLoginSuccesed = true;
+               // IsLoginSuccesed = true;
                 person.GetSettings();
                 person.SettingsLoad += OnPerson_SettingsLoad;
                 person.MenuItemsChanged += OnPerson_MenuItemsChanged;
                 person.AddPages(_viewModel);
             }
-            //person.AddPages(_viewModel);
         }
 
         private void OnPerson_MenuItemsChanged(ObservableCollection<MenuItem> obj)
