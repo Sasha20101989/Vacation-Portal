@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using Vacation_Portal.DbContext;
 using Vacation_Portal.DTOs;
 using Vacation_Portal.MVVM.Models;
@@ -62,7 +63,7 @@ namespace Vacation_Portal.Services.Providers
             //Holidays.Add(new HolidayViewModel("Праздник", new DateTime(2022, 11, 6)));
         }
 
-        public Person Person { get; set; } = new Person("я", "я", "я", "ru13779", 1, false, false);
+        public Person Person { get; set; }
         private List<HolidayViewModel> _holidays;
         public List<HolidayViewModel> Holidays
         {
@@ -84,8 +85,15 @@ namespace Vacation_Portal.Services.Providers
                 DateStart = start,
                 DateEnd = end
             };
-            IEnumerable<HolidayViewModel> dates = await database.QueryAsync<HolidayViewModel>("usp_Load_Holidays", parameters, commandType: CommandType.StoredProcedure);
-            return dates.Select(ToDates);
+            try
+            {
+                IEnumerable<HolidayViewModel> dates = await database.QueryAsync<HolidayViewModel>("usp_Load_Holidays", parameters, commandType: CommandType.StoredProcedure);
+                return dates.Select(ToDates);
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
         }
 
         private HolidayViewModel ToDates(HolidayViewModel dto)
@@ -100,18 +108,20 @@ namespace Vacation_Portal.Services.Providers
             {
                 Account = account
             };
-            IEnumerable<SettingsDTO> settingsDTOs = await database.QueryAsync<SettingsDTO>("usp_Load_Settings_For_User", parameters, commandType: CommandType.StoredProcedure);
-            return settingsDTOs.Select(ToSettings);
+            try
+            {
+                IEnumerable<SettingsDTO> settingsDTOs = await database.QueryAsync<SettingsDTO>("usp_Load_Settings_For_User", parameters, commandType: CommandType.StoredProcedure);
+                return settingsDTOs.Select(ToSettings);
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
         }
 
         private Settings ToSettings(SettingsDTO dto)
         {
-            return new Settings(dto.Account, dto.Color);
-        }
-
-        public Task<IEnumerable<Person>> GetUser(string account)
-        {
-            throw new NotImplementedException();
+            return new Settings(dto.User_Id_Account, dto.Color);
         }
 
         public async Task<IEnumerable<PersonDTO>> LoginAsync(string account)
@@ -123,13 +133,17 @@ namespace Vacation_Portal.Services.Providers
             };
             try
             {
-                IEnumerable<PersonDTO> userDTOs = await database.QueryAsync<PersonDTO>("usp_Load_Description_For_User", parameters, commandType: CommandType.StoredProcedure);
+                IEnumerable<PersonDTO> userDTOs = await database.QueryAsync<PersonDTO>("usp_Get_User", parameters, commandType: CommandType.StoredProcedure);
                 Persons.AddRange(userDTOs);
-                Person = new Person(Persons[0].Name, Persons[0].Surname, Persons[0].Patronymic, Persons[0].Account, Persons[0].Department_Id, Persons[0].Is_Supervisor, Persons[0].Is_HR);
+                Person = new Person(Persons[0].User_Id_SAP, Persons[0].User_Id_Account, Persons[0].User_Name, Persons[0].User_Surname, Persons[0].User_Patronymic_name, Persons[0].User_Department_Id, Persons[0].User_Virtual_Department_Id, Persons[0].User_Position_Id);
                 return userDTOs;
-            } catch(Exception ex)
+            } catch(Exception)
             {
-                MessageBox.Show(ex.Message);
+                App.Current.Dispatcher.Invoke((Action) delegate
+                {
+                    App.SplashScreen.status.Text = "Вас нет в базе данных";
+                    App.SplashScreen.status.Foreground = Brushes.Red;
+                });
                 return null;
             }
         }
@@ -137,6 +151,27 @@ namespace Vacation_Portal.Services.Providers
         public Task LogoutAsync()
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<Access>> GetAccessAsync(string account)
+        {
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            object parameters = new
+            {
+                Account = account
+            };
+            try
+            {
+                IEnumerable<AccessDTO> accessDTOs = await database.QueryAsync<AccessDTO>("usp_Load_Access_For_User", parameters, commandType: CommandType.StoredProcedure);
+                return accessDTOs.Select(ToAccess);
+            } catch(Exception)
+            {
+                return null;
+            }
+        }
+        private Access ToAccess(AccessDTO dto)
+        {
+            return new Access(dto.Is_Worker,dto.Is_HR, dto.Is_Accounting, dto.Is_Supervisor);
         }
     }
 }

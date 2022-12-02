@@ -2,12 +2,13 @@
 {
     public class PersonDTO
     {
-        public string Name { get; set; }
-        public string Surname { get; set; }
-        public string Patronymic { get; set; }
-        public string Account { get; set; }
-        public int Department_Id { get; set; }
-        public bool Is_Supervisor { get; set; }
-        public bool Is_HR { get; set; }
+        public int User_Id_SAP { get; set; }
+        public string User_Id_Account { get; set; }
+        public string User_Name { get; set; }
+        public string User_Surname { get; set; }
+        public string User_Patronymic_name { get; set; }
+        public int User_Department_Id { get; set; }
+        public int User_Virtual_Department_Id { get; set; }
+        public string User_Position_Id { get; set; }
     }
 }

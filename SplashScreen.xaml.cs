@@ -39,6 +39,12 @@ namespace Vacation_Portal
                 Close();
                 _mainWindow.ShowDialog();
             }
+            if(status.Text == "Вас нет в базе данных")
+            {
+                Thread.Sleep(3000); 
+                Application.Current.Shutdown();
+                Close();
+            }
         }
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {

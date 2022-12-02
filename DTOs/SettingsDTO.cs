@@ -2,7 +2,7 @@
 {
     public class SettingsDTO
     {
-        public string Account { get; set; }
+        public string User_Id_Account { get; set; }
         public string Color { get; set; }
     }
 }

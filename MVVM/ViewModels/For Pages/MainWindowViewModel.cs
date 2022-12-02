@@ -272,7 +272,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 App.SplashScreen.status.Text = "Ищу вас в базе данных...";
             });
             await App.API.LoginAsync(Environment.UserName);
-            await Task.Delay(3000);
             OnLoginSuccesed(App.API.Person);
         }
 
@@ -281,7 +280,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             
             if(person != null)
             {
-               // IsLoginSuccesed = true;
+                person.GetAccess();
                 person.GetSettings();
                 person.SettingsLoad += OnPerson_SettingsLoad;
                 person.MenuItemsChanged += OnPerson_MenuItemsChanged;

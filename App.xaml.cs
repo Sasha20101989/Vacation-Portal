@@ -40,7 +40,6 @@ namespace Vacation_Portal
             MainWindow = _host.Services.GetRequiredService<MainWindow>();
             SplashScreen = new SplashScreen(MainWindow);
 
-
             SplashScreen.Show();
 
             base.OnStartup(e);

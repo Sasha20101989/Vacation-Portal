@@ -6,6 +6,8 @@ using System.Linq;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 using Vacation_Portal.MVVM.ViewModels.ForPages;
 using Vacation_Portal.MVVM.Views;
+using System.Windows.Media;
+using System.Threading;
 
 namespace Vacation_Portal.MVVM.Models
 {
@@ -15,21 +17,24 @@ namespace Vacation_Portal.MVVM.Models
         private static readonly string _settingsPage = "Настройки приложения";
         private static readonly string _holidaysPage = "Настройки выходных и праздников";
         private static readonly string _supervisorPage = "Страница руководителя";
-        //private static readonly string HRPage = "Страница HR сотрудника";
+        private static readonly string _hrPage = "Страница HR сотрудника";
         //private static readonly string Табельщик = "Страница HR сотрудника";
         private static readonly string _personalVacationPlanning = "Страница персонального планирования отпуска";
         #endregion
-
+        public int Id_SAP { get; set; }
+        public string Id_Account { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Patronymic { get; set; }
-        public string Account { get; set; }
         public int Department_Id { get; set; }
-        public bool Is_Supervisor { get; set; }
-        public bool Is_HR { get; set; }
+        public int Vitrual_Department_Id { get; set; }
+        public string Position { get; set; }
+        public static bool Is_HR { get; set; }
+        public static bool Is_Accounting { get; set; }
+        public static bool Is_Supervisor { get; set; }
         public Settings Settings { get; set; }
 
-        private readonly List<Settings> ListSettings = new List<Settings>();
+        private readonly List<Settings> _listSettings = new List<Settings>();
 
         public event Action<Settings> SettingsLoad;
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
@@ -39,42 +44,109 @@ namespace Vacation_Portal.MVVM.Models
             return $"{Surname} {Name} {Patronymic}";
         }
 
-        public Person(string name, string surname, string patronymic, string account, int departmentId, bool isSupervisor, bool isHR)
+        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId, string position)
         {
+            Id_SAP = id_SAP;
+            Id_Account = id_Account;
             Name = name;
             Surname = surname;
             Patronymic = patronymic;
-            Account = account;
             Department_Id = departmentId;
-            Is_Supervisor = isSupervisor;
-            Is_HR = isHR;
+            Vitrual_Department_Id = virtualDepartmentId;
+            Position = position;
+        }
+        public async void GetAccess()
+        {
+            IEnumerable<Access> access = await App.API.GetAccessAsync(Environment.UserName);
+            App.Current.Dispatcher.Invoke((Action) delegate
+            {
+                App.SplashScreen.status.Text = "Ищу настройки вашего аккаунта...";
+                App.SplashScreen.status.Foreground = Brushes.Black;
+            });
+            NewMethod(access);
+        }
+
+        private static void NewMethod(IEnumerable<Access> access)
+        {
+            App.Current.Dispatcher.Invoke((Action) delegate
+            {
+                App.SplashScreen.status.Text = "Приложение с доступом сотрудника";
+                App.SplashScreen.status.Foreground = Brushes.Black;
+            });
+            foreach(Access item in access)
+            {
+                if(item.Is_Accounting)
+                {
+                    Is_Accounting = true;
+                    App.Current.Dispatcher.Invoke((Action) delegate
+                    {
+                        App.SplashScreen.status.Text = "Приложение с доступом табельщика";
+                        App.SplashScreen.status.Foreground = Brushes.Black;
+                    });
+                }
+                if(item.Is_Supervisor)
+                {
+                    Is_Supervisor = true;
+                    App.Current.Dispatcher.Invoke((Action) delegate
+                    {
+                        App.SplashScreen.status.Text = "Приложение с доступом руководителя";
+                        App.SplashScreen.status.Foreground = Brushes.Black;
+                    });
+                }
+                if(item.Is_HR)
+                {
+                    Is_HR = true;
+                    App.SplashScreen.status.Text = "Приложение с доступом HR сотрудника";
+                    App.SplashScreen.status.Foreground = Brushes.Black;
+                }
+            }
+        }
+
+        private static void OnAccessLoad(IEnumerable<Access> access)
+        {
+            throw new NotImplementedException();
         }
 
         public async void GetSettings()
         {
+
+            IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
             App.Current.Dispatcher.Invoke((Action) delegate
             {
                 App.SplashScreen.status.Text = "Ищу настройки вашего аккаунта...";
+                App.SplashScreen.status.Foreground = Brushes.Black;
             });
-            IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
             OnSettingsLoad(settings);
         }
         private void OnSettingsLoad(IEnumerable<Settings> settings)
         {
-            App.Current.Dispatcher.Invoke((Action) delegate
+
+            _listSettings.AddRange(settings);
+
+            if(_listSettings.Count < 1)
             {
-                App.SplashScreen.status.Text = "Применяю настройки вашего аккаунта...";
-            }); 
-            ListSettings.AddRange(settings);
-            Settings = ListSettings[0];
-            SettingsLoad?.Invoke(Settings);
+                App.Current.Dispatcher.Invoke((Action) delegate
+                {
+                    App.SplashScreen.status.Text = "Настройки приложения не найдены";
+                    App.SplashScreen.status.Foreground = Brushes.Orange;
+                });
+            } else
+            {
+                App.Current.Dispatcher.Invoke((Action) delegate
+                {
+                    App.SplashScreen.status.Text = "Применяю настройки вашего аккаунта...";
+                    App.SplashScreen.status.Foreground = Brushes.Black;
+                });
+                Settings = _listSettings[0];
+                SettingsLoad?.Invoke(Settings);
+            }
         }
 
         public void AddPages(MainWindowViewModel _viewModel)
         {
             App.Current.Dispatcher.Invoke((Action) delegate
              {
-                 
+
                  foreach(MenuItem menuItem in GenerateMenuItems())
                  {
                      if(!_viewModel.MenuItems.Contains(menuItem))
@@ -85,7 +157,7 @@ namespace Vacation_Portal.MVVM.Models
                      }
                  }
 
-                 _viewModel.MenuItems.Add(new MenuItem(_holidaysPage, typeof(HolidaysView), selectedIcon: PackIconKind.BoxCog, unselectedIcon: PackIconKind.BoxCogOutline, new HolidaysViewModel())); 
+                 _viewModel.MenuItems.Add(new MenuItem(_holidaysPage, typeof(HolidaysView), selectedIcon: PackIconKind.BoxCog, unselectedIcon: PackIconKind.BoxCogOutline, new HolidaysViewModel()));
                  _viewModel.MenuItems.Add(new MenuItem(_settingsPage, typeof(SettingsView), selectedIcon: PackIconKind.Cog, unselectedIcon: PackIconKind.CogOutline, new SettingsViewModel(_viewModel)));
 
                  MenuItem personalItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _personalVacationPlanning);
@@ -99,7 +171,7 @@ namespace Vacation_Portal.MVVM.Models
                  } else if(Is_HR)
                  {
                      _viewModel.AdminString = "Аккаунт HR сотрудника";
-                     MenuItem hRItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _supervisorPage);
+                     MenuItem hRItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _hrPage);
                      _viewModel.MainMenuItems = CreateMainMenuItems(hRItem, _viewModel);
                  }
                  OnMenuItemsChanged(_viewModel.MenuItems);
