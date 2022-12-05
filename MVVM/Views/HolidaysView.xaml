@@ -71,7 +71,7 @@
                         md:ShadowAssist.ShadowDepth="Depth4"
                         Width="28" Height="28"
                         Content="{md:PackIcon Kind=Reload,Size=20}"
-                        Command="{Binding Load}"/>
+                        Command="{Binding LoadHolidays}"/>
                 <TextBlock Grid.Row="1" 
                                        Text="{Binding ErrorMessage}" 
                                        HorizontalAlignment="Stretch"

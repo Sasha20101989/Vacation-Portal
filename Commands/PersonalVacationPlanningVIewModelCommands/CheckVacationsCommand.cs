@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
@@ -15,6 +16,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
     {
         private readonly PersonalVacationPlanningViewModel _viewModel;
         private readonly SampleError _sampleError = new SampleError();
+        private readonly CheckVacationView _checkVacationView = new CheckVacationView();
         private Vacation CheckedVacation { get; set; }
         public CheckVacationsCommand(PersonalVacationPlanningViewModel viewModel)
         {
@@ -23,6 +25,10 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
         public override void Execute(object parameter)
         {
+            _checkVacationView.DataContext = _viewModel;
+            _checkVacationView.ClearVisibility();
+            
+            Task<object> openCheck = DialogHost.Show(_checkVacationView, "RootDialog", _viewModel.ExtendedClosingEventHandler);
             _viewModel.IsEnabled = false;
             bool is14DaysPlaned = false;
             bool is7DaysPlaned = false;
@@ -50,6 +56,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             }
             if(is14DaysPlaned)
             {
+                _checkVacationView.VisibilityButton14();
                 for(int i = 0; i < _viewModel.VacationsToAproval.Count; i++)
                 {
                     int countSecondPeriod = 0;
@@ -66,20 +73,23 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                         }
                         if(is7DaysPlaned)
                         {
-                            _viewModel.ShowAlert("Успех");
-                            Task<object> result = DialogHost.Show(_sampleError, "RootDialog", _viewModel.ExtendedClosingEventHandler);
+                            _checkVacationView.VisibilityButton7();
+                            //_viewModel.ShowAlert("Успех");
+                            //Task<object> result = DialogHost.Show(_sampleError, "RootDialog", _viewModel.ExtendedClosingEventHandler);
                             break;
                         } else
                         {
-                            _viewModel.ShowAlert("Среди периодов планового основного отпуска, должен быть один длительностью не менее 7");
-                            Task<object> result = DialogHost.Show(_sampleError, "RootDialog", _viewModel.ExtendedClosingEventHandler);
+                            _checkVacationView.NotVisibilityButton7();
+                            //_viewModel.ShowAlert("Среди периодов планового основного отпуска, должен быть один длительностью не менее 7");
+                            //Task<object> result = DialogHost.Show(_sampleError, "RootDialog", _viewModel.ExtendedClosingEventHandler);
                         }
                     }
                 }
             } else
             {
-                _viewModel.ShowAlert("Среди периодов планового основного отпуска, должен быть один длительностью не менее 14 дней");
-                Task<object> result = DialogHost.Show(_sampleError, "RootDialog", _viewModel.ExtendedClosingEventHandler);
+                _checkVacationView.NotVisibilityButton14();
+               // _viewModel.ShowAlert("Среди периодов планового основного отпуска, должен быть один длительностью не менее 14 дней");
+                //Task<object> result = DialogHost.Show(_sampleError, "RootDialog", _viewModel.ExtendedClosingEventHandler);
             }
             _viewModel.IsEnabled = true;
         }

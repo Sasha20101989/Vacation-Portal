@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using Vacation_Portal.MVVM.Models;
 
 namespace Vacation_Portal
 {
@@ -41,7 +37,7 @@ namespace Vacation_Portal
             }
             if(status.Text == "Вас нет в базе данных")
             {
-                Thread.Sleep(3000); 
+                Thread.Sleep(3000);
                 Application.Current.Shutdown();
                 Close();
             }

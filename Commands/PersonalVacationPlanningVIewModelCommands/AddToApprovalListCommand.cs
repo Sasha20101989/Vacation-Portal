@@ -23,30 +23,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
         public override void Execute(object parameter)
         {
-
-            //if (WorkingDays.Count > 1)
-            //{
-            //    if (WorkingDays.Contains(true))
-            //    {
-            //        button.Background = PlannedItem.Color;
-            //    }
-            //    else
-            //    {
-            //        ClicksOnCalendar = 0;
-            //        CountSelectedDays = 0;
-            //        DisplayedDateString = "";
-            //        clearColorAndBlocked();
-            //        WorkingDays.Clear();
-            //        ShowAlert("В выбранном промежутке отсутствуют рабочие дни");
-            //    }
-            //}
-
-            //int remainder = _viewModel.SelectedItem.Count - _viewModel.CountSelectedDays;
-            //VacationsToAprovalClone.Clear();
-            //VacationsToRemove.Clear();
-            //bool isMorePlanedDays = remainder >= 0;
-            //if (isMorePlanedDays)
-            //{
             Range<DateTime> range = _viewModel.ReturnRange(_viewModel.PlannedItem);
 
             _viewModel.WorkingDays.Clear();
@@ -80,27 +56,27 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     }
                 }
             }
-
-            _viewModel.SelectedItem.Count -= _viewModel.CountSelectedDays;
             _viewModel.VacationsToAproval.Add(_viewModel.PlannedItem);
+            _viewModel.SelectedItemAllowance.Vacation_Days_Quantity -= _viewModel.CountSelectedDays;
 
             _viewModel.DisplayedDateString = "";
             _viewModel.ClicksOnCalendar = 0;
 
-            if(_viewModel.SelectedItem.Count == 0)
+            if(_viewModel.SelectedItemAllowance.Vacation_Days_Quantity == 0)
             {
-                for(int i = 0; i < _viewModel.VacationTypes.Count; i++)
+                for(int i = 0; i < _viewModel.VacationAllowances.Count; i++)
                 {
-                    if(_viewModel.VacationTypes[i].Count > 0)
+                    if(_viewModel.VacationAllowances[i].Vacation_Days_Quantity > 0)
                     {
-                        _viewModel.SelectedItem = _viewModel.VacationTypes[i];
+                        _viewModel.SelectedItemAllowance = _viewModel.VacationAllowances[i];
                         break;
                     }
                 }
             }
 
-            _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
+            //_viewModel.VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
             //TODO: исправить
+            //TODO: Проверка если рабочий в выходной
             VacationsToAprovalClone = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
 
             for(int i = VacationsToAprovalClone.Count - 1; i > 0; i--)
@@ -127,55 +103,10 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             } else
             {
                 _viewModel.ShowAlert("В выбранном периоде, отсутствуют рабочие дни выбранного типа отпуска.");
-                _viewModel.SelectedItem.Count += _viewModel.CountSelectedDays;
+                _viewModel.SelectedItemAllowance.Vacation_Days_Quantity += _viewModel.CountSelectedDays;
                 _viewModel.VacationsToAproval.Remove(_viewModel.PlannedItem);
                 _viewModel.ClearVacationData();
             }
-            //} else
-            //{
-            //    _viewModel.SelectedItem.Count -= _viewModel.CountSelectedDays;
-            //    _viewModel.VacationsToAproval.Add(_viewModel.PlannedItem);
-            //    _viewModel.DisplayedDateString = "";
-            //    _viewModel.ClicksOnCalendar = 0;
-
-            //    VacationsToAprovalClone = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
-
-            //    for(int i = VacationsToAprovalClone.Count - 1; i > 0; i--)
-            //    {
-            //        if(VacationsToAprovalClone[i].Name == VacationsToAprovalClone[i - 1].Name)
-            //        {
-            //            if(VacationsToAprovalClone[i].Date_Start.AddDays(-1) == VacationsToAprovalClone[i - 1].Date_end)
-            //            {
-
-            //                VacationsToAprovalClone[i].Date_Start = VacationsToAprovalClone[i - 1].Date_Start;
-            //                int countDays = GetCountDays(VacationsToAprovalClone[i]);
-            //                VacationsToAprovalClone[i].Count = countDays;
-            //                VacationsToAprovalClone.Remove(VacationsToAprovalClone[i - 1]);
-
-            //                _viewModel.ShowAlert("Несколько периодов объединены в один");
-            //            } else
-            //            {
-            //                _viewModel.ShowAlert("В выбранном периоде отсутствуют рабочие дни");
-
-            //                VacationsToAprovalClone.Remove(_viewModel.PlannedItem);
-            //                _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
-            //                _viewModel.clearVacationData();
-            //            }
-            //        }
-            //    }
-            //    if(VacationsToAprovalClone.Count > 1)
-            //    {
-            //        _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
-            //    } else
-            //    {
-            //        _viewModel.ShowAlert("В выбранном периоде отсутствуют рабочие дни");
-            //        //_viewModel.SelectedItem.Count += _viewModel.CountSelectedDays;
-            //        VacationsToAprovalClone.Remove(_viewModel.PlannedItem);
-
-            //        _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
-            //        _viewModel.clearVacationData();
-            //    }
-            //}
         }
 
         private int GetCountDays(Vacation vacation)

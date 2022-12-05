@@ -206,7 +206,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             _mainMenuItems = new ObservableCollection<MenuItem>();
 
             MenuItems.Add(new MenuItem(_homePage, typeof(HomeView), selectedIcon: PackIconKind.Home, unselectedIcon: PackIconKind.HomeOutline, _homeViewModel));
-           
+
             _homeViewModel.IsLogginIn = true;
 
             HomeCommand = new AnotherCommandImplementation(
@@ -277,7 +277,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         private void OnLoginSuccesed(Person person)
         {
-            
+
             if(person != null)
             {
                 person.GetAccess();

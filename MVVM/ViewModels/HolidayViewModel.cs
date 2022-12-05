@@ -4,10 +4,12 @@ namespace Vacation_Portal.MVVM.ViewModels
 {
     public class HolidayViewModel
     {
+        public int Id { get; set; }
         public string TypeOfHoliday { get; set; }
         public DateTime Date { get; set; }
-        public HolidayViewModel(string typeOfHoliday, DateTime date)
+        public HolidayViewModel(int id, string typeOfHoliday, DateTime date)
         {
+            Id = id;
             TypeOfHoliday = typeOfHoliday;
             Date = date;
         }

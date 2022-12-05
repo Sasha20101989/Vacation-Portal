@@ -16,7 +16,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
     public class SaveDataModelCommand : AsyncComandBase
     {
         private readonly PersonalVacationPlanningViewModel _viewModel;
-        private readonly SampleError _sampleError = new SampleError();
         public ObservableCollection<Vacation> VacationsToAprovalClone { get; set; } = new ObservableCollection<Vacation>();
         private Vacation CheckedVacation { get; set; }
         public SaveDataModelCommand(PersonalVacationPlanningViewModel viewModel)
@@ -24,77 +23,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             _viewModel = viewModel;
         }
         public override async Task ExecuteAsync(object parameter)
-        {
-            if(_viewModel.IsSaveComplete)
-            {
-                _viewModel.IsSaveComplete = false;
-                return;
-            }
-            if(_viewModel.SaveProgress != 0)
-            {
-                return;
-            }
-
-            bool is14DaysPlaned = false;
-            bool is7DaysPlaned = false;
-            VacationsToAprovalClone = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderByDescending(i => i.Count));
-            for(int i = 0; i < VacationsToAprovalClone.Count; i++)
-            {
-                int countFirstPeriod = 0;
-                if(VacationsToAprovalClone[i].Name == "Основной")
-                {
-                    Range<DateTime> range = _viewModel.ReturnRange(VacationsToAprovalClone[i]);
-                    foreach(DateTime planedDate in range.Step(x => x.AddDays(1)))
-                    {
-                        countFirstPeriod++;
-                        if(countFirstPeriod >= 14)
-                        {
-                            is14DaysPlaned = true;
-                            CheckedVacation = VacationsToAprovalClone[i];
-                        }
-                    }
-                }
-                if(is14DaysPlaned)
-                {
-                    break;
-                }
-            }
-            if(is14DaysPlaned)
-            {
-                for(int i = 0; i < VacationsToAprovalClone.Count; i++)
-                {
-                    int countSecondPeriod = 0;
-                    if(VacationsToAprovalClone[i].Name == "Основной" && VacationsToAprovalClone[i] != CheckedVacation)
-                    {
-                        Range<DateTime> range = _viewModel.ReturnRange(VacationsToAprovalClone[i]);
-                        foreach(DateTime planedDate in range.Step(x => x.AddDays(1)))
-                        {
-                            countSecondPeriod++;
-                            if(countSecondPeriod >= 7)
-                            {
-                                is7DaysPlaned = true;
-                            }
-                        }
-                        if(is7DaysPlaned)
-                        {
-                            GoToSave();
-                            break;
-                        } else
-                        {
-                            _viewModel.ShowAlert("Среди периодов планового основного отпуска, должен быть один длительностью не менее 7 дней");
-                            Task<object> result = DialogHost.Show(_sampleError, "RootDialog", _viewModel.ExtendedClosingEventHandler);
-                            GoToSave();
-                        }
-                    }
-                }
-            } else
-            {
-                _viewModel.ShowAlert("Среди периодов планового основного отпуска, должен быть один длительностью не менее 14 дней");
-                Task<object> result = DialogHost.Show(_sampleError, "RootDialog", _viewModel.ExtendedClosingEventHandler);
-            }
-        }
-
-        private void GoToSave()
         {
             DateTime started = DateTime.Now;
             _viewModel.IsSaving = true;
@@ -113,7 +41,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     if(_viewModel.SaveProgress >= 100)
                     {
                         CheckedVacation = null;
-                        _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
+                        _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
                         _viewModel.IsSaveComplete = true;
                         _viewModel.IsSaving = false;
 

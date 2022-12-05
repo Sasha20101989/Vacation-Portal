@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Vacation_Portal.MVVM.Views.Controls"
              xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages"  
+             xmlns:vModels="clr-namespace:Vacation_Portal.MVVM.ViewModels"  
              xmlns:md="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
              xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
              mc:Ignorable="d" 
@@ -220,19 +221,19 @@
                                  FontSize="15"
                                  Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
 
-                        <Border Grid.Row="1" Grid.RowSpan="2" BorderBrush="{Binding BorderColorVacation}" BorderThickness="2" CornerRadius="6" Margin="0 6 0 4">
+                        <Border Grid.Row="1" Grid.RowSpan="2" CornerRadius="6" Margin="0 6 0 4">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
                             <ListBox Grid.Row="0" Margin="6" 
-                                     SelectedIndex="{Binding SelectedIndex, UpdateSourceTrigger=PropertyChanged}"
-                                     SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}"
-                                     ItemsSource="{Binding VacationTypes, UpdateSourceTrigger=PropertyChanged}"
+                                     SelectedIndex="{Binding SelectedIndexAllowance, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                     SelectedItem="{Binding SelectedItemAllowance, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                     ItemsSource="{Binding VacationAllowances,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource MaterialDesignChoiceChipAccentOutlineListBox}">
                                 <ListBox.Resources>
-                                        <DataTemplate DataType="{x:Type models:Vacation}">
+                                    <DataTemplate DataType="{x:Type vModels:VacationAllowanceViewModel}">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="auto"/>
@@ -243,12 +244,12 @@
                                                     <RowDefinition Height="*"/>
                                                     <RowDefinition Height="auto"/>
                                                 </Grid.RowDefinitions>
-                                                <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Name}"
+                                                <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Vacation_Name}"
                                                            Width="180"
                                                            TextAlignment="Center"
                                                            FontSize="16"/>
-                                                <Rectangle Margin="8 0 0 0" Grid.Column="0" Grid.Row="1" Width="9" Height="9" Fill="{Binding Color,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" RadiusX="10" RadiusY="10"/>
-                                                <TextBlock TextAlignment="Center" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding Count,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay, StringFormat={}Остаток дней: {0}}" TextTrimming="CharacterEllipsis" FontSize="15"/>
+                                                <Rectangle Margin="8 0 0 0" Grid.Column="0" Grid.Row="1" Width="9" Height="9" Fill="{Binding Vacation_Color}" RadiusX="10" RadiusY="10"/>
+                                                <TextBlock TextAlignment="Center" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding Vacation_Days_Quantity, StringFormat={}Остаток дней: {0}}" TextTrimming="CharacterEllipsis" FontSize="15"/>
                                             </Grid>
                                         </DataTemplate>
                                     </ListBox.Resources>
@@ -260,7 +261,7 @@
                                         <Setter Property="BorderBrush" Value="{StaticResource PrimaryHueMidBrush}" />
                                         <Setter Property="Visibility" Value="Visible" />
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Count}" Value="0">
+                                                <DataTrigger Binding="{Binding Vacation_Days_Quantity}" Value="0">
                                                     <Setter Property="IsEnabled" Value="False" />
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -331,55 +332,8 @@
                             <Button Width="280" VerticalAlignment="Bottom"
                             Margin="3 0 3 6"
                             Style="{DynamicResource MaterialDesignOutlinedLightButton}"
-                            Command="{Binding CheckVacations}" Content="Проверить"
+                            Command="{Binding CheckVacations}" Content="Проверить и отправить"
                             IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
-                            </Button>
-                            <Button Width="280" VerticalAlignment="Bottom"
-                            Margin="3 0 3 6"
-                            Style="{DynamicResource MaterialDesignOutlinedLightButton}"
-                            md:ButtonProgressAssist.IsIndicatorVisible="{Binding IsSaving}"
-                            md:ButtonProgressAssist.Value="{Binding SaveProgress}"
-                            Command="{Binding SaveDataModel}"
-                            IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
-                                <StackPanel Orientation="Horizontal">
-                                    <md:PackIcon Width="25" Height="25">
-                                        <md:PackIcon.Style>
-                                            <Style TargetType="md:PackIcon" BasedOn="{StaticResource {x:Type md:PackIcon}}">
-                                                <Setter Property="Kind" Value="CloudSync"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsSaveComplete}" Value="True">
-                                                        <Setter Property="Kind" Value="Check"/>
-                                                        <DataTrigger.EnterActions>
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                 From="0"
-                                                                 To="1"
-                                                                 Duration="0:0:0.8"/>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </DataTrigger.EnterActions>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </md:PackIcon.Style>
-                                    </md:PackIcon>
-                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10 0 0 0">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                                                <Setter Property="Text" Value="отправить на согласование"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsSaveComplete}" Value="True">
-                                                        <Setter Property="Text" Value="отправлено"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsSaving}" Value="True">
-                                                        <Setter Property="Text" Value="отправка"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </StackPanel>
                             </Button>
                         </StackPanel>
                         <md:Snackbar  Grid.Row="2" MessageQueue="{Binding MessageQueuePLanedVacations,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" ActionButtonPlacement="SeparateLine"/>

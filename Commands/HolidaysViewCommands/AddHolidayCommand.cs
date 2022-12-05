@@ -19,23 +19,24 @@ namespace Vacation_Portal.Commands.HolidaysViewCommands
             if(_viewModel.SelectedItem.NameOfHoliday == "Рабочий в выходной" && !IsDayOff)
             {
                 _viewModel.MessageQueue.Enqueue("Этот день не является выходным");
-            } else if(_viewModel.SelectedItem.NameOfHoliday == "Выходной" && IsDayOff)
+            } else if(_viewModel.SelectedItem.NameOfHoliday == "Внеплановый" && IsDayOff)
             {
                 _viewModel.MessageQueue.Enqueue("Этот день уже является выходным");
             } else
             {
-                if(!_viewModel.Holidays.Contains(new HolidayViewModel(_viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate)))
+                if(!_viewModel.Holidays.Contains(new HolidayViewModel(1, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate)))
                 {
-                    App.API.Holidays.Add(new HolidayViewModel(_viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate));
-                    _viewModel.Holidays.Add(new HolidayViewModel(_viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate));
+                    App.API.Holidays.Add(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate));
+                    _viewModel.Holidays.Add(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate));
                     App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
+                    App.API.AddHolidayAsync(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate));
                 } else
                 {
                     foreach(HolidayViewModel item in _viewModel.Holidays)
                     {
                         if(item.Date == _viewModel.CurrentDate)
                         {
-                            _viewModel.SelectedHoliday = new HolidayViewModel(item.TypeOfHoliday, item.Date);
+                            _viewModel.SelectedHoliday = new HolidayViewModel(_viewModel.SelectedItem.Id, item.TypeOfHoliday, item.Date);
                         }
                     }
                     _viewModel.MessageQueue.Enqueue("Такой день уже есть в списке");

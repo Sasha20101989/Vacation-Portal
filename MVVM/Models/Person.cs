@@ -3,11 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Media;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 using Vacation_Portal.MVVM.ViewModels.ForPages;
 using Vacation_Portal.MVVM.Views;
-using System.Windows.Media;
-using System.Threading;
 
 namespace Vacation_Portal.MVVM.Models
 {
@@ -100,11 +99,6 @@ namespace Vacation_Portal.MVVM.Models
                     App.SplashScreen.status.Foreground = Brushes.Black;
                 }
             }
-        }
-
-        private static void OnAccessLoad(IEnumerable<Access> access)
-        {
-            throw new NotImplementedException();
         }
 
         public async void GetSettings()
