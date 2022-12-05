@@ -30,7 +30,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             _ = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(50),
                 DispatcherPriority.Normal,
-                new EventHandler((o, e) =>
+                new EventHandler(async (o, e) =>
                 {
                     long totalDuration = started.AddSeconds(3).Ticks - started.Ticks;
                     long currentProgress = DateTime.Now.Ticks - started.Ticks;
@@ -42,6 +42,11 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     {
                         CheckedVacation = null;
                         _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
+                        foreach(var item in _viewModel.VacationsToAproval)
+                        {
+                            //TODO: сохранение в базу данных
+                            await App.API.AddVacationAsync(new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, "На согласовании"));
+                        }
                         _viewModel.IsSaveComplete = true;
                         _viewModel.IsSaving = false;
 
@@ -55,8 +60,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                         timer1.Enabled = true;
                     }
                 }), Dispatcher.CurrentDispatcher);
-            //TODO: сохранение в базу данных
-           await Task.Run(() => { });
         }
 
         private void Timer1_Elapsed(object sender, ElapsedEventArgs e)

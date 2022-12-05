@@ -7,6 +7,8 @@ namespace Vacation_Portal.MVVM.Models
     public class Vacation : ViewModelBase
     {
         public string Name { get; set; }
+        public int User_Id_SAP { get; set; }
+        public int Vacation_Id { get; set; }
         //public int Count { get; set; }
         private int _count;
         public int Count
@@ -21,6 +23,7 @@ namespace Vacation_Portal.MVVM.Models
         public Brush Color { get; set; }
         public DateTime Date_Start { get; set; }
         public DateTime Date_end { get; set; }
+        public string Status { get; set; }
 
         public override string ToString()
         {
@@ -37,13 +40,16 @@ namespace Vacation_Portal.MVVM.Models
             return HashCode.Combine(Date_Start, Date_end);
         }
 
-        public Vacation(string name, int count, Brush color, DateTime date_Start, DateTime date_end)
+        public Vacation(string name, int user_Id_SAP, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, string status)
         {
             Name = name;
+            User_Id_SAP = user_Id_SAP;
+            Vacation_Id = vacation_Id;
             _count = count;
             Color = color;
             Date_Start = date_Start;
             Date_end = date_end;
+            Status = status;
         }
     }
 }

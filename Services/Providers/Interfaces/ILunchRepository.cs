@@ -20,5 +20,7 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         Task AddHolidayAsync(HolidayViewModel holiday);
         Task DeleteHolidayAsync(HolidayViewModel holiday);
         Task<IEnumerable<VacationAllowanceViewModel>> GetVacationsAsync(int UserIdSAP, int year);
+        Task AddVacationAsync(Vacation vacation);
+        Task DeleteVacationAsync(Vacation vacation);
     }
 }

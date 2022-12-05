@@ -190,6 +190,48 @@ namespace Vacation_Portal.Services.Providers
                 return null;
             }
         }
+        public async Task AddVacationAsync(Vacation vacation)
+        {
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            object parameters = new
+            {
+                User_Id_SAP = vacation.User_Id_SAP,
+                Vacation_Id = vacation.Vacation_Id,
+                Vacation_Year = vacation.Date_Start.Year,
+                Vacation_Start_Date = vacation.Date_Start,
+                Vacation_End_Date = vacation.Date_end,
+                Vacation_Status = vacation.Status,
+                Creator_Id = Person.Id_Account
+            };
+            try
+            {
+                _ = await database.QueryAsync<Vacation>("usp_Add_Vacation", parameters, commandType: CommandType.StoredProcedure);
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
+        }
+        public async Task DeleteVacationAsync(Vacation vacation)
+        {
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            object parameters = new
+            {
+                User_Id_SAP = vacation.User_Id_SAP,
+                Vacation_Id = vacation.Vacation_Id,
+                Vacation_Year = vacation.Date_Start.Year,
+                Vacation_Start_Date = vacation.Date_Start,
+                Vacation_End_Date = vacation.Date_end
+            };
+            try
+            {
+                _ = await database.QueryAsync<Vacation>("usp_Delete_Vacation", parameters, commandType: CommandType.StoredProcedure);
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
         #endregion
 
         #region ToObj
@@ -215,7 +257,6 @@ namespace Vacation_Portal.Services.Providers
         {
             return new Access(dto.Is_Worker, dto.Is_HR, dto.Is_Accounting, dto.Is_Supervisor);
         }
-
         #endregion
     }
 }

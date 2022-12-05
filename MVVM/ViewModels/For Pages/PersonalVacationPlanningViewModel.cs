@@ -734,7 +734,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                             {
                                 DayAddition = GetDayAddition(CountSelectedDays);
                                 DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.yyyy");
-                                _plannedItem = new Vacation(SelectedItemAllowance.Vacation_Name, CountSelectedDays, SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate);
+                                _plannedItem = new Vacation(SelectedItemAllowance.Vacation_Name, Person.Id_SAP,SelectedItemAllowance.Vacation_Id, CountSelectedDays, SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate,null);
                             } else
                             {
                                 ShowAlert("Этот день является праздичным, начните планирование отпуска с другого дня");
@@ -756,7 +756,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
                                     DayAddition = GetDayAddition(CountSelectedDays);
                                     DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
-                                    _plannedItem = new Vacation(SelectedItemAllowance.Vacation_Name, CountSelectedDays, SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate);
+                                    _plannedItem = new Vacation(SelectedItemAllowance.Vacation_Name, Person.Id_SAP, SelectedItemAllowance.Vacation_Id, CountSelectedDays, SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, null);
                                 } else
                                 {
                                     ShowAlert("Этот день является праздичным, закончите планирование отпуска другим днём");
@@ -775,7 +775,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
                                     DayAddition = GetDayAddition(CountSelectedDays);
                                     DisplayedDateString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
-                                    _plannedItem = new Vacation(SelectedItemAllowance.Vacation_Name, CountSelectedDays, SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate);
+                                    _plannedItem = new Vacation(SelectedItemAllowance.Vacation_Name, Person.Id_SAP, SelectedItemAllowance.Vacation_Id, CountSelectedDays, SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate, null);
                                 } else
                                 {
                                     ShowAlert("Этот день является праздичным, закончите планирование отпуска с другим днём");
