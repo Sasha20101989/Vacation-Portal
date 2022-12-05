@@ -194,7 +194,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         #endregion
 
-        public MainWindowViewModel()
+        public  MainWindowViewModel()
         {
 
             ITheme theme = _paletteHelper.GetTheme();

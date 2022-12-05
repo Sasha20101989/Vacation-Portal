@@ -12,8 +12,8 @@ namespace Vacation_Portal.MVVM.ViewModels
         public int Vacation_Id { get; set; }
         public string Vacation_Name { get; set; }
 
-        private string _vacation_Year;
-        public string Vacation_Year
+        private int _vacation_Year;
+        public int Vacation_Year
         {
             get
             {
@@ -40,7 +40,7 @@ namespace Vacation_Portal.MVVM.ViewModels
             }
         }
         public Brush Vacation_Color { get; set; }
-        public VacationAllowanceViewModel(int user_Id_SAP, string vacation_Name, int vacation_Id, string vacation_Year, int vacation_Days_Quantity, Brush vacation_color)
+        public VacationAllowanceViewModel(int user_Id_SAP, string vacation_Name, int vacation_Id, int vacation_Year, int vacation_Days_Quantity, Brush vacation_color)
         {
             User_Id_SAP = user_Id_SAP;
             Vacation_Id = vacation_Id;

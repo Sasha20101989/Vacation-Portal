@@ -158,129 +158,133 @@
 
         </ResourceDictionary>
     </UserControl.Resources>
-    <Viewbox>
-        <Grid Cursor="Arrow">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*" MinHeight="40"/>
-            </Grid.RowDefinitions>
+    <Grid>
+        <ProgressBar IsIndeterminate="{Binding IsLoadingPage,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Style="{StaticResource MaterialDesignCircularProgressBar}" Width="90" Height="90" Margin="0 0 0 24"/>
+        <Viewbox>
+            <Grid Cursor="Arrow"  Visibility="{Binding IsLoadingPage,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*" MinHeight="40"/>
+                </Grid.RowDefinitions>
 
-            <Button Style="{StaticResource MaterialDesignFloatingActionButton}"  Grid.Column="0" Grid.Row="1"
+                <Button Style="{StaticResource MaterialDesignFloatingActionButton}"  Grid.Column="0" Grid.Row="1"
                     Width="20" Height="20"  
                     HorizontalAlignment="Left" VerticalAlignment="Bottom"
                     Margin="6,6,6,6"
                     Command="{Binding StartLearning}"
                     ToolTip="Обучение"
                     IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
-                <md:PackIcon Kind="HelpCircleOutline"/>
-            </Button>
+                    <md:PackIcon Kind="HelpCircleOutline"/>
+                </Button>
 
-            <md:TransitioningContent OpeningEffectsOffset="0:0:0"
-                        OpeningEffect="{md:TransitionEffect Kind=SlideInFromLeft, Duration=0:0:1.00}">
-                <StackPanel Grid.Row="0" Grid.Column="0">
-                    <!--<controls:HRView VerticalAlignment="Top" Margin="6,6,16,6"
+                <md:TransitioningContent OpeningEffectsOffset="0:0:0"
+                        OpeningEffect="{md:TransitionEffect Kind=ExpandIn, Duration=0:0:1.00}">
+                    <StackPanel Grid.Row="0" Grid.Column="0">
+                        <!--<controls:HRView VerticalAlignment="Top" Margin="6,6,16,6"
                         Visibility="{Binding Person.Is_HR, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <controls:SupervisorView VerticalAlignment="Top" Margin="6,6,16,6"
                         Visibility="{Binding Person.Is_Supervisor, Converter={StaticResource BooleanToVisibilityConverter}}"/>-->
-                    <Viewbox>
-                    <controls:PersonalView Margin="6,49,6,6"
+                        <Viewbox>
+                            <controls:PersonalView Margin="6,49,6,6"
                         Visibility="{Binding IsEmployee,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    </Viewbox>
-                </StackPanel>
-            </md:TransitioningContent>
+                        </Viewbox>
+                    </StackPanel>
+                </md:TransitioningContent>
 
-            <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <Border  Grid.Row="0" Grid.ColumnSpan="3" Margin="10" BorderBrush="{Binding BorderColorCalendar}" BorderThickness="2" CornerRadius="10">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-                        <!--<md:Card md:ElevationAssist.Elevation="Dp5" UniformCornerRadius="10">-->
+                <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Border  Grid.Row="0" Grid.ColumnSpan="3" Margin="10" BorderBrush="{Binding BorderColorCalendar}" BorderThickness="2" CornerRadius="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <!--<md:Card md:ElevationAssist.Elevation="Dp5" UniformCornerRadius="10">-->
 
-                        <md:TransitioningContent OpeningEffectsOffset="0:0:0"
-                                OpeningEffect="{md:TransitionEffect Kind=SlideInFromRight, Duration=0:0:1.20}">
-                            <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" VerticalAlignment="Center"/>
-                                        <TextBlock Text=" - выходной день" VerticalAlignment="Center"/>
-                                        <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" Background="#FCA795" Width="20" Height="18" TextAlignment="Center" VerticalAlignment="Center"/>
-                                        <TextBlock Text=" - праздничный день" VerticalAlignment="Center"/>
-                                        <TextBlock Margin="20 0 0 0" Text="1" VerticalAlignment="Center"/>
-                                        <TextBlock Text=" - рабочий день" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <Button Margin="5 0 0 0" ToolTip="Предыдущий год"
+                            <md:TransitioningContent OpeningEffectsOffset="0:0:0"
+                                OpeningEffect="{md:TransitionEffect Kind=ExpandIn, Duration=0:0:1.00}">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" VerticalAlignment="Center"/>
+                                            <TextBlock Text=" - выходной день" VerticalAlignment="Center"/>
+                                            <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" Background="#FCA795" Width="20" Height="18" TextAlignment="Center" VerticalAlignment="Center"/>
+                                            <TextBlock Text=" - праздничный день" VerticalAlignment="Center"/>
+                                            <TextBlock Margin="20 0 0 0" Text="1" VerticalAlignment="Center"/>
+                                            <TextBlock Text=" - рабочий день" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <Button Margin="5 0 0 0" ToolTip="Предыдущий год"
                                                 Style="{StaticResource MaterialDesignToolButton}"
                                                 Content="{md:PackIcon Kind=ArrowLeft, Size=15}" 
                                                 IsEnabled="{Binding IsPreviousYearEnabled,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                 Command="{Binding MovePrevYearCommand}"
                                                 Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"/>
-                                        <TextBlock Margin="10 0 10 0" Text="{Binding CurrentDate.Year}" Foreground="{DynamicResource PrimaryHueMidBrush}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
-                                        <Button Margin="0 0 5 0"  ToolTip="Следующий год"
+                                            <TextBlock Margin="10 0 10 0" Text="{Binding CurrentDate.Year}" Foreground="{DynamicResource PrimaryHueMidBrush}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
+                                            <Button Margin="0 0 5 0"  ToolTip="Следующий год"
                                                 Style="{StaticResource MaterialDesignToolButton}"
                                                 Content="{md:PackIcon Kind=ArrowRight, Size=15}" 
                                                 IsEnabled="{Binding IsNextYearEnabled,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                 Command="{Binding MoveNextYearCommand}"
                                                 Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"/>
-                                    </StackPanel>
-                                </Grid>
-                                <controls:FullCalendar HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                    <controls:FullCalendar HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                </StackPanel>
 
-                        </md:TransitioningContent>
-                        <!--</md:Card>-->
-                        <md:Snackbar Grid.Row="1" 
+                            </md:TransitioningContent>
+                            <!--</md:Card>-->
+                            <md:Snackbar Grid.Row="1" 
                              MessageQueue="{Binding MessageQueueCalendar,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
-                    </Grid>
-                </Border>
-                <Border  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="{Binding BorderColorSelectedGap}" BorderThickness="2" CornerRadius="10"  Padding="0 0 0 0">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center"
+                        </Grid>
+                    </Border>
+                    <Border  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="{Binding BorderColorSelectedGap}" BorderThickness="2" CornerRadius="10"  Padding="0 0 0 0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center"
                                     Visibility="{Binding IsGapVisible,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <TextBlock TextAlignment="Right" Cursor="Arrow" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                <TextBlock TextAlignment="Right" Cursor="Arrow" HorizontalAlignment="Right" VerticalAlignment="Center"
                                        FontSize="14"
                                        Text="{Binding SelectedItemAllowance.Vacation_Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock TextAlignment="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10 0 0 0"
+                                <TextBlock TextAlignment="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10 0 0 0"
                                        FontSize="14"
                                        Text="{Binding DisplayedDateString,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                            <Button HorizontalAlignment="Left" Foreground="Green" Width="24" Height="24" Margin="10 0 0 0"
+                                <Button HorizontalAlignment="Left" Foreground="Green" Width="24" Height="24" Margin="10 0 0 0"
                                     Style="{StaticResource MaterialDesignIconForegroundButton}" 
                                     Command="{Binding AddToApprovalList}">
-                                <md:PackIcon Kind="Check"  Width="20" Height="20"/>
-                            </Button>
-                        </StackPanel>
-                        <md:Snackbar Grid.Row="1" MessageQueue="{Binding MessageQueueSelectedGap}"/>
-                    </Grid>
-                </Border>
-            </Grid>
+                                    <md:PackIcon Kind="Check"  Width="20" Height="20"/>
+                                </Button>
+                            </StackPanel>
+                            <md:Snackbar Grid.Row="1" MessageQueue="{Binding MessageQueueSelectedGap}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
 
-        </Grid>
-    </Viewbox>
+            </Grid>
+        </Viewbox>
+    </Grid>
+    
 </UserControl>

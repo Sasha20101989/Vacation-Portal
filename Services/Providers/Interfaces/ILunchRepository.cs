@@ -13,14 +13,12 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         List<HolidayViewModel> Holidays { get; set; }
         Action<List<HolidayViewModel>> OnHolidaysChanged { get; set; }
         Task<IEnumerable<PersonDTO>> LoginAsync(string account);
-        Task LogoutAsync();
-        Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(DateTime start, DateTime end);
+        Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(int year);
         Task<IEnumerable<Settings>> GetSettingsAsync(string account);
         Task<IEnumerable<Access>> GetAccessAsync(string account);
         Task<IEnumerable<Holiday>> GetHolidayTypesAsync();
-        Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync();
         Task AddHolidayAsync(HolidayViewModel holiday);
         Task DeleteHolidayAsync(HolidayViewModel holiday);
-        Task<IEnumerable<VacationAllowance>> GetVacationsAsync(int UserIdSAP, string year);
+        Task<IEnumerable<VacationAllowanceViewModel>> GetVacationsAsync(int UserIdSAP, int year);
     }
 }

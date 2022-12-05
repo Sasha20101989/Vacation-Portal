@@ -6,7 +6,6 @@ namespace Vacation_Portal.MVVM.Models
     {
         public int Id { get; set; }
         public string NameOfHoliday { get; set; }
-
         public Holiday(int id, string name)
         {
             Id = id;

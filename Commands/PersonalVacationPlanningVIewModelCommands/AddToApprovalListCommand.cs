@@ -41,9 +41,13 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                             Button button = elem as Button;
                             TextBlock buttonTextBlock = button.Content as TextBlock;
                             int buttonDay = Convert.ToInt32(buttonTextBlock.Text);
-                            int buttonMonth = Convert.ToInt32(buttonTextBlock.Tag);
+                            int buttonMonth = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[0]);
+                            int buttonYear = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[1]);
                             string buttonNameOfDay = buttonTextBlock.ToolTip.ToString();
-                            if(buttonNameOfDay == "Рабочий" && date.Day == buttonDay && date.Month == buttonMonth)
+                            if((buttonNameOfDay == "Рабочий" || buttonNameOfDay == "Рабочий в выходной") && 
+                                date.Day == buttonDay &&
+                                date.Month == buttonMonth &&
+                                date.Year == buttonYear)
                             {
                                 _viewModel.WorkingDays.Add(true);
                                 break;

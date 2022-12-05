@@ -227,7 +227,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 async _ =>
                 {
                     IsLoading = true;
-                    IEnumerable<HolidayViewModel> holidays = await Task.Run(async () => await App.API.GetHolidaysAsync());
+                    IEnumerable<HolidayViewModel> holidays = await Task.Run(async () => await App.API.GetHolidaysAsync(Convert.ToInt32(DateTime.Now.Year)));
                     IsLoading = false;
                     OnHolidaysLoad(holidays);
                 });
@@ -240,10 +240,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
             foreach(HolidayViewModel holiday in holidays)
             {
-                if(!Holidays.Contains(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date)))
+                if(!Holidays.Contains(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year))))
                 {
-                    App.API.Holidays.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date));
-                    Holidays.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date));
+                    App.API.Holidays.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year)));
+                    Holidays.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year)));
                     App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
                 }
             }

@@ -16,7 +16,7 @@ namespace Vacation_Portal.MVVM.Views.Controls
         public void Day(DateTime date)
         {
             tbDay.Text = date.Day.ToString("d");
-            tbDay.Tag = date.Month;
+            tbDay.Tag = date.Month + "." + date.Year;
             tbDay.ToolTip = "Рабочий";
         }
         public void DayWork(DateTime date)

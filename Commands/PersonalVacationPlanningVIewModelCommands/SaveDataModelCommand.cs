@@ -56,7 +56,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     }
                 }), Dispatcher.CurrentDispatcher);
             //TODO: сохранение в базу данных
-            Task.Run(() => { });
+           await Task.Run(() => { });
         }
 
         private void Timer1_Elapsed(object sender, ElapsedEventArgs e)
