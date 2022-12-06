@@ -1,12 +1,15 @@
 ﻿using MaterialDesignThemes.Wpf;
 using MiscUtil.Collections;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Threading;
 using Vacation_Portal.Commands.BaseCommands;
+using Vacation_Portal.DTOs;
+using Vacation_Portal.Exceptions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
@@ -43,13 +46,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     {
                         CheckedVacation = null;
                         _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
-                        foreach(var item in _viewModel.VacationsToAproval)
-                        {
-                           //TODO:Реализовать функцию Добавлять в случае если в базе нет такой записи
-                            await App.API.AddVacationAsync(new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, "На согласовании"));
-                            VacationAllowanceViewModel vacation = _viewModel.GetVacationAllowance(item.Name);
-                            await _viewModel.UpdateVacationAllowance(item.Vacation_Id, item.Date_Start.Year, vacation.Vacation_Days_Quantity);
-                        }
+                        
                         _viewModel.IsSaveComplete = true;
                         _viewModel.IsSaving = false;
 
@@ -63,7 +60,26 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                         timer1.Enabled = true;
                     }
                 }), Dispatcher.CurrentDispatcher);
-            
+            foreach(var item in _viewModel.VacationsToAproval)
+            {
+                int countConflicts = 0;
+                Vacation plannedVacation = new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, "На согласовании");
+                IEnumerable<VacationDTO> conflictingVacations = await App.API.GetConflictingVacationAsync(plannedVacation);
+
+                foreach(VacationDTO vacationDTO in conflictingVacations)
+                {
+                    countConflicts++;
+                }
+                if(countConflicts == 0)
+                {
+                    await App.API.AddVacationAsync(plannedVacation);
+                    VacationAllowanceViewModel vacation = _viewModel.GetVacationAllowance(item.Name);
+                    await _viewModel.UpdateVacationAllowance(item.Vacation_Id, item.Date_Start.Year, vacation.Vacation_Days_Quantity);
+                } else
+                {
+                    _viewModel.ShowAlert("Такой отпуск уже существует");
+                }
+            }
         }
 
         

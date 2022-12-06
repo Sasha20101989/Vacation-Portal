@@ -191,7 +191,6 @@ namespace Vacation_Portal.Services.Providers
                 return null;
             }
         }
-
         public async Task UpdateVacationAllowanceAsync(int vacation_Id, int year, int count)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
@@ -231,6 +230,28 @@ namespace Vacation_Portal.Services.Providers
                 MessageBox.Show(ex.Message);
             }
             
+        }
+        public async Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation)
+        {
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            object parameters = new
+            {
+                User_Id_SAP = vacation.User_Id_SAP,
+                Vacation_Id = vacation.Vacation_Id,
+                Vacation_Year = vacation.Date_Start.Year,
+                Vacation_Date_Start = vacation.Date_Start,
+                Vacation_Date_End = vacation.Date_end,
+                Vacation_Status = vacation.Status
+            };
+            try
+            {
+               IEnumerable<VacationDTO> vacationDTOs = await database.QueryAsync<VacationDTO>("usp_Load_Conflicting_Vacation_For_User", parameters, commandType: CommandType.StoredProcedure);
+                return vacationDTOs;
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
         }
         public async Task DeleteVacationAsync(Vacation vacation)
         {
@@ -278,6 +299,12 @@ namespace Vacation_Portal.Services.Providers
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
             return new VacationViewModel(dto.Vacation_Name, dto.User_Id_SAP, dto.Vacation_Id, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status, dto.Creator_Id);
         }
+        private VacationViewModel ToConflictingVacation(VacationDTO dto)
+        {
+            BrushConverter converter = new System.Windows.Media.BrushConverter();
+            Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
+            return new VacationViewModel(dto.Vacation_Name, dto.User_Id_SAP, dto.Vacation_Id, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status, dto.Creator_Id);
+        }
         private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto)
         {
             BrushConverter converter = new System.Windows.Media.BrushConverter();
@@ -300,6 +327,7 @@ namespace Vacation_Portal.Services.Providers
         {
             return new Access(dto.Is_Worker, dto.Is_HR, dto.Is_Accounting, dto.Is_Supervisor);
         }
+
         #endregion
     }
 }
