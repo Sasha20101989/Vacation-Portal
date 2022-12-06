@@ -9,7 +9,6 @@ using System.Timers;
 using System.Windows.Threading;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.DTOs;
-using Vacation_Portal.Exceptions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;

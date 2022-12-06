@@ -59,6 +59,18 @@ namespace Vacation_Portal.Services.Providers
                 OnPropertyChanged(nameof(Holidays));
             }
         }
+        public Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
+
+        private List<VacationViewModel> _vacations = new List<VacationViewModel>();
+        public List<VacationViewModel> Vacations
+        {
+            get => _vacations;
+            set
+            {
+                _vacations = value;
+                OnPropertyChanged(nameof(Vacations));
+            }
+        }
         public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
         #endregion
 
@@ -294,12 +306,6 @@ namespace Vacation_Portal.Services.Providers
 
         #region ToObj
         private VacationViewModel ToVacation(VacationDTO dto)
-        {
-            BrushConverter converter = new System.Windows.Media.BrushConverter();
-            Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
-            return new VacationViewModel(dto.Vacation_Name, dto.User_Id_SAP, dto.Vacation_Id, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status, dto.Creator_Id);
-        }
-        private VacationViewModel ToConflictingVacation(VacationDTO dto)
         {
             BrushConverter converter = new System.Windows.Media.BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);

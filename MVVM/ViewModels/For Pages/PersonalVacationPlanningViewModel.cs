@@ -621,9 +621,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #region Constructor
         public PersonalVacationPlanningViewModel()
         {
-            _vacationsToAproval = new ObservableCollection<Vacation>();
             _vacationTypes = new ObservableCollection<Vacation>();
             _vacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
+            _vacationsToAproval = new ObservableCollection<Vacation>();
             MessageQueueVacation = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
             MessageQueueCalendar = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
             MessageQueueSelectedGap = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
@@ -654,7 +654,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                    CurrentDate = new DateTime(DateTime.Now.Year + 1, DateTime.Now.Month, DateTime.Now.Day);
                    await LoadVacationAllowanceForYearAsync();
                });
-            LoadModel.Execute(new object());
+            LoadModel.Execute(new object());      
             App.API.OnHolidaysChanged += OnHolidaysChanged;
         }
         #endregion Constructor
@@ -969,7 +969,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #region Task Lazy
         private async Task Initialize()
         {
-            await LoadVacationAllowanceForYearAsync();//Передаем в параметр текущий год
+            await LoadVacationAllowanceForYearAsync();
         }
 
         public async Task Load()
@@ -999,11 +999,11 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 VacationAllowances.Add(item);
             }
             OnHolidaysLoad(holidays);
-            //foreach(VacationViewModel vacation in App.API.Person.Vacations)
-            //{
-            //    VacationsToAproval.Add(new Vacation(vacation.Name, vacation.User_Id_SAP, vacation.Vacation_Id, vacation.Count, vacation.Color, vacation.DateStart, vacation.DateEnd, vacation.Status));
-            //}
             IsLoadingPage = false;
+            //foreach(VacationViewModel item in App.API.Vacations)
+            //{
+            //    VacationsToAproval.Add(new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.DateStart, item.DateEnd, item.Status));
+            //}
         }
 
         private void OnHolidaysLoad(IEnumerable<HolidayViewModel> holidays)

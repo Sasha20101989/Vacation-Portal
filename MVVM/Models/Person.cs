@@ -37,7 +37,6 @@ namespace Vacation_Portal.MVVM.Models
         private readonly List<Settings> _listSettings = new List<Settings>();
         public ObservableCollection<VacationViewModel> Vacations = new ObservableCollection<VacationViewModel>();
         public event Action<Settings> SettingsLoad;
-        //public event Action<ObservableCollection<VacationViewModel>> VacationsLoad;
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
         public override string ToString()
@@ -55,6 +54,7 @@ namespace Vacation_Portal.MVVM.Models
             Department_Id = departmentId;
             Vitrual_Department_Id = virtualDepartmentId;
             Position = position;
+            App.API.OnVacationsChanged += OnVacationsLoad;
         }
         public async void GetVacations()
         {
@@ -71,8 +71,8 @@ namespace Vacation_Portal.MVVM.Models
             foreach(VacationViewModel vacation in vacations)
             {
                 Vacations.Add(vacation);
+                App.API.Vacations.Add(vacation);
             }
-            //VacationsLoad?.Invoke(Vacations);
         }
         public async void GetAccess()
         {
