@@ -10,5 +10,6 @@
         public int User_Department_Id { get; set; }
         public int User_Virtual_Department_Id { get; set; }
         public string User_Position_Id { get; set; }
+        public string User_Role { get; set; }
     }
 }
