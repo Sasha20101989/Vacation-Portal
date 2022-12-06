@@ -1171,10 +1171,27 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     }
                 }
                 VacationAllowances[index].Vacation_Days_Quantity += deletedItem.Count;
+                Task.Run(async() => await UpdateVacationAllowance(VacationAllowances[index].Vacation_Id, deletedItem.Date_Start.Year, VacationAllowances[index].Vacation_Days_Quantity));
                 VacationsToAproval.Remove(deletedItem);
                 PlannedIndex = 0;
                 ClearColor();
             }
+        }
+        public VacationAllowanceViewModel GetVacationAllowance(string name)
+        {
+            foreach(var item in VacationAllowances)
+            {
+                if(item.Vacation_Name == name)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        public async Task UpdateVacationAllowance(int vacation_Id, int year, int count)
+        {
+            await App.API.UpdateVacationAllowanceAsync(vacation_Id, year, count);
         }
         #endregion Utils
     }

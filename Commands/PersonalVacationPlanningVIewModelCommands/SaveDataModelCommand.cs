@@ -47,8 +47,8 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                         {
                            //TODO:Реализовать функцию Добавлять в случае если в базе нет такой записи
                             await App.API.AddVacationAsync(new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, "На согласовании"));
-                            VacationAllowanceViewModel vacation = GetVacationAllowance(item.Name);
-                            await UpdateVacationAllowance(item.Vacation_Id, item.Date_Start.Year, vacation.Vacation_Days_Quantity);
+                            VacationAllowanceViewModel vacation = _viewModel.GetVacationAllowance(item.Name);
+                            await _viewModel.UpdateVacationAllowance(item.Vacation_Id, item.Date_Start.Year, vacation.Vacation_Days_Quantity);
                         }
                         _viewModel.IsSaveComplete = true;
                         _viewModel.IsSaving = false;
@@ -66,22 +66,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             
         }
 
-        private VacationAllowanceViewModel GetVacationAllowance(string name)
-        {
-            foreach(var item in _viewModel.VacationAllowances)
-            {
-                if(item.Vacation_Name == name)
-                {
-                    return item;
-                }
-            }
-            return null;
-        }
-
-        private async Task UpdateVacationAllowance(int vacation_Id, int year, int count)
-        {
-           await App.API.UpdateVacationAllowanceAsync(vacation_Id, year, count);
-        }
+        
 
         private void Timer1_Elapsed(object sender, ElapsedEventArgs e)
         {
