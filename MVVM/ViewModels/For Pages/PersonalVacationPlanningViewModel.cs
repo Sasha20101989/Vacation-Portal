@@ -999,12 +999,12 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 VacationAllowances.Add(item);
             }
             OnHolidaysLoad(holidays);
-            IsLoadingPage = false;
+
             //foreach(VacationViewModel item in App.API.Vacations)
             //{
             //    VacationsToAproval.Add(new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.DateStart, item.DateEnd, item.Status));
             //}
-            //TODO
+            IsLoadingPage = false;
         }
 
         private void OnHolidaysLoad(IEnumerable<HolidayViewModel> holidays)
