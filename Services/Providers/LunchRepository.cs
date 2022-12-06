@@ -191,6 +191,25 @@ namespace Vacation_Portal.Services.Providers
                 return null;
             }
         }
+
+        public async Task UpdateVacationAllowanceAsync(int vacation_Id, int year, int count)
+        {
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            object parameters = new
+            {
+                User_Id_SAP = Person.Id_SAP,
+                Vacation_Id = vacation_Id,
+                Vacation_Year = year,
+                Quantity = count
+            };
+            try
+            {
+                await database.QueryAsync("usp_Update_Vacation_Allowance", parameters, commandType: CommandType.StoredProcedure);
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
         public async Task AddVacationAsync(Vacation vacation)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
@@ -281,7 +300,6 @@ namespace Vacation_Portal.Services.Providers
         {
             return new Access(dto.Is_Worker, dto.Is_HR, dto.Is_Accounting, dto.Is_Supervisor);
         }
-
         #endregion
     }
 }
