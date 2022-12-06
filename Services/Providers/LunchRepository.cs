@@ -47,8 +47,9 @@ namespace Vacation_Portal.Services.Providers
 
         #region Props
         public Person Person { get; set; }
-        private List<HolidayViewModel> _holidays = new List<HolidayViewModel>();
         public Action<List<HolidayViewModel>> OnHolidaysChanged { get; set; }
+
+        private List<HolidayViewModel> _holidays = new List<HolidayViewModel>();
         public List<HolidayViewModel> Holidays
         {
             get => _holidays;
@@ -173,7 +174,7 @@ namespace Vacation_Portal.Services.Providers
         #endregion
 
         #region Vacations
-        public async Task<IEnumerable<VacationAllowanceViewModel>> GetVacationsAsync(int UserIdSAP, int year)
+        public async Task<IEnumerable<VacationAllowanceViewModel>> GetVacationAllowanceAsync(int UserIdSAP, int year)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             object parameters = new
@@ -184,7 +185,7 @@ namespace Vacation_Portal.Services.Providers
             try
             {
                 IEnumerable<VacationAllowanceDTO> vacationAllowanceDTOs = await database.QueryAsync<VacationAllowanceDTO>("usp_Load_Vacation_Allowance_For_User", parameters, commandType: CommandType.StoredProcedure);
-                return vacationAllowanceDTOs.Select(ToVacations);
+                return vacationAllowanceDTOs.Select(ToVacationAllowance);
             } catch(Exception ex)
             {
                 return null;
@@ -232,10 +233,33 @@ namespace Vacation_Portal.Services.Providers
             }
 
         }
+        public async Task<IEnumerable<VacationViewModel>> LoadVacationAsync(int UserIdSAP)
+        {
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            object parameters = new
+            {
+                User_Id_SAP = UserIdSAP
+            };
+            try
+            {
+                IEnumerable<VacationDTO> vacationDTOs = await database.QueryAsync<VacationDTO>("usp_Load_Vacation_For_User", parameters, commandType: CommandType.StoredProcedure);
+                return vacationDTOs.Select(ToVacation);
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
         #endregion
 
         #region ToObj
-        private VacationAllowanceViewModel ToVacations(VacationAllowanceDTO dto)
+        private VacationViewModel ToVacation(VacationDTO dto)
+        {
+            BrushConverter converter = new System.Windows.Media.BrushConverter();
+            Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
+            return new VacationViewModel(dto.Vacation_Name, dto.User_Id_SAP, dto.Vacation_Id, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status, dto.Creator_Id);
+        }
+        private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto)
         {
             BrushConverter converter = new System.Windows.Media.BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
@@ -257,6 +281,7 @@ namespace Vacation_Portal.Services.Providers
         {
             return new Access(dto.Is_Worker, dto.Is_HR, dto.Is_Accounting, dto.Is_Supervisor);
         }
+
         #endregion
     }
 }

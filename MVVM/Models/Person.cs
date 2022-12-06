@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media;
+using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 using Vacation_Portal.MVVM.ViewModels.ForPages;
 using Vacation_Portal.MVVM.Views;
@@ -34,8 +35,9 @@ namespace Vacation_Portal.MVVM.Models
         public Settings Settings { get; set; }
 
         private readonly List<Settings> _listSettings = new List<Settings>();
-
+        public ObservableCollection<VacationViewModel> Vacations = new ObservableCollection<VacationViewModel>();
         public event Action<Settings> SettingsLoad;
+        //public event Action<ObservableCollection<VacationViewModel>> VacationsLoad;
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
         public override string ToString()
@@ -54,6 +56,24 @@ namespace Vacation_Portal.MVVM.Models
             Vitrual_Department_Id = virtualDepartmentId;
             Position = position;
         }
+        public async void GetVacations()
+        {
+            IEnumerable<VacationViewModel> vacations = await App.API.LoadVacationAsync(Id_SAP);
+            App.Current.Dispatcher.Invoke((Action) delegate
+            {
+                App.SplashScreen.status.Text = "Ищу ваши отпуска...";
+                App.SplashScreen.status.Foreground = Brushes.Black;
+            });
+            OnVacationsLoad(vacations);
+        }
+        public void OnVacationsLoad(IEnumerable<VacationViewModel> vacations)
+        {
+            foreach(VacationViewModel vacation in vacations)
+            {
+                Vacations.Add(vacation);
+            }
+            //VacationsLoad?.Invoke(Vacations);
+        }
         public async void GetAccess()
         {
             IEnumerable<Access> access = await App.API.GetAccessAsync(Environment.UserName);
@@ -62,10 +82,9 @@ namespace Vacation_Portal.MVVM.Models
                 App.SplashScreen.status.Text = "Ищу настройки вашего аккаунта...";
                 App.SplashScreen.status.Foreground = Brushes.Black;
             });
-            NewMethod(access);
+            OnAccessLoad(access);
         }
-
-        private static void NewMethod(IEnumerable<Access> access)
+        private static void OnAccessLoad(IEnumerable<Access> access)
         {
             App.Current.Dispatcher.Invoke((Action) delegate
             {

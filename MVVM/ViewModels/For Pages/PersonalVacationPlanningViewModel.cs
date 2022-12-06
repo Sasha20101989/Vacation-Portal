@@ -992,14 +992,17 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             IsLoadingPage = true;
             VacationAllowances.Clear();
             ClearColor();
-            IEnumerable<VacationAllowanceViewModel> vacations = await App.API.GetVacationsAsync(App.API.Person.Id_SAP, Convert.ToInt32(CurrentDate.Year));
+            IEnumerable<VacationAllowanceViewModel> vacations = await App.API.GetVacationAllowanceAsync(App.API.Person.Id_SAP, Convert.ToInt32(CurrentDate.Year));
             IEnumerable<HolidayViewModel> holidays = await Task.Run(async () => await App.API.GetHolidaysAsync(Convert.ToInt32(CurrentDate.Year)));
             foreach(VacationAllowanceViewModel item in vacations)
             {
                 VacationAllowances.Add(item);
             }
-            
             OnHolidaysLoad(holidays);
+            //foreach(VacationViewModel vacation in App.API.Person.Vacations)
+            //{
+            //    VacationsToAproval.Add(new Vacation(vacation.Name, vacation.User_Id_SAP, vacation.Vacation_Id, vacation.Count, vacation.Color, vacation.DateStart, vacation.DateEnd, vacation.Status));
+            //}
             IsLoadingPage = false;
         }
 

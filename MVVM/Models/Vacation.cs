@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MiscUtil.Collections;
+using MiscUtil.Collections.Extensions;
+using System;
 using System.Windows.Media;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
