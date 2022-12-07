@@ -21,9 +21,9 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Январь" FontWeight="Bold" Margin="5 0 0 0" Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="WorkOutline" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[0].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[0].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="HomeOutline" VerticalAlignment="Center" Margin="6 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[0].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[0].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </md:ColorZone>
                 <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0" Cursor="Arrow">
@@ -35,10 +35,10 @@
                     <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                     <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 </UniformGrid>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding FullYear[0].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Calendar.FullYear[0].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Rows="{Binding  FullYear[0].CountRows}" Columns="7" FirstColumn="{Binding FullYear[0].ColumnOfWeek}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <UniformGrid Rows="{Binding  Calendar.FullYear[0].CountRows}" Columns="7" FirstColumn="{Binding Calendar.FullYear[0].ColumnOfWeek}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -56,9 +56,9 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Февраль" FontWeight="Bold" Margin="5 0 0 0" Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="WorkOutline" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[1].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[1].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="HomeOutline" VerticalAlignment="Center" Margin="6 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[1].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[1].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </md:ColorZone>
                 <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0" Cursor="Arrow">
@@ -70,10 +70,10 @@
                     <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                     <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 </UniformGrid>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding FullYear[1].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Calendar.FullYear[1].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Rows="{Binding  FullYear[1].CountRows}" Columns="7" FirstColumn="{Binding FullYear[1].ColumnOfWeek}"/>
+                            <UniformGrid Rows="{Binding  Calendar.FullYear[1].CountRows}" Columns="7" FirstColumn="{Binding Calendar.FullYear[1].ColumnOfWeek}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -91,9 +91,9 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Март" FontWeight="Bold" Margin="5 0 0 0" Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="WorkOutline" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[2].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[2].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="HomeOutline" VerticalAlignment="Center" Margin="6 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[2].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[2].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </md:ColorZone>
                 <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0" Cursor="Arrow">
@@ -105,10 +105,10 @@
                     <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                     <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 </UniformGrid>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding FullYear[2].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Calendar.FullYear[2].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Rows="{Binding  FullYear[2].CountRows}" Columns="7" FirstColumn="{Binding FullYear[2].ColumnOfWeek}"/>
+                            <UniformGrid Rows="{Binding  Calendar.FullYear[2].CountRows}" Columns="7" FirstColumn="{Binding Calendar.FullYear[2].ColumnOfWeek}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -126,9 +126,9 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Апрель" FontWeight="Bold" Margin="5 0 0 0" Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="WorkOutline" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[3].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[3].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="HomeOutline" VerticalAlignment="Center" Margin="6 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[3].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[3].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </md:ColorZone>
                 <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0" Cursor="Arrow">
@@ -140,10 +140,10 @@
                     <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                     <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 </UniformGrid>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding FullYear[3].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Calendar.FullYear[3].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Rows="{Binding  FullYear[3].CountRows}" Columns="7" FirstColumn="{Binding FullYear[3].ColumnOfWeek}"/>
+                            <UniformGrid Rows="{Binding  Calendar.FullYear[3].CountRows}" Columns="7" FirstColumn="{Binding Calendar.FullYear[3].ColumnOfWeek}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -161,9 +161,9 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Май" FontWeight="Bold" Margin="5 0 0 0" Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="WorkOutline" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[4].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[4].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="HomeOutline" VerticalAlignment="Center" Margin="6 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[4].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[4].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </md:ColorZone>
                 <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0" Cursor="Arrow">
@@ -175,10 +175,10 @@
                     <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                     <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 </UniformGrid>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding FullYear[4].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Calendar.FullYear[4].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Rows="{Binding  FullYear[4].CountRows}" Columns="7" FirstColumn="{Binding FullYear[4].ColumnOfWeek}"/>
+                            <UniformGrid Rows="{Binding  Calendar.FullYear[4].CountRows}" Columns="7" FirstColumn="{Binding Calendar.FullYear[4].ColumnOfWeek}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -196,9 +196,9 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Июнь" FontWeight="Bold" Margin="5 0 0 0" Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="WorkOutline" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[5].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[5].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="HomeOutline" VerticalAlignment="Center" Margin="6 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[5].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[5].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </md:ColorZone>
                 <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0" Cursor="Arrow">
@@ -210,10 +210,10 @@
                     <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                     <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 </UniformGrid>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding FullYear[5].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Calendar.FullYear[5].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Rows="{Binding  FullYear[5].CountRows}" Columns="7" FirstColumn="{Binding FullYear[5].ColumnOfWeek}"/>
+                            <UniformGrid Rows="{Binding  Calendar.FullYear[5].CountRows}" Columns="7" FirstColumn="{Binding Calendar.FullYear[5].ColumnOfWeek}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -231,9 +231,9 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Июль" FontWeight="Bold" Margin="5 0 0 0" Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="WorkOutline" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[6].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[6].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="HomeOutline" VerticalAlignment="Center" Margin="6 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[6].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[6].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </md:ColorZone>
                 <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0" Cursor="Arrow">
@@ -245,10 +245,10 @@
                     <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                     <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 </UniformGrid>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding FullYear[6].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Calendar.FullYear[6].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Rows="{Binding  FullYear[6].CountRows}" Columns="7" FirstColumn="{Binding FullYear[6].ColumnOfWeek}"/>
+                            <UniformGrid Rows="{Binding  Calendar.FullYear[6].CountRows}" Columns="7" FirstColumn="{Binding Calendar.FullYear[6].ColumnOfWeek}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -266,9 +266,9 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Август" FontWeight="Bold" Margin="5 0 0 0" Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="WorkOutline" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[7].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[7].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="HomeOutline" VerticalAlignment="Center" Margin="6 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[7].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[7].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </md:ColorZone>
                 <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0" Cursor="Arrow">
@@ -280,10 +280,10 @@
                     <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                     <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 </UniformGrid>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding FullYear[7].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Calendar.FullYear[7].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Rows="{Binding  FullYear[7].CountRows}" Columns="7" FirstColumn="{Binding FullYear[7].ColumnOfWeek}"/>
+                            <UniformGrid Rows="{Binding  Calendar.FullYear[7].CountRows}" Columns="7" FirstColumn="{Binding Calendar.FullYear[7].ColumnOfWeek}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -301,9 +301,9 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Сентябрь" FontWeight="Bold" Margin="5 0 0 0" Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="WorkOutline" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[8].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[8].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="HomeOutline" VerticalAlignment="Center" Margin="6 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[8].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[8].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </md:ColorZone>
                 <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0" Cursor="Arrow">
@@ -315,10 +315,10 @@
                     <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                     <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 </UniformGrid>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding FullYear[8].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Calendar.FullYear[8].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Rows="{Binding  FullYear[8].CountRows}" Columns="7" FirstColumn="{Binding FullYear[8].ColumnOfWeek}"/>
+                            <UniformGrid Rows="{Binding  Calendar.FullYear[8].CountRows}" Columns="7" FirstColumn="{Binding Calendar.FullYear[8].ColumnOfWeek}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -336,9 +336,9 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Октябрь" FontWeight="Bold" Margin="5 0 0 0" Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="WorkOutline" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[9].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[9].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="HomeOutline" VerticalAlignment="Center" Margin="6 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[9].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[9].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </md:ColorZone>
                 <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0" Cursor="Arrow">
@@ -350,10 +350,10 @@
                     <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                     <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 </UniformGrid>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding FullYear[9].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Calendar.FullYear[9].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Rows="{Binding  FullYear[9].CountRows}" Columns="7" FirstColumn="{Binding FullYear[9].ColumnOfWeek}"/>
+                            <UniformGrid Rows="{Binding  Calendar.FullYear[9].CountRows}" Columns="7" FirstColumn="{Binding Calendar.FullYear[9].ColumnOfWeek}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -371,9 +371,9 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Ноябрь" FontWeight="Bold" Margin="5 0 0 0" Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="WorkOutline" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[10].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[10].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="HomeOutline" VerticalAlignment="Center" Margin="6 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[10].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[10].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                      </StackPanel>
                 </md:ColorZone>
                 <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0" Cursor="Arrow">
@@ -385,10 +385,10 @@
                     <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                     <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 </UniformGrid>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding FullYear[10].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Calendar.FullYear[10].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Rows="{Binding  FullYear[10].CountRows}" Columns="7" FirstColumn="{Binding FullYear[10].ColumnOfWeek}"/>
+                            <UniformGrid Rows="{Binding  Calendar.FullYear[10].CountRows}" Columns="7" FirstColumn="{Binding Calendar.FullYear[10].ColumnOfWeek}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -406,9 +406,9 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Декабрь" FontWeight="Bold" Margin="5 0 0 0" Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="WorkOutline" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[10].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[10].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="HomeOutline" VerticalAlignment="Center" Margin="6 0 0 0"/>
-                        <TextBlock Text="{Binding FullYear[10].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[10].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </md:ColorZone>
                 <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0" Cursor="Arrow">
@@ -420,10 +420,10 @@
                     <TextBlock Text="Сб" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                     <TextBlock Text="Вс" TextAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
                 </UniformGrid>
-                <ItemsControl Grid.Row="2" ItemsSource="{Binding FullYear[11].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding Calendar.FullYear[11].Days[0].Days,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderThickness="1">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Rows="{Binding  FullYear[11].CountRows}" Columns="7" FirstColumn="{Binding FullYear[11].ColumnOfWeek}"/>
+                            <UniformGrid Rows="{Binding  Calendar.FullYear[11].CountRows}" Columns="7" FirstColumn="{Binding Calendar.FullYear[11].ColumnOfWeek}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>

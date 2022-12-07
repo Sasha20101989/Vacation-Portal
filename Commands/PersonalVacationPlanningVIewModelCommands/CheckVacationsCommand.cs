@@ -38,7 +38,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 int countFirstPeriod = 0;
                 if(_viewModel.VacationsToAproval[i].Name == "Основной")
                 {
-                    Range<DateTime> range = _viewModel.ReturnRange(_viewModel.VacationsToAproval[i]);
+                    Range<DateTime> range = _viewModel.Calendar.ReturnRange(_viewModel.VacationsToAproval[i]);
                     foreach(DateTime planedDate in range.Step(x => x.AddDays(1)))
                     {
                         countFirstPeriod++;
@@ -62,7 +62,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     int countSecondPeriod = 0;
                     if(_viewModel.VacationsToAproval[i].Name == "Основной" && _viewModel.VacationsToAproval[i] != CheckedVacation)
                     {
-                        Range<DateTime> range = _viewModel.ReturnRange(_viewModel.VacationsToAproval[i]);
+                        Range<DateTime> range = _viewModel.Calendar.ReturnRange(_viewModel.VacationsToAproval[i]);
                         foreach(DateTime planedDate in range.Step(x => x.AddDays(1)))
                         {
                             countSecondPeriod++;

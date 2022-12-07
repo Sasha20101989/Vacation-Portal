@@ -23,12 +23,12 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
         public override void Execute(object parameter)
         {
-            Range<DateTime> range = _viewModel.ReturnRange(_viewModel.PlannedItem);
+            Range<DateTime> range = _viewModel.Calendar.ReturnRange(_viewModel.PlannedItem);
 
             _viewModel.WorkingDays.Clear();
             foreach(DateTime date in range.Step(x => x.AddDays(1)))
             {
-                foreach(ObservableCollection<DayControl> month in _viewModel.Year)
+                foreach(ObservableCollection<DayControl> month in _viewModel.Calendar.Year)
                 {
                     foreach(DayControl item in month)
                     {
@@ -105,13 +105,13 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 _viewModel.ShowAlert("В выбранном периоде, отсутствуют рабочие дни выбранного типа отпуска.");
                 _viewModel.SelectedItemAllowance.Vacation_Days_Quantity += _viewModel.CountSelectedDays;
                 _viewModel.VacationsToAproval.Remove(_viewModel.PlannedItem);
-                _viewModel.ClearVacationData();
+                _viewModel.Calendar.ClearVacationData();
             }
         }
 
         private int GetCountDays(Vacation vacation)
         {
-            Range<DateTime> range = _viewModel.ReturnRange(vacation);
+            Range<DateTime> range = _viewModel.Calendar.ReturnRange(vacation);
             int count = 0;
             foreach(DateTime date in range.Step(x => x.AddDays(1)))
             {

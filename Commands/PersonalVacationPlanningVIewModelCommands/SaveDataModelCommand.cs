@@ -73,7 +73,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 if(countConflicts == 0)
                 {
                     await App.API.AddVacationAsync(plannedVacation);
-                    VacationAllowanceViewModel vacation = _viewModel.GetVacationAllowance(item.Name);
+                    VacationAllowanceViewModel vacation = GetVacationAllowance(item.Name);
                     await _viewModel.UpdateVacationAllowance(item.Vacation_Id, item.Date_Start.Year, vacation.Vacation_Days_Quantity);
                 } else
                 {
@@ -82,8 +82,17 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             }
         }
 
-        
-
+        private VacationAllowanceViewModel GetVacationAllowance(string name)
+        {
+            foreach(var item in _viewModel.VacationAllowances)
+            {
+                if(item.Vacation_Name == name)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
         private void Timer1_Elapsed(object sender, ElapsedEventArgs e)
         {
             if(sender is Timer timer)

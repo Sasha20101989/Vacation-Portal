@@ -228,7 +228,7 @@
                                         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
                                             <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" VerticalAlignment="Center"/>
                                             <TextBlock Text=" - выходной день" VerticalAlignment="Center"/>
-                                            <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" Background="#FCA795" Width="20" Height="18" TextAlignment="Center" VerticalAlignment="Center"/>
+                                            <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" Background="#FCA795" Width="20" Height="21" TextAlignment="Center" VerticalAlignment="Center"/>
                                             <TextBlock Text=" - праздничный день" VerticalAlignment="Center"/>
                                             <TextBlock Margin="20 0 0 0" Text="1" VerticalAlignment="Center"/>
                                             <TextBlock Text=" - рабочий день" VerticalAlignment="Center"/>
