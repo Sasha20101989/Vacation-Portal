@@ -159,9 +159,9 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
-        <ProgressBar IsIndeterminate="{Binding IsLoadingPage,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Style="{StaticResource MaterialDesignCircularProgressBar}" Width="90" Height="90" Margin="0 0 0 24"/>
+        <ProgressBar IsIndeterminate="{Binding IsLoadingCalendarPage,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Style="{StaticResource MaterialDesignCircularProgressBar}" Width="90" Height="90" Margin="0 0 0 24"/>
         <Viewbox>
-            <Grid Cursor="Arrow"  Visibility="{Binding IsLoadingPage,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            <Grid Cursor="Arrow"  Visibility="{Binding IsLoadingCalendarPage,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
@@ -271,7 +271,7 @@
                                        Text="{Binding SelectedItemAllowance.Vacation_Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                                 <TextBlock TextAlignment="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10 0 0 0"
                                        FontSize="14"
-                                       Text="{Binding DisplayedDateString,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                       Text="{Binding PlannedVacationString,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                                 <Button HorizontalAlignment="Left" Foreground="Green" Width="24" Height="24" Margin="10 0 0 0"
                                     Style="{StaticResource MaterialDesignIconForegroundButton}" 
                                     Command="{Binding AddToApprovalList}">

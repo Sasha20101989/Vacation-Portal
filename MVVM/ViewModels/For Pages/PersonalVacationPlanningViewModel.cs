@@ -26,18 +26,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private readonly SampleError _sampleError = new SampleError();
         public CustomCalendar Calendar { get; set; }
 
-        public List<bool> WorkingDays = new List<bool>();
-
-        private List<Vacation> _vacations = new List<Vacation>();
-        public List<Vacation> Vacations
-        {
-            get => _vacations;
-            set
-            {
-                _vacations = value;
-                OnPropertyChanged(nameof(Vacations));
-            }
-        }
         private List<HolidayViewModel> _holidays = new List<HolidayViewModel>();
         public List<HolidayViewModel> Holidays
         {
@@ -48,10 +36,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 OnPropertyChanged(nameof(Holidays));
             }
         }
-
-        #region Calendar
-        
-        #endregion
 
         private ObservableCollection<Vacation> _vacationsToAproval = new ObservableCollection<Vacation>();
         public ObservableCollection<Vacation> VacationsToAproval
@@ -76,6 +60,40 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
+        private DateTime _currentDate = DateTime.Now;
+        public DateTime CurrentDate
+        {
+            get => _currentDate;
+            set
+            {
+                _currentDate = value;
+                OnPropertyChanged(nameof(CurrentDate));
+            }
+        }
+
+        private string _plannedVacationString;
+        public string PlannedVacationString
+        {
+            get => _plannedVacationString;
+            set
+            {
+                _plannedVacationString = value;
+                OnPropertyChanged(nameof(PlannedVacationString));
+                IsGapVisible = PlannedVacationString != "";
+            }
+        }
+
+        private bool _isLoadingCalendarPage;
+        public bool IsLoadingCalendarPage
+        {
+            get => _isLoadingCalendarPage;
+            set
+            {
+                _isLoadingCalendarPage = value;
+                OnPropertyChanged(nameof(IsLoadingCalendarPage));
+            }
+        }
+
         #region Person props
         private Person _person = App.API.Person;
         public Person Person
@@ -92,51 +110,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public string PersonName { get; set; } = App.API.Person.ToString();
 
         #endregion Person props
-
-        private int SelectedDay { get; set; }
-        private int SelectedMonth { get; set; }
-        private int SelectedYear { get; set; }
-        public string SelectedNameDay { get; private set; }
-        public bool CalendarClickable { get; set; }
-
-        private DateTime _currentDate = DateTime.Now;
-        public DateTime CurrentDate
-        {
-            get => _currentDate;
-            set
-            {
-                _currentDate = value;
-                OnPropertyChanged(nameof(CurrentDate));
-            }
-        }
-        public DateTime FirstSelectedDate { get; set; }
-        public DateTime SecondSelectedDate { get; set; }
-        public string DayAddition { get; set; }
-        public int ClicksOnCalendar { get; set; }
-        public int CountSelectedDays { get; set; }
-
-        private string _displayedDateString;
-        public string DisplayedDateString
-        {
-            get => _displayedDateString;
-            set
-            {
-                _displayedDateString = value;
-                OnPropertyChanged(nameof(DisplayedDateString));
-                IsGapVisible = DisplayedDateString != "";
-            }
-        }
-
-        private bool _isLoadingPage;
-        public bool IsLoadingPage
-        {
-            get => _isLoadingPage;
-            set
-            {
-                _isLoadingPage = value;
-                OnPropertyChanged(nameof(IsLoadingPage));
-            }
-        }
 
         #region Button Interaction
 
@@ -210,33 +183,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         }
         #endregion Button Interaction
 
-        #region Lerning props
-        private double _saveProgress;
-        public double SaveProgress
-        {
-            get => _saveProgress;
-            set
-            {
-                _saveProgress = value;
-                OnPropertyChanged(nameof(SaveProgress));
-
-            }
-        }
-
-        private double _learningProgress;
-        public double LearningProgress
-        {
-            get => _learningProgress;
-            set
-            {
-                _learningProgress = value;
-                OnPropertyChanged(nameof(LearningProgress));
-
-            }
-        }
-        #endregion Lerning props
-
-        #region Vacation props
+        #region Vacation Allowance props
 
         private VacationAllowanceViewModel _selectedItemAllowance;
         public VacationAllowanceViewModel SelectedItemAllowance
@@ -248,7 +195,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 OnPropertyChanged(nameof(SelectedItemAllowance));
                 if(SelectedItemAllowance != null)
                 {
-                    CalendarClickable = SelectedItemAllowance.Vacation_Days_Quantity > 0;
+                    Calendar.CalendarClickable = SelectedItemAllowance.Vacation_Days_Quantity > 0;
                 }
                 Calendar.ClearVacationData();
             }
@@ -264,7 +211,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 OnPropertyChanged(nameof(SelectedIndexAllowance));
             }
         }
-        #endregion Vacation props
+        #endregion Vacation Allowance props
 
         #region Planned Vacation props
         private Vacation _plannedItem;
@@ -289,6 +236,31 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
         #endregion Planned Vacation props
+
+        #region Lerning props
+        private double _saveProgress;
+        public double SaveProgress
+        {
+            get => _saveProgress;
+            set
+            {
+                _saveProgress = value;
+                OnPropertyChanged(nameof(SaveProgress));
+
+            }
+        }
+
+        private double _learningProgress;
+        public double LearningProgress
+        {
+            get => _learningProgress;
+            set
+            {
+                _learningProgress = value;
+                OnPropertyChanged(nameof(LearningProgress));
+
+            }
+        }
 
         #region QueuesLern
         public SnackbarMessageQueue MessageQueueVacation { get; set; }
@@ -342,6 +314,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
         #endregion BorderLern
+
+        #endregion Lerning props
 
         #endregion Props
 
@@ -397,192 +371,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         }
         #endregion Constructor
 
-        public void UcDays_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if(SelectedItemAllowance != null)
-            {
-                for(int i = 0; i < VacationAllowances.Count; i++)
-                {
-                    if(VacationAllowances[i].Vacation_Days_Quantity > 0)
-                    {
-                        CalendarClickable = true;
-                        break;
-                    } else
-                    {
-                        CalendarClickable = false;
-                    }
-                }
-                if(CalendarClickable)
-                {
-                    if(e.OriginalSource is Grid)
-                    {
-                        Grid source = e.OriginalSource as Grid;
-                        UIElementCollection elems = source.Children as UIElementCollection;
-                        foreach(object elem in elems)
-                        {
-                            if(elem is ContentPresenter)
-                            {
-                                ContentPresenter presenter = elem as ContentPresenter;
-                                TextBlock obj = presenter.Content as TextBlock;
-                                SelectedDay = Convert.ToInt32(obj.Text);
-                                SelectedMonth = Convert.ToInt32(obj.Tag.ToString().Split(".")[0]);
-                                SelectedYear = Convert.ToInt32(obj.Tag.ToString().Split(".")[1]);
-                                SelectedNameDay = obj.ToolTip.ToString();
-                            }
-                        }
-                    } else if(e.OriginalSource is TextBlock)
-                    {
-                        TextBlock obj = e.OriginalSource as TextBlock;
-
-                        SelectedDay = Convert.ToInt32(obj.Text);
-                        SelectedMonth = Convert.ToInt32(obj.Tag.ToString().Split(".")[0]);
-                        SelectedYear = Convert.ToInt32(obj.Tag.ToString().Split(".")[1]);
-                        SelectedNameDay = obj.ToolTip.ToString();
-                    } else if(e.OriginalSource is Button)
-                    {
-
-                    }
-
-                    ClicksOnCalendar++;
-
-                    DateTime newDate = new DateTime();
-
-                    if(ClicksOnCalendar >= 3)
-                    {
-                        Calendar.BlockAndPaintButtons();
-                        FirstSelectedDate = newDate;
-                        SecondSelectedDate = newDate;
-                        ClicksOnCalendar = 1;
-                        Calendar.UpdateColor();
-                    }
-
-                    if(ClicksOnCalendar == 1)
-                    {
-                        FirstSelectedDate = new DateTime(SelectedYear, SelectedMonth, SelectedDay);
-                        CountSelectedDays = FirstSelectedDate.Subtract(FirstSelectedDate).Days + 1;
-                        if(CountSelectedDays <= SelectedItemAllowance.Vacation_Days_Quantity)
-                        {
-                            if(SelectedNameDay != "Праздник")
-                            {
-                                DayAddition = Calendar.GetDayAddition(CountSelectedDays);
-                                DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.yyyy");
-                                _plannedItem = new Vacation(SelectedItemAllowance.Vacation_Name, Person.Id_SAP, SelectedItemAllowance.Vacation_Id, CountSelectedDays, SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, null);
-                            } else
-                            {
-                                ShowAlert("Этот день является праздичным, начните планирование отпуска с другого дня");
-                            }
-                        } else
-                        {
-                            ShowAlert("Выбранный промежуток больше доступного колличества дней");
-                        }
-                    } else
-                    {
-                        SecondSelectedDate = new DateTime(SelectedYear, SelectedMonth, SelectedDay);
-                        if(SecondSelectedDate > FirstSelectedDate)
-                        {
-                            CountSelectedDays = SecondSelectedDate.Subtract(FirstSelectedDate).Days + 1;
-                            if(CountSelectedDays <= SelectedItemAllowance.Vacation_Days_Quantity)
-                            {
-                                if(SelectedNameDay != "Праздник")
-                                {
-
-                                    DayAddition = Calendar.GetDayAddition(CountSelectedDays);
-                                    DisplayedDateString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
-                                    _plannedItem = new Vacation(SelectedItemAllowance.Vacation_Name, Person.Id_SAP, SelectedItemAllowance.Vacation_Id, CountSelectedDays, SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, null);
-                                } else
-                                {
-                                    ShowAlert("Этот день является праздичным, закончите планирование отпуска другим днём");
-                                }
-                            } else
-                            {
-                                ShowAlert("Выбранный промежуток больше доступного колличества дней");
-                            }
-                        } else
-                        {
-                            CountSelectedDays = FirstSelectedDate.Subtract(SecondSelectedDate).Days + 1;
-                            if(CountSelectedDays <= SelectedItemAllowance.Vacation_Days_Quantity)
-                            {
-                                if(SelectedNameDay != "Праздник")
-                                {
-
-                                    DayAddition = Calendar.GetDayAddition(CountSelectedDays);
-                                    DisplayedDateString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
-                                    _plannedItem = new Vacation(SelectedItemAllowance.Vacation_Name, Person.Id_SAP, SelectedItemAllowance.Vacation_Id, CountSelectedDays, SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate, null);
-                                } else
-                                {
-                                    ShowAlert("Этот день является праздичным, закончите планирование отпуска с другим днём");
-                                }
-                            } else
-                            {
-                                ShowAlert("Выбранный промежуток больше доступного колличества дней");
-                            }
-                        }
-                    }
-                    if(CountSelectedDays <= SelectedItemAllowance.Vacation_Days_Quantity)
-                    {
-                        if(PlannedItem != null)
-                        {
-
-                            Range<DateTime> range = Calendar.ReturnRange(PlannedItem);
-                            List<bool> isGoToNext = new List<bool>();
-
-                            foreach(DateTime planedDate in range.Step(x => x.AddDays(1)))
-                            {
-                                for(int i = 0; i < VacationsToAproval.Count; i++)
-                                {
-                                    Vacation existingVacation = VacationsToAproval[i];
-
-                                    Range<DateTime> rangeExistingVacation = Calendar.ReturnRange(existingVacation); ;
-
-                                    foreach(DateTime existingDate in rangeExistingVacation.Step(x => x.AddDays(1)))
-                                    {
-                                        if(existingDate == planedDate)
-                                        {
-                                            isGoToNext.Add(false);
-                                        }
-                                    }
-                                    if(isGoToNext.Contains(false))
-                                    {
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if(!isGoToNext.Contains(false))
-                            {
-                                Calendar.BlockAndPaintButtons();
-                            } else
-                            {
-                                ShowAlert("Пересечение отпусков не допустимо");
-                                Calendar.BlockAndPaintButtons();
-                                FirstSelectedDate = newDate;
-                                SecondSelectedDate = newDate;
-                                ClicksOnCalendar = 0;
-                                CountSelectedDays = 0;
-                                DisplayedDateString = "";
-                                Calendar.UpdateColor();
-                            }
-                        }
-                    } else
-                    {
-
-                        ShowAlert("Выбранный промежуток больше доступного колличества дней");
-                        Calendar.BlockAndPaintButtons();
-                        FirstSelectedDate = newDate;
-                        SecondSelectedDate = newDate;
-                        ClicksOnCalendar = 0;
-                        CountSelectedDays = 0;
-                        DisplayedDateString = "";
-                        Calendar.UpdateColor();
-                        //PlannedItem = null;
-                    }
-                }
-            } else
-            {
-                ShowAlert("Выберете тип отпуска");
-            }
-        }
-
         #region Task Lazy
         private async Task Initialize()
         {
@@ -606,7 +394,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         public async Task LoadVacationAllowanceForYearAsync()
         {
-            IsLoadingPage = true;
+            IsLoadingCalendarPage = true;
             //await Task.Delay(2000);
             VacationAllowances.Clear();
             VacationsToAproval.Clear();
@@ -617,14 +405,14 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             IEnumerable<VacationAllowanceViewModel> vacationAllowances = await App.API.GetVacationAllowanceAsync(App.API.Person.Id_SAP, Convert.ToInt32(CurrentDate.Year));
             OnVacationAllowanceLoad(vacationAllowances);
             Calendar.UpdateColor();
-            IsLoadingPage = false;
+            IsLoadingCalendarPage = false;
         }
 
         private void OnHolidaysChanged(List<HolidayViewModel> obj)
         {
             Holidays = obj;
             //Calendar = new CustomCalendar(CurrentDate, this);
-            //Calendar.RenderCalendar();
+            Calendar.Render(CurrentDate);
         }
         private void OnHolidaysLoad(IEnumerable<HolidayViewModel> holidays)
         {
