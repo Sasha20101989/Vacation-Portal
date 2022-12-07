@@ -335,7 +335,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         {
             MessageQueueVacation = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
             Calendar = new CustomCalendar(CurrentDate, this);
-
+            //TODO:сделать получение и создание 2 календарей сразу
             MessageQueueCalendar = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
             MessageQueueSelectedGap = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));
             MessageQueuePLanedVacations = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(5000));

@@ -76,7 +76,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
             //_viewModel.VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
             //TODO: исправить
-            //TODO: Проверка если рабочий в выходной
+
             VacationsToAprovalClone = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
 
             for(int i = VacationsToAprovalClone.Count - 1; i > 0; i--)
