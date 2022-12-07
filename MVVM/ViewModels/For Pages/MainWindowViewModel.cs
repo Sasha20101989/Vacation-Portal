@@ -285,7 +285,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 person.SettingsLoad += OnPerson_SettingsLoad;
                 person.MenuItemsChanged += OnPerson_MenuItemsChanged;
                 person.AddPages(_viewModel);
-                person.GetVacations();
             }
         }
 

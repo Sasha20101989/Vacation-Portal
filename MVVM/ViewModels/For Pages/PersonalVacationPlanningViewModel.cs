@@ -28,6 +28,16 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public List<bool> WorkingDays = new List<bool>();
         public BindingList<DateTime> DayOffs { get; set; } = new BindingList<DateTime>();
 
+        private List<Vacation> _vacations = new List<Vacation>();
+        public List<Vacation> Vacations
+        {
+            get => _vacations;
+            set
+            {
+                _vacations = value;
+                OnPropertyChanged(nameof(Vacations));
+            }
+        }
         private List<HolidayViewModel> _holidays = new List<HolidayViewModel>();
         public List<HolidayViewModel> Holidays
         {
@@ -987,25 +997,32 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         #region OnStartup
 
-        private async Task LoadVacationAllowanceForYearAsync()
+        public async Task LoadVacationAllowanceForYearAsync()
         {
             IsLoadingPage = true;
             VacationAllowances.Clear();
+            VacationsToAproval.Clear();
             ClearColor();
-            IEnumerable<VacationAllowanceViewModel> vacations = await App.API.GetVacationAllowanceAsync(App.API.Person.Id_SAP, Convert.ToInt32(CurrentDate.Year));
-            IEnumerable<HolidayViewModel> holidays = await Task.Run(async () => await App.API.GetHolidaysAsync(Convert.ToInt32(CurrentDate.Year)));
-            foreach(VacationAllowanceViewModel item in vacations)
+            IEnumerable<VacationViewModel> vacations = await App.API.LoadVacationAsync(App.API.Person.Id_SAP);
+            IEnumerable<VacationAllowanceViewModel> vacationAllowances = await App.API.GetVacationAllowanceAsync(App.API.Person.Id_SAP, Convert.ToInt32(CurrentDate.Year));
+            IEnumerable<HolidayViewModel> holidays = await App.API.GetHolidaysAsync(Convert.ToInt32(CurrentDate.Year));
+            foreach(VacationViewModel item in vacations)
+            {
+                Vacation vacation = new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.DateStart, item.DateEnd, item.Status);
+                if(!VacationsToAproval.Contains(vacation))
+                {
+                    App.API.Person.Vacations.Add(item);
+                    VacationsToAproval.Add(vacation);
+                }
+            }
+            foreach(VacationAllowanceViewModel item in vacationAllowances)
             {
                 VacationAllowances.Add(item);
             }
             OnHolidaysLoad(holidays);
 
-            //foreach(VacationViewModel item in App.API.Vacations)
-            //{
-            //    VacationsToAproval.Add(new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.DateStart, item.DateEnd, item.Status));
-            //}
+
             IsLoadingPage = false;
-            //закрепим
         }
 
         private void OnHolidaysLoad(IEnumerable<HolidayViewModel> holidays)
@@ -1179,6 +1196,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 ClearColor();
             }
         }
+
         public VacationAllowanceViewModel GetVacationAllowance(string name)
         {
             foreach(var item in VacationAllowances)
@@ -1190,7 +1208,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
             return null;
         }
-
         public async Task UpdateVacationAllowance(int vacation_Id, int year, int count)
         {
             await App.API.UpdateVacationAllowanceAsync(vacation_Id, year, count);

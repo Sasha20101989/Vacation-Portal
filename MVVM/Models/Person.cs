@@ -35,8 +35,9 @@ namespace Vacation_Portal.MVVM.Models
         public Settings Settings { get; set; }
 
         private readonly List<Settings> _listSettings = new List<Settings>();
-        public ObservableCollection<VacationViewModel> Vacations = new ObservableCollection<VacationViewModel>();
+        public List<VacationViewModel> Vacations = new List<VacationViewModel>();
         public event Action<Settings> SettingsLoad;
+        //public event Action<List<VacationViewModel>> VacationsLoad;
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
         public override string ToString()
@@ -54,26 +55,27 @@ namespace Vacation_Portal.MVVM.Models
             Department_Id = departmentId;
             Vitrual_Department_Id = virtualDepartmentId;
             Position = position;
-            App.API.OnVacationsChanged += OnVacationsLoad;
+            //App.API.OnVacationsChanged += OnVacationsLoad;
         }
-        public async void GetVacations()
-        {
-            IEnumerable<VacationViewModel> vacations = await App.API.LoadVacationAsync(Id_SAP);
-            App.Current.Dispatcher.Invoke((Action) delegate
-            {
-                App.SplashScreen.status.Text = "Ищу ваши отпуска...";
-                App.SplashScreen.status.Foreground = Brushes.Black;
-            });
-            OnVacationsLoad(vacations);
-        }
-        public void OnVacationsLoad(IEnumerable<VacationViewModel> vacations)
-        {
-            foreach(VacationViewModel vacation in vacations)
-            {
-                Vacations.Add(vacation);
-                App.API.Vacations.Add(vacation);
-            }
-        }
+        //public async void GetVacations()
+        //{
+        //    IEnumerable<VacationViewModel> vacations = await App.API.LoadVacationAsync(Id_SAP);
+        //    App.Current.Dispatcher.Invoke((Action) delegate
+        //    {
+        //        App.SplashScreen.status.Text = "Ищу ваши отпуска...";
+        //        App.SplashScreen.status.Foreground = Brushes.Black;
+        //    });
+        //    OnVacationsLoad(vacations);
+        //}
+        //public void OnVacationsLoad(IEnumerable<VacationViewModel> vacations)
+        //{
+        //    foreach(VacationViewModel vacation in vacations)
+        //    {
+        //        Vacations.Add(vacation);
+        //        App.API.Vacations.Add(vacation);
+        //    }
+        //    VacationsLoad?.Invoke(Vacations);
+        //}
         public async void GetAccess()
         {
             IEnumerable<Access> access = await App.API.GetAccessAsync(Environment.UserName);

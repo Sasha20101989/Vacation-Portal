@@ -17,7 +17,8 @@ namespace Vacation_Portal.MVVM.Views.Controls
         {
             if(ListView.Height is double.NaN)
             {
-                ListView.Height = ListView.ActualHeight * 7.78;
+                //ListView.Height = ListView.ActualHeight * App.API.Person.Vacations.Count / 3.3;
+                ListView.Height = 433;
             }
         }
     }

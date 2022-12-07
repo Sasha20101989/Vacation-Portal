@@ -61,8 +61,9 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 }), Dispatcher.CurrentDispatcher);
             foreach(var item in _viewModel.VacationsToAproval)
             {
+                item.Status = "На согласовании";
                 int countConflicts = 0;
-                Vacation plannedVacation = new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, "На согласовании");
+                Vacation plannedVacation = new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Status);
                 IEnumerable<VacationDTO> conflictingVacations = await App.API.GetConflictingVacationAsync(plannedVacation);
 
                 foreach(VacationDTO vacationDTO in conflictingVacations)
