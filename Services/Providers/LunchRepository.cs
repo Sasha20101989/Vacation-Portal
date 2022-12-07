@@ -290,12 +290,13 @@ namespace Vacation_Portal.Services.Providers
             }
 
         }
-        public async Task<IEnumerable<VacationViewModel>> LoadVacationAsync(int UserIdSAP)
+        public async Task<IEnumerable<VacationViewModel>> LoadVacationAsync(int UserIdSAP, int year)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             object parameters = new
             {
-                User_Id_SAP = UserIdSAP
+                User_Id_SAP = UserIdSAP,
+                Year = year
             };
             try
             {

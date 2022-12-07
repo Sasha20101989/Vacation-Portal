@@ -52,10 +52,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                                 _viewModel.WorkingDays.Add(true);
                                 break;
                             }
-                            //else
-                            //{
-                            //    _viewModel.WorkingDays.Add(false);
-                            //}
                         }
                     }
                 }
