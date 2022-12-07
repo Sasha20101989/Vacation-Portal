@@ -8,6 +8,9 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using TableDependency.SqlClient;
+using TableDependency.SqlClient.Base.Enums;
+using TableDependency.SqlClient.Base.EventArgs;
 using Vacation_Portal.DbContext;
 using Vacation_Portal.DTOs;
 using Vacation_Portal.MVVM.Models;
@@ -18,6 +21,7 @@ namespace Vacation_Portal.Services.Providers
 {
     public class LunchRepository : ILunchRepository
     {
+        public SqlTableDependency<HolidayDTO> tableDependencyHoliday;
         private readonly SqlDbConnectionFactory _sqlDbConnectionFactory;
 
         #region PropChange
@@ -156,6 +160,7 @@ namespace Vacation_Portal.Services.Providers
             };
             try
             {
+                
                 IEnumerable<HolidayDTO> holidayDTOs = await database.QueryAsync<HolidayDTO>("usp_Load_Holidays", parameters, commandType: CommandType.StoredProcedure);
                 return holidayDTOs.Select(ToHolidays);
             } catch(Exception)
@@ -335,5 +340,6 @@ namespace Vacation_Portal.Services.Providers
         }
 
         #endregion
+
     }
 }
