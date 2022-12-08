@@ -9,36 +9,161 @@
              xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
              d:DataContext="{d:DesignInstance vm:HolidaysViewModel}"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!--#region Styling Scrollbar-->
+            <Style x:Key="ScrollThumbs"
+           TargetType="{x:Type Thumb}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Thumb}">
+                            <Grid x:Name="Grid">
+                                <Rectangle HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch"
+                                   Width="Auto"
+                                   Height="Auto"
+                                   Fill="Transparent" />
+                                <Border x:Name="Rectangle1"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Width="Auto"
+                                Height="Auto"
+                                Background="{TemplateBinding Background}" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="Tag"
+                                 Value="Horizontal">
+                                    <Setter TargetName="Rectangle1"
+                                    Property="Width"
+                                    Value="Auto" />
+                                    <Setter TargetName="Rectangle1"
+                                    Property="Height"
+                                    Value="7" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="{x:Type ScrollBar}"
+           TargetType="{x:Type ScrollBar}">
+                <Setter Property="Stylus.IsFlicksEnabled"
+                Value="False" />
+                <Setter Property="Foreground"
+                Value="LightGray" />
+                <Setter Property="Background"
+                Value="Transparent" />
+                <Setter Property="Width"
+                Value="10" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ScrollBar}">
+                            <Grid x:Name="GridRoot"
+                          Width="2"
+                          Background="{TemplateBinding Background}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <!--This is scrollbar track-->
+                                <Track x:Name="PART_Track"
+                               Grid.Row="0"
+                               IsDirectionReversed="True"
+                               Focusable="False">
+                                    <Track.Thumb>
+                                        <Thumb x:Name="Thumb"
+                                       Background="{TemplateBinding Foreground}"
+                                       Style="{DynamicResource ScrollThumbs}" />
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton x:Name="PageUp"
+                                              Command="ScrollBar.PageUpCommand"
+                                              Opacity="0"
+                                              Focusable="False" />
+                                    </Track.IncreaseRepeatButton>
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton x:Name="PageDown"
+                                              Command="ScrollBar.PageDownCommand"
+                                              Opacity="0"
+                                              Focusable="False" />
+                                    </Track.DecreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled"
+                                 Value="False">
+                                    <Setter TargetName="Thumb"
+                                    Property="Visibility"
+                                    Value="Collapsed" />
+                                    <Setter TargetName="GridRoot"
+                                    Property="Visibility"
+                                    Value="Collapsed" />
+                                </Trigger>
+                                <Trigger Property="Orientation"
+                                 Value="Horizontal">
+                                    <Setter TargetName="GridRoot"
+                                    Property="LayoutTransform">
+                                        <Setter.Value>
+                                            <RotateTransform Angle="-90" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter TargetName="PART_Track"
+                                    Property="LayoutTransform">
+                                        <Setter.Value>
+                                            <RotateTransform Angle="-90" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Width"
+                                    Value="Auto" />
+                                    <Setter Property="Height"
+                                    Value="12" />
+                                    <Setter TargetName="Thumb"
+                                    Property="Tag"
+                                    Value="Horizontal" />
+                                    <Setter TargetName="PageDown"
+                                    Property="Command"
+                                    Value="ScrollBar.PageLeftCommand" />
+                                    <Setter TargetName="PageUp"
+                                    Property="Command"
+                                    Value="ScrollBar.PageRightCommand" />
+                                </Trigger>
+
+                                <Trigger Property="IsMouseOver"
+                                 Value="True">
+                                    <Setter TargetName="GridRoot" Property="Width" Value="8" />
+                                </Trigger>
+
+
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <!--#endregion-->
+
+        </ResourceDictionary>
+    </UserControl.Resources>
     <md:TransitioningContent Grid.Row="1" OpeningEffectsOffset="0:0:0"
                         OpeningEffect="{md:TransitionEffect FadeIn, Duration=0:0:1.0}">
         <md:Card Padding="15">
 
             <Grid>
-
-                <!--#region Definitions-->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" MinHeight="50"/>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition/>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <!--#endregion Definitions-->
-                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <DockPanel  Grid.Row="0">
+
                     <DatePicker MinWidth="120"
-                            SelectedDate="{Binding CurrentDate,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"            
-                            Style="{StaticResource MaterialDesignDatePicker}"/>
+                                        SelectedDate="{Binding CurrentDate,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"            
+                                        Style="{StaticResource MaterialDesignDatePicker}"/>
                     <ListBox VerticalAlignment="Center"
-                         Margin="10 0 0 0"
-                         SelectedIndex="{Binding SelectedIndex, UpdateSourceTrigger=PropertyChanged}"
-                         SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}"
-                         ItemsSource="{Binding HolidayTypes, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource MaterialDesignChoiceChipAccentOutlineListBox}">
+                                     Margin="10 0 0 0"
+                                     SelectedIndex="{Binding SelectedIndex, UpdateSourceTrigger=PropertyChanged}"
+                                     SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}"
+                                     ItemsSource="{Binding HolidayTypes, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource MaterialDesignChoiceChipAccentOutlineListBox}">
                         <ListBox.Resources>
                             <DataTemplate DataType="{x:Type models:Holiday}">
                                 <TextBlock Text="{Binding NameOfHoliday}" TextAlignment="Center" FontSize="16"/>
@@ -52,85 +177,72 @@
                         </ListBox.ItemContainerStyle>
                     </ListBox>
                     <Button HorizontalAlignment="Right" Margin="10 0 0 0" VerticalAlignment="Center"
-                        Style="{StaticResource MaterialDesignFloatingActionSecondaryButton}"
-                        md:ButtonProgressAssist.IsIndicatorVisible="{Binding IsSaving}"
-                        md:ButtonProgressAssist.Value="-1"
-                        md:ButtonProgressAssist.IsIndeterminate="{Binding IsSaving}"
-                        md:ShadowAssist.ShadowDepth="Depth2"
-                        Width="28" Height="28"
-                        Content="{md:PackIcon Kind=PlaylistPlus,Size=20}"
-                        Command="{Binding Submit}"/>
+                            Style="{StaticResource MaterialDesignFloatingActionSecondaryButton}"
+                            md:ButtonProgressAssist.IsIndicatorVisible="{Binding IsSaving}"
+                            md:ButtonProgressAssist.Value="-1"
+                            md:ButtonProgressAssist.IsIndeterminate="{Binding IsSaving}"
+                            md:ShadowAssist.ShadowDepth="Depth2"
+                            Width="28" Height="28"
+                            Content="{md:PackIcon Kind=PlaylistPlus,Size=20}"
+                            Command="{Binding Submit}"/>
                     <md:Snackbar Margin="10 0 0 0" MessageQueue="{Binding MessageQueue}"/>
-                </StackPanel>
-                <Button Grid.Row="0" Grid.Column="3"
-                        HorizontalAlignment="Right" Margin="0 0 5 0"
-                        Style="{StaticResource MaterialDesignFloatingActionLightButton}"
-                        md:ButtonProgressAssist.IsIndicatorVisible="{Binding IsLoading}"
-                        md:ButtonProgressAssist.Value="-1"
-                        md:ButtonProgressAssist.IsIndeterminate="{Binding IsLoading}"
-                        md:ShadowAssist.ShadowDepth="Depth4"
-                        Width="28" Height="28"
-                        Content="{md:PackIcon Kind=Reload,Size=20}"
-                        Command="{Binding LoadHolidays}"/>
-                <TextBlock Grid.Row="1" 
-                                       Text="{Binding ErrorMessage}" 
-                                       HorizontalAlignment="Stretch"
-                                       
-                                       MaxWidth="220"
-                                       Foreground="red"
-                                       TextWrapping="Wrap"
-                                       Visibility="{Binding HasErrorMessage,Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                <TextBlock Grid.Row="1" 
-                                       Text="{Binding SuccessMessage}" 
-                                       HorizontalAlignment="Stretch"
-                                       Padding="5"
-                                       MaxWidth="220"
-                                       Foreground="Green"
-                                       TextWrapping="Wrap"
-                                       Visibility="{Binding HasSuccessMessage,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Button HorizontalAlignment="Right" Margin="0 0 5 0"
+                            Style="{StaticResource MaterialDesignFloatingActionLightButton}"
+                            md:ButtonProgressAssist.IsIndicatorVisible="{Binding IsLoading}"
+                            md:ButtonProgressAssist.Value="-1"
+                            md:ButtonProgressAssist.IsIndeterminate="{Binding IsLoading}"
+                            md:ShadowAssist.ShadowDepth="Depth2"
+                            Width="28" Height="28"
+                            Content="{md:PackIcon Kind=Reload,Size=20}"
+                            Command="{Binding LoadHolidays}"/>
+                </DockPanel>
+
                 <Separator  Grid.Row="1" Grid.ColumnSpan="3"/>
                 <!--#endregion Controls-->
-                <ListView Grid.Row="2" Width="350" HorizontalAlignment="Left"
+                <DockPanel  Grid.Row="2" HorizontalAlignment="Left">
+                    <ListView
                           SelectionMode="Single"
                           ItemsSource="{Binding Holidays, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
                           SelectedIndex="{Binding SelectedHolidayIndex, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                           SelectedItem="{Binding SelectedHoliday, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                           ScrollViewer.VerticalScrollBarVisibility="Auto" FontSize="12"
-                          ScrollViewer.CanContentScroll="False" Style="{StaticResource MaterialDesignListView}">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignGridViewItem}">
-                            <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
-                            <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="IsSelected" Value="True"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn DisplayMemberBinding="{Binding Date,StringFormat=dd.MM.yyyy}" Header="Дата"></GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding TypeOfHoliday}" Header="Тип выходного"></GridViewColumn>
-                            <GridViewColumn Width="40" Header="">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="Red" Width="24" Height="24"
+                          ScrollViewer.CanContentScroll="True" Style="{StaticResource MaterialDesignListView}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignGridViewItem}">
+                                <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                                <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="IsSelected" Value="True"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn DisplayMemberBinding="{Binding Date,StringFormat=dd.MM.yyyy}" Header="Дата"></GridViewColumn>
+                                <GridViewColumn DisplayMemberBinding="{Binding TypeOfHoliday}" Header="Тип выходного"></GridViewColumn>
+                                <GridViewColumn Width="40" Header="">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="Red" Width="24" Height="24"
                                                             Command="{Binding RelativeSource={
                                                             RelativeSource AncestorType=ListView},
                                                             Path=DataContext.CancelHoliday}"
                                                             CommandParameter="{Binding RelativeSource={
                                                             RelativeSource AncestorType=ListView},
                                                             Path=SelectedItem}">
-                                            <md:PackIcon Kind="Close"  Width="20" Height="20"></md:PackIcon>
-                                        </Button>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                                                <md:PackIcon Kind="Close"  Width="20" Height="20"></md:PackIcon>
+                                            </Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </DockPanel>
+                
                 
             </Grid>
         </md:Card>
