@@ -8,7 +8,7 @@
              xmlns:local="clr-namespace:Vacation_Portal.MVVM.Views.Controls"
              xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
              d:DataContext="{d:DesignInstance vm:HolidaysViewModel}"
-             mc:Ignorable="d">
+             mc:Ignorable="d" Width="1000">
     <UserControl.Resources>
         <ResourceDictionary>
             <!--#region Styling Scrollbar-->
@@ -145,7 +145,7 @@
     </UserControl.Resources>
     <md:TransitioningContent Grid.Row="1" OpeningEffectsOffset="0:0:0"
                         OpeningEffect="{md:TransitionEffect FadeIn, Duration=0:0:1.0}">
-        <md:Card Padding="15">
+        <md:Card Padding="15" UniformCornerRadius="10" md:ShadowAssist.ShadowDepth="Depth2">
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -198,10 +198,10 @@
                             Command="{Binding LoadHolidays}"/>
                 </DockPanel>
 
-                <Separator  Grid.Row="1" Grid.ColumnSpan="3"/>
+                <Separator  Grid.Row="1"/>
                 <!--#endregion Controls-->
                 <DockPanel  Grid.Row="2" HorizontalAlignment="Left">
-                    <ListView
+                    <ListView Margin="10"
                           SelectionMode="Single"
                           ItemsSource="{Binding Holidays, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
                           SelectedIndex="{Binding SelectedHolidayIndex, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
@@ -242,8 +242,6 @@
                         </ListView.View>
                     </ListView>
                 </DockPanel>
-                
-                
             </Grid>
         </md:Card>
 
