@@ -34,6 +34,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 _holidays = value;
                 OnPropertyChanged(nameof(Holidays));
+                //new one
             }
         }
 
