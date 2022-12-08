@@ -25,7 +25,17 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private Lazy<Task> _initializeLazy;
         private readonly SampleError _sampleError = new SampleError();
         public CustomCalendar Calendar { get; set; }
-        
+
+        private List<HolidayViewModel> _calendars = new List<HolidayViewModel>();
+        public List<HolidayViewModel> Calendars
+        {
+            get => _calendars;
+            set
+            {
+                _calendars = value;
+                OnPropertyChanged(nameof(Calendars));
+            }
+        }
 
         private List<HolidayViewModel> _holidays = new List<HolidayViewModel>();
         public List<HolidayViewModel> Holidays
