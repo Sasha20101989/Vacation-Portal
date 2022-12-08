@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -206,10 +207,10 @@ namespace Vacation_Portal.MVVM.Models
             ViewModel = viewModel;
         }
 
-        public void Render(DateTime currentDate)
+        public async Task Render(DateTime currentDate)
         {
-
-            App.Current.Dispatcher.Invoke((Action) delegate
+            await Task.Delay(100);
+            App.Current.Dispatcher.Invoke((Action) async delegate
             {
                 FullYear.Clear();
                 Year.Clear();
@@ -301,7 +302,7 @@ namespace Vacation_Portal.MVVM.Models
                     FullYear.Add(new CalendarViewModel(FullDays, daysOfWeek, countRows));
                     Year.Add(Days);
                 }
-                PaintButtons();
+               await Task.Run( async() => await PaintButtons());
             });
         }
 
@@ -415,9 +416,12 @@ namespace Vacation_Portal.MVVM.Models
                     return days + " Дней";
             }
         }
-        public void PaintButtons()
+        public async Task PaintButtons()
         {
-            foreach(Vacation vacation in ViewModel.VacationsToAproval)
+            await Task.Delay(100);
+            App.Current.Dispatcher.Invoke((Action) delegate
+            {
+                foreach(Vacation vacation in ViewModel.VacationsToAproval)
             {
                 Range<DateTime> range = ReturnRange(vacation);
                 foreach(DateTime date in range.Step(x => x.AddDays(1)))
@@ -445,6 +449,7 @@ namespace Vacation_Portal.MVVM.Models
                     }
                 }
             }
+        });
         }
         public void ClearVacationData()
         {

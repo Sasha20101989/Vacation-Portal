@@ -394,41 +394,15 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         public async Task LoadVacationAllowanceForYearAsync()
         {
-            IsLoadingCalendarPage = true;
-            //await Task.Delay(2000);
             VacationAllowances.Clear();
             VacationsToAproval.Clear();
-            IEnumerable<HolidayViewModel> holidays = await App.API.GetHolidaysAsync(Convert.ToInt32(CurrentDate.Year));
-            OnHolidaysLoad(holidays);
-            IEnumerable<VacationViewModel> vacations = await App.API.LoadVacationAsync(App.API.Person.Id_SAP, CurrentDate.Year);
-            OnVacationsLoad(vacations);
-            IEnumerable<VacationAllowanceViewModel> vacationAllowances = await App.API.GetVacationAllowanceAsync(App.API.Person.Id_SAP, Convert.ToInt32(CurrentDate.Year));
-            OnVacationAllowanceLoad(vacationAllowances);
-            Calendar.UpdateColor();
-            IsLoadingCalendarPage = false;
-        }
-
-        private void OnHolidaysChanged(List<HolidayViewModel> obj)
-        {
-            Holidays = obj;
-            //Calendar = new CustomCalendar(CurrentDate, this);
-            Calendar.Render(CurrentDate);
-        }
-        private void OnHolidaysLoad(IEnumerable<HolidayViewModel> holidays)
-        {
-            foreach(HolidayViewModel holiday in holidays)
+            IsLoadingCalendarPage = true;
+            await Task.Delay(2000);
+            await foreach(HolidayViewModel item in FetchHolidaysAsync())
             {
-                if(!Holidays.Contains(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year))))
-                {
-                    Holidays.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year)));
-                    App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
-                }
+                Holidays.Add(item);
             }
-            Task.Run(() => Calendar.Render(CurrentDate));
-        }
-        private void OnVacationsLoad(IEnumerable<VacationViewModel> vacations)
-        {
-            foreach(VacationViewModel item in vacations)
+            await foreach(VacationViewModel item in FetchVacationsAsync())
             {
                 Vacation vacation = new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.DateStart, item.DateEnd, item.Status);
                 if(!VacationsToAproval.Contains(vacation))
@@ -437,24 +411,54 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     VacationsToAproval.Add(vacation);
                 }
             }
-        }
-        private void OnVacationAllowanceLoad(IEnumerable<VacationAllowanceViewModel> vacationAllowances)
-        {
-            foreach(VacationAllowanceViewModel item in vacationAllowances)
+            await foreach(VacationAllowanceViewModel item in FetchVacationAllowancesAsync())
             {
                 VacationAllowances.Add(item);
-            }
-            for(int i = 0; i < VacationAllowances.Count; i++)
-            {
-                if(VacationAllowances[i].Vacation_Days_Quantity > 0)
+                for(int i = 0; i < VacationAllowances.Count; i++)
                 {
-                    SelectedIndexAllowance = i;
-                    break;
+                    if(VacationAllowances[i].Vacation_Days_Quantity > 0)
+                    {
+                        SelectedIndexAllowance = i;
+                        break;
+                    }
                 }
             }
+            await Task.Run( async() => await Calendar.Render(CurrentDate));
+            await Task.Run(() => Calendar.UpdateColor());
+            IsLoadingCalendarPage = false;
         }
 
-        
+        private async IAsyncEnumerable<HolidayViewModel> FetchHolidaysAsync()
+        {
+            IEnumerable<HolidayViewModel> holidays = await App.API.GetHolidaysAsync(Convert.ToInt32(CurrentDate.Year));
+            foreach(var item in holidays)
+            {
+                yield return item;
+            }
+        }
+        private async IAsyncEnumerable<VacationViewModel> FetchVacationsAsync()
+        {
+            IEnumerable<VacationViewModel> vacations = await App.API.LoadVacationAsync(App.API.Person.Id_SAP, CurrentDate.Year);
+            foreach(var item in vacations)
+            {
+                yield return item;
+            }
+        }
+        private async IAsyncEnumerable<VacationAllowanceViewModel> FetchVacationAllowancesAsync()
+        {
+            IEnumerable<VacationAllowanceViewModel> vacationAllowances = await App.API.GetVacationAllowanceAsync(App.API.Person.Id_SAP, Convert.ToInt32(CurrentDate.Year));
+            foreach(var item in vacationAllowances)
+            {
+                yield return item;
+            }
+        }
+        private void OnHolidaysChanged(List<HolidayViewModel> obj)
+        {
+            Holidays = obj;
+            //Calendar = new CustomCalendar(CurrentDate, this);
+            Task.Run(async () => await Calendar.Render(CurrentDate));
+        }
+
         #endregion OnStartup
 
         #region Utils
