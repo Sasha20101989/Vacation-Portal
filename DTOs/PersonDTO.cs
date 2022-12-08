@@ -11,5 +11,6 @@
         public int User_Virtual_Department_Id { get; set; }
         public string User_Position_Id { get; set; }
         public string User_Role { get; set; }
+        public int Supervisor_Id_SAP { get; set; }
     }
 }
