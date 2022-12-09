@@ -93,6 +93,8 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                             VacationsToAprovalClone[i].Count = countDays;
                             VacationsToAprovalClone.Remove(VacationsToAprovalClone[i - 1]);
                             _viewModel.ShowAlert("Несколько периодов объединены в один.");
+                            //TODO:Определить что делать если у меня запланированы отпуска и они имеют разные статусы подтверждения,
+                            //но я попытаюсь их объединить в один промежуток
                         }
                     }
                 }
@@ -100,11 +102,13 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             if(_viewModel.Calendar.WorkingDays.Contains(true))
             {
                 _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
+                _viewModel.VacationsToAprovalClone.Add(_viewModel.PlannedItem);
             } else
             {
                 _viewModel.ShowAlert("В выбранном периоде, отсутствуют рабочие дни выбранного типа отпуска.");
                 _viewModel.SelectedItemAllowance.Vacation_Days_Quantity += _viewModel.Calendar.CountSelectedDays;
                 _viewModel.VacationsToAproval.Remove(_viewModel.PlannedItem);
+                _viewModel.VacationsToAprovalClone.Remove(_viewModel.PlannedItem);
                 _viewModel.Calendar.ClearVacationData();
             }
         }

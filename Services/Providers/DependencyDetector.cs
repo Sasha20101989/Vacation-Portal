@@ -8,6 +8,7 @@ using TableDependency.SqlClient.Base.Enums;
 using TableDependency.SqlClient.Base.EventArgs;
 using Vacation_Portal.DbContext;
 using Vacation_Portal.DTOs;
+using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.Services.Providers.Interfaces;
 
 namespace Vacation_Portal.Services.Providers
@@ -80,7 +81,7 @@ namespace Vacation_Portal.Services.Providers
                     break;
                     case ChangeType.Update:
                     {
-                        MessageBox.Show("Могу обновить интерфейс, так как в базе обновлено");
+                        App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
                     }
                     break;
                 };

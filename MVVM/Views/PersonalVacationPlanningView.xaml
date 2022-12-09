@@ -240,7 +240,7 @@
                                                 IsEnabled="{Binding IsPreviousYearEnabled,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                 Command="{Binding MovePrevYearCommand}"
                                                 Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"/>
-                                            <TextBlock Margin="10 0 10 0" Text="{Binding CurrentDate.Year}" Foreground="{DynamicResource PrimaryHueMidBrush}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
+                                            <TextBlock Margin="10 0 10 0" Text="{Binding CurrentYear}" Foreground="{DynamicResource PrimaryHueMidBrush}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
                                             <Button Margin="0 0 5 0"  ToolTip="Следующий год"
                                                 Style="{StaticResource MaterialDesignToolButton}"
                                                 Content="{md:PackIcon Kind=ArrowRight, Size=15}" 
