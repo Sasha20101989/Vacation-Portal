@@ -8,7 +8,7 @@
              xmlns:local="clr-namespace:Vacation_Portal.MVVM.Views.Controls"
              xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
              d:DataContext="{d:DesignInstance vm:HolidaysViewModel}"
-             mc:Ignorable="d" Width="1000">
+             mc:Ignorable="d" Width="1030">
     <UserControl.Resources>
         <ResourceDictionary>
             <!--#region Styling Scrollbar-->
@@ -151,9 +151,14 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" MinHeight="50"/>
                     <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <DockPanel  Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <DockPanel  Grid.Row="0" Grid.ColumnSpan="2">
 
                     <DatePicker MinWidth="120"
                                         SelectedDate="{Binding CurrentDate,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"            
@@ -198,14 +203,62 @@
                             Command="{Binding LoadHolidays}"/>
                 </DockPanel>
 
-                <Separator  Grid.Row="1"/>
+                <Separator  Grid.Row="1" Grid.ColumnSpan="2"/>
                 <!--#endregion Controls-->
-                <DockPanel  Grid.Row="2" HorizontalAlignment="Left">
+                <TextBlock Grid.Row="2" Text="{Binding CurrentDate.Year,StringFormat={}Текущий {0} Год}" Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                           HorizontalAlignment="Center" Margin="10"/>
+                <DockPanel Grid.Row="3" HorizontalAlignment="Center">
+                    
                     <ListView Margin="10"
                           SelectionMode="Single"
-                          ItemsSource="{Binding Holidays, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
-                          SelectedIndex="{Binding SelectedHolidayIndex, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
-                          SelectedItem="{Binding SelectedHoliday, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                          ItemsSource="{Binding HolidaysCurrentYear, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
+                          SelectedIndex="{Binding SelectedCurrentYearHolidayIndex, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                          SelectedItem="{Binding SelectedCurrentYearHoliday, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto" FontSize="12"
+                          ScrollViewer.CanContentScroll="True" Style="{StaticResource MaterialDesignListView}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignGridViewItem}">
+                                <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                                <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="IsSelected" Value="True"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn DisplayMemberBinding="{Binding Date,StringFormat=dd.MM.yyyy}" Header="Дата"></GridViewColumn>
+                                <GridViewColumn DisplayMemberBinding="{Binding TypeOfHoliday}" Header="Тип выходного"></GridViewColumn>
+                                <GridViewColumn Width="40" Header="">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="Red" Width="24" Height="24"
+                                                            Command="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=DataContext.CancelHoliday}"
+                                                            CommandParameter="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=SelectedItem}">
+                                                <md:PackIcon Kind="Close"  Width="20" Height="20"></md:PackIcon>
+                                            </Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </DockPanel>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding NextDate.Year,StringFormat={}Следующий {0} Год}" Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                           HorizontalAlignment="Center" Margin="10"/>
+                <DockPanel Grid.Row="3" HorizontalAlignment="Center"  Grid.Column="1">
+
+                    <ListView Margin="10"
+                          SelectionMode="Single"
+                          ItemsSource="{Binding HolidaysNextYear, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
+                          SelectedIndex="{Binding SelectedNextYearHolidayIndex, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                          SelectedItem="{Binding SelectedNextYearHoliday, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                           ScrollViewer.VerticalScrollBarVisibility="Auto" FontSize="12"
                           ScrollViewer.CanContentScroll="True" Style="{StaticResource MaterialDesignListView}">
                         <ListView.ItemContainerStyle>

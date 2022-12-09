@@ -50,16 +50,16 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        private List<HolidayViewModel> _holidays = new List<HolidayViewModel>();
-        public List<HolidayViewModel> Holidays
-        {
-            get => _holidays;
-            set
-            {
-                _holidays = value;
-                OnPropertyChanged(nameof(Holidays));
-            }
-        }
+        //private List<HolidayViewModel> _holidays = new List<HolidayViewModel>();
+        //public List<HolidayViewModel> Holidays
+        //{
+        //    get => _holidays;
+        //    set
+        //    {
+        //        _holidays = value;
+        //        OnPropertyChanged(nameof(Holidays));
+        //    }
+        //}
 
         private ObservableCollection<Vacation> _vacationsToAproval = new ObservableCollection<Vacation>();
         public ObservableCollection<Vacation> VacationsToAproval
@@ -445,10 +445,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         {
             for(int k = 0; k < 2; k++)
             {
-                await foreach(HolidayViewModel item in FetchHolidaysAsync(CurrentDate.Year + k))
-                {
-                    Holidays.Add(item);
-                }
+                //await foreach(HolidayViewModel item in FetchHolidaysAsync(CurrentDate.Year + k))
+                //{
+                //    Holidays.Add(item);
+                //}
                 await foreach(VacationViewModel item in Person.FetchVacationsAsync(CurrentDate.Year + k))
                 {
                     Vacation vacation = new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.DateStart, item.DateEnd, item.Status);
@@ -506,7 +506,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         }
         private async IAsyncEnumerable<HolidayViewModel> FetchHolidaysAsync(int year)
         {
-            IEnumerable<HolidayViewModel> holidays = await App.API.GetHolidaysAsync(year);
+            IEnumerable<HolidayViewModel> holidays = await App.API.GetHolidaysAsync(year, year + 1);
 
             foreach(var item in holidays)
             {
@@ -516,7 +516,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         private void OnHolidaysChanged(List<HolidayViewModel> obj)
         {
-            Holidays = obj;
+            //Holidays = obj;
             //Task.Run(async () => await Calendar.Render(CurrentDate.Year));
         }
 

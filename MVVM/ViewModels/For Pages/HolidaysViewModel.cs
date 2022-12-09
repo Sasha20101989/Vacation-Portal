@@ -26,13 +26,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 SetProperty(ref _selectedItem, value);
                 OnPropertyChanged(nameof(SelectedItem));
-                ClearErrors(nameof(CurrentDate));
-
-                if(CurrentDate == null)
-                {
-                    AddErrors("Выберете дату", nameof(CurrentDate));
-                    ErrorMessage = "Выберете дату";
-                }
             }
         }
 
@@ -70,87 +63,49 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 OnPropertyChanged(nameof(IsLoading));
             }
         }
-
-        private string _errorMessage;
-        public string ErrorMessage
-        {
-            get => _errorMessage;
-            set
-            {
-                _errorMessage = value;
-                OnPropertyChanged(nameof(ErrorMessage));
-                OnPropertyChanged(nameof(HasErrorMessage));
-            }
-        }
-
-        public bool HasErrorMessage => !string.IsNullOrEmpty(ErrorMessage);
-
-        private string _successMessage;
-        public string SuccessMessage
-        {
-            get => _successMessage;
-            set
-            {
-                _successMessage = value;
-                OnPropertyChanged(nameof(SuccessMessage));
-                OnPropertyChanged(nameof(HasSuccessMessage));
-            }
-        }
-
-        public bool HasSuccessMessage => !string.IsNullOrEmpty(SuccessMessage);
-
-        private readonly Dictionary<string, List<string>> _propertyNameToErrorsDictionary;
-        public bool HasErrors => _propertyNameToErrorsDictionary.Any();
-
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
-        private void AddErrors(string errorMessage, string propertyName)
-        {
-            if(!_propertyNameToErrorsDictionary.ContainsKey(propertyName))
-            {
-                _propertyNameToErrorsDictionary.Add(propertyName, new List<string>());
-            }
-            _propertyNameToErrorsDictionary[propertyName].Add(errorMessage);
-            OnErrorsChanged(propertyName);
-        }
-        public IEnumerable GetErrors(string propertyName)
-        {
-            return _propertyNameToErrorsDictionary.GetValueOrDefault(propertyName, new List<string>());
-        }
-        private void ClearErrors(string propertyName)
-        {
-            ErrorMessage = string.Empty;
-            SuccessMessage = string.Empty;
-            _propertyNameToErrorsDictionary.Remove(propertyName);
-            OnErrorsChanged(propertyName);
-        }
-
-        private void OnErrorsChanged(string propertyName)
-        {
-            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(propertyName)));
-        }
-
         #endregion
 
         #region PlanedHolidays props
-        private HolidayViewModel _selectedHoliday;
-        public HolidayViewModel SelectedHoliday
+        private HolidayViewModel _selectedCurrentYearHoliday;
+        public HolidayViewModel SelectedCurrentYearHoliday
         {
-            get => _selectedHoliday;
+            get => _selectedCurrentYearHoliday;
             set
             {
-                SetProperty(ref _selectedHoliday, value);
-                OnPropertyChanged(nameof(SelectedHoliday));
+                SetProperty(ref _selectedCurrentYearHoliday, value);
+                OnPropertyChanged(nameof(SelectedCurrentYearHoliday));
             }
         }
 
-        private int _selectedHolidayIndex;
-        public int SelectedHolidayIndex
+        private int _selectedCurrentYearHolidayIndex;
+        public int SelectedCurrentYearHolidayIndex
         {
-            get => _selectedHolidayIndex;
+            get => _selectedCurrentYearHolidayIndex;
             set
             {
-                SetProperty(ref _selectedHolidayIndex, value);
-                OnPropertyChanged(nameof(SelectedHolidayIndex));
+                SetProperty(ref _selectedCurrentYearHolidayIndex, value);
+                OnPropertyChanged(nameof(SelectedCurrentYearHolidayIndex));
+            }
+        }
+        private HolidayViewModel _selectedNextYearHoliday;
+        public HolidayViewModel SelectedNextYearHoliday
+        {
+            get => _selectedNextYearHoliday;
+            set
+            {
+                SetProperty(ref _selectedNextYearHoliday, value);
+                OnPropertyChanged(nameof(SelectedNextYearHoliday));
+            }
+        }
+
+        private int _selectedNextYearHolidayIndex;
+        public int SelectedNextYearHolidayIndex
+        {
+            get => _selectedNextYearHolidayIndex;
+            set
+            {
+                SetProperty(ref _selectedNextYearHolidayIndex, value);
+                OnPropertyChanged(nameof(SelectedNextYearHolidayIndex));
             }
         }
         #endregion PlanedHolidays props
@@ -158,7 +113,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public int Id { get; set; }
         public string NameOfHoliday { get; set; }
 
-        private DateTime _currentDate;
+        private DateTime _currentDate = DateTime.Now;
         public DateTime CurrentDate
         {
             get => _currentDate;
@@ -166,11 +121,21 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 _currentDate = value;
                 OnPropertyChanged(nameof(CurrentDate));
-                ClearErrors(nameof(CurrentDate));
             }
         }
 
-        private ObservableCollection<Holiday> _holidayTypes;
+        private DateTime _nextDate = new DateTime(DateTime.Now.Year + 1, DateTime.Now.Month,DateTime.Now.Day);
+        public DateTime NextDate
+        {
+            get => _nextDate;
+            set
+            {
+                _nextDate = value;
+                OnPropertyChanged(nameof(NextDate));
+            }
+        }
+
+        private ObservableCollection<Holiday> _holidayTypes = new ObservableCollection<Holiday>();
         public ObservableCollection<Holiday> HolidayTypes
         {
             get => _holidayTypes;
@@ -182,15 +147,26 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        private ObservableCollection<HolidayViewModel> _holidays;
-        public ObservableCollection<HolidayViewModel> Holidays
+        private ObservableCollection<HolidayViewModel> _holidaysCurrentYear = new ObservableCollection<HolidayViewModel>();
+        public ObservableCollection<HolidayViewModel> HolidaysCurrentYear
         {
-            get => _holidays;
+            get => _holidaysCurrentYear;
             set
             {
-                _holidays = value;
-                OnPropertyChanged(nameof(Holidays));
+                _holidaysCurrentYear = value;
+                OnPropertyChanged(nameof(HolidaysCurrentYear));
 
+            }
+        }
+
+        private ObservableCollection<HolidayViewModel> _holidaysNextYear = new ObservableCollection<HolidayViewModel>();
+        public ObservableCollection<HolidayViewModel> HolidaysNextYear
+        {
+            get => _holidaysNextYear;
+            set
+            {
+                _holidaysNextYear = value;
+                OnPropertyChanged(nameof(HolidaysNextYear));
             }
         }
 
@@ -203,16 +179,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         public HolidaysViewModel()
         {
-            _holidayTypes = new ObservableCollection<Holiday>();
-            _holidays = new ObservableCollection<HolidayViewModel>();
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(2000));
-            //HolidayTypes.Add(new Holiday("Внеплановый"));
-            //HolidayTypes.Add(new Holiday("Праздник"));
-            //HolidayTypes.Add(new Holiday("Рабочий в выходной"));
-            //HolidayTypes.Add(new Holiday("Выходной"));
-
-            _currentDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-            _propertyNameToErrorsDictionary = new Dictionary<string, List<string>>();
 
             Submit = new AddHolidayCommand(this);
             CancelHoliday = new CancelHolidayCommand(this);
@@ -227,7 +194,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 async _ =>
                 {
                     IsLoading = true;
-                    IEnumerable<HolidayViewModel> holidays = await Task.Run(async () => await App.API.GetHolidaysAsync(Convert.ToInt32(DateTime.Now.Year)));
+                    IEnumerable<HolidayViewModel> holidays = await Task.Run(async () => await App.API.GetHolidaysAsync(CurrentDate.Year, CurrentDate.Year + 1));
                     IsLoading = false;
                     OnHolidaysLoad(holidays);
                 });
@@ -240,12 +207,27 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
             foreach(HolidayViewModel holiday in holidays)
             {
-                if(!Holidays.Contains(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year))))
+                if(holiday.Date.Year == CurrentDate.Year)
                 {
-                    App.API.Holidays.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year)));
-                    Holidays.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year)));
-                    App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
+                    if(!HolidaysCurrentYear.Contains(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year))))
+                    {
+                        App.API.Holidays.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year)));
+                        HolidaysCurrentYear.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year)));
+                        HolidaysCurrentYear = new ObservableCollection<HolidayViewModel>(HolidaysCurrentYear.OrderBy(i => i.Date));
+
+                        App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
+                    }
+                } else
+                {
+                    if(!HolidaysNextYear.Contains(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year))))
+                    {
+                        App.API.Holidays.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year)));
+                        HolidaysNextYear.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year)));
+                        HolidaysNextYear = new ObservableCollection<HolidayViewModel>(HolidaysNextYear.OrderBy(i => i.Date));
+                        App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
+                    }
                 }
+                
             }
         }
 

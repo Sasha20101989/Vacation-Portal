@@ -15,7 +15,7 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         Action<List<HolidayViewModel>> OnHolidaysChanged { get; set; }
         Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
         Task<IEnumerable<PersonDTO>> LoginAsync(string account);
-        Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(int year);
+        Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(int yearCurrent, int yearNext);
         Task<IEnumerable<Settings>> GetSettingsAsync(string account);
         Task<IEnumerable<Access>> GetAccessAsync(string account);
         Task<IEnumerable<Holiday>> GetHolidayTypesAsync();

@@ -182,7 +182,7 @@
                 </Button>
 
                 <md:TransitioningContent OpeningEffectsOffset="0:0:0"
-                        OpeningEffect="{md:TransitionEffect Kind=ExpandIn, Duration=0:0:1.00}">
+                        OpeningEffect="{md:TransitionEffect Kind=FadeIn, Duration=0:0:1.50}">
                     <StackPanel Grid.Row="0" Grid.Column="0">
                         <!--<controls:HRView VerticalAlignment="Top" Margin="6,6,16,6"
                         Visibility="{Binding Person.Is_HR, Converter={StaticResource BooleanToVisibilityConverter}}"/>
@@ -217,7 +217,7 @@
                             <!--<md:Card md:ElevationAssist.Elevation="Dp5" UniformCornerRadius="10">-->
 
                             <md:TransitioningContent OpeningEffectsOffset="0:0:0"
-                                OpeningEffect="{md:TransitionEffect Kind=ExpandIn, Duration=0:0:1.00}">
+                                OpeningEffect="{md:TransitionEffect Kind=FadeIn, Duration=0:0:1.50}">
                                 <StackPanel>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
