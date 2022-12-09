@@ -35,7 +35,7 @@ namespace Vacation_Portal.MVVM.Models
         public Settings Settings { get; set; }
 
         private readonly List<Settings> _listSettings = new List<Settings>();
-        public List<VacationViewModel> Vacations = new List<VacationViewModel>();
+        public ObservableCollection<VacationViewModel> Vacations { get; set; } = new ObservableCollection<VacationViewModel>();
         public event Action<Settings> SettingsLoad;
         //public event Action<List<VacationViewModel>> VacationsLoad;
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
@@ -76,6 +76,23 @@ namespace Vacation_Portal.MVVM.Models
         //    }
         //    VacationsLoad?.Invoke(Vacations);
         //}
+        public async IAsyncEnumerable<VacationViewModel> FetchVacationsAsync(int year)
+        {
+            IEnumerable<VacationViewModel> vacations = await App.API.LoadVacationAsync(App.API.Person.Id_SAP, year);
+
+            foreach(var item in vacations)
+            {
+                yield return item;
+            }
+        }
+        public async IAsyncEnumerable<VacationAllowanceViewModel> FetchVacationAllowancesAsync(int year)
+        {
+            IEnumerable<VacationAllowanceViewModel> vacationAllowances = await App.API.GetVacationAllowanceAsync(App.API.Person.Id_SAP, year);
+            foreach(var item in vacationAllowances)
+            {
+                yield return item;
+            }
+        }
         public async void GetAccess()
         {
             IEnumerable<Access> access = await App.API.GetAccessAsync(Environment.UserName);
