@@ -151,12 +151,13 @@ namespace Vacation_Portal.Services.Providers
                 return null;
             }
         }
-        public async Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(int year)
+        public async Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(int yearCurrent, int yearNext)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             object parameters = new
             {
-                Date_Year = year
+                Date_Year_Current = yearCurrent,
+                Date_Year_Next = yearNext
             };
             try
             {
