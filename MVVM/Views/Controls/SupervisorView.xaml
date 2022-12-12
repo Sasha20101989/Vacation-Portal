@@ -3,12 +3,340 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d">
-    <Grid>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="ФИО" Margin="0,0,20,0"/>
-            <TextBox Text="Руководитель"/>
-            <!--<TextBox  x:Name="myTextBoxName" Text="124"/>-->
-        </StackPanel>
+             mc:Ignorable="d"
+             xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages"  
+             xmlns:vModels="clr-namespace:Vacation_Portal.MVVM.ViewModels"  
+             xmlns:md="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+             xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
+             d:DataContext="{d:DesignInstance vm:PersonalVacationPlanningViewModel}" Loaded="UserControl_Loaded">
+    <UserControl.Resources>
+        <ResourceDictionary>
+
+            <!--#region Styling Scrollbar-->
+            <Style x:Key="ScrollThumbs"
+           TargetType="{x:Type Thumb}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Thumb}">
+                            <Grid x:Name="Grid">
+                                <Rectangle HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch"
+                                   Width="Auto"
+                                   Height="Auto"
+                                   Fill="Transparent" />
+                                <Border x:Name="Rectangle1"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Width="Auto"
+                                Height="Auto"
+                                Background="{TemplateBinding Background}" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="Tag"
+                                 Value="Horizontal">
+                                    <Setter TargetName="Rectangle1"
+                                    Property="Width"
+                                    Value="Auto" />
+                                    <Setter TargetName="Rectangle1"
+                                    Property="Height"
+                                    Value="7" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="{x:Type ScrollBar}"
+           TargetType="{x:Type ScrollBar}">
+                <Setter Property="Stylus.IsFlicksEnabled"
+                Value="False" />
+                <Setter Property="Foreground"
+                Value="LightGray" />
+                <Setter Property="Background"
+                Value="Transparent" />
+                <Setter Property="Width"
+                Value="10" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ScrollBar}">
+                            <Grid x:Name="GridRoot"
+                          Width="2"
+                          Background="{TemplateBinding Background}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <!--This is scrollbar track-->
+                                <Track x:Name="PART_Track"
+                               Grid.Row="0"
+                               IsDirectionReversed="True"
+                               Focusable="False">
+                                    <Track.Thumb>
+                                        <Thumb x:Name="Thumb"
+                                       Background="{TemplateBinding Foreground}"
+                                       Style="{DynamicResource ScrollThumbs}" />
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton x:Name="PageUp"
+                                              Command="ScrollBar.PageUpCommand"
+                                              Opacity="0"
+                                              Focusable="False" />
+                                    </Track.IncreaseRepeatButton>
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton x:Name="PageDown"
+                                              Command="ScrollBar.PageDownCommand"
+                                              Opacity="0"
+                                              Focusable="False" />
+                                    </Track.DecreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled"
+                                 Value="False">
+                                    <Setter TargetName="Thumb"
+                                    Property="Visibility"
+                                    Value="Collapsed" />
+                                    <Setter TargetName="GridRoot"
+                                    Property="Visibility"
+                                    Value="Collapsed" />
+                                </Trigger>
+                                <Trigger Property="Orientation"
+                                 Value="Horizontal">
+                                    <Setter TargetName="GridRoot"
+                                    Property="LayoutTransform">
+                                        <Setter.Value>
+                                            <RotateTransform Angle="-90" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter TargetName="PART_Track"
+                                    Property="LayoutTransform">
+                                        <Setter.Value>
+                                            <RotateTransform Angle="-90" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Width"
+                                    Value="Auto" />
+                                    <Setter Property="Height"
+                                    Value="12" />
+                                    <Setter TargetName="Thumb"
+                                    Property="Tag"
+                                    Value="Horizontal" />
+                                    <Setter TargetName="PageDown"
+                                    Property="Command"
+                                    Value="ScrollBar.PageLeftCommand" />
+                                    <Setter TargetName="PageUp"
+                                    Property="Command"
+                                    Value="ScrollBar.PageRightCommand" />
+                                </Trigger>
+
+                                <Trigger Property="IsMouseOver"
+                                 Value="True">
+                                    <Setter TargetName="GridRoot" Property="Width" Value="8" />
+                                </Trigger>
+
+
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <!--#endregion-->
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid x:Name="Main">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <md:Badged Grid.Row="0" BadgePlacementMode="Top" Margin="0 0 0 10">
+            <md:Badged.Badge>
+                <TextBlock Text="Сотрудник и типы отпуска" Margin="3" FontSize="10"/>
+            </md:Badged.Badge>
+            <md:Card  x:Name="containerPerson" md:ElevationAssist.Elevation="Dp6" Width="{Binding ActualWidth, ElementName=cardPlannedDays, Mode=OneWay}">
+                <!--<md:Card.RenderTransform>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </md:Card.RenderTransform>
+                <md:Card.Triggers>
+                    <EventTrigger RoutedEvent="MouseEnter" >
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="1.01" Duration="0:0:0.05">
+                                    <DoubleAnimation.EasingFunction>
+                                        <QuarticEase />
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="1.02" Duration="0:0:0.05" >
+                                    <DoubleAnimation.EasingFunction>
+                                        <QuarticEase />
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <EventTrigger RoutedEvent="MouseLeave" >
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="1.0" Duration="0:0:.03">
+                                    <DoubleAnimation.EasingFunction>
+                                        <QuarticEase />
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="1.0" Duration="0:0:.03" >
+                                    <DoubleAnimation.EasingFunction>
+                                        <QuarticEase />
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </md:Card.Triggers>-->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox Style="{StaticResource MaterialDesignOutlinedComboBox}" Margin="10" HorizontalContentAlignment="Center">
+                        <ComboBoxItem Content="Сотрудник 1"/>
+                        <ComboBoxItem Content="Сотрудник 2"/>
+                        <ComboBoxItem Content="Сотрудник 3"/>
+                    </ComboBox>
+
+                    <Border Grid.Row="1" Grid.RowSpan="2" CornerRadius="6" Margin="0 6 0 4">
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <ListBox Grid.Row="0" Margin="6" 
+                                     SelectedIndex="{Binding SelectedIndexAllowance, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                     SelectedItem="{Binding SelectedItemAllowance, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                     ItemsSource="{Binding VacationAllowances,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource MaterialDesignChoiceChipAccentOutlineListBox}">
+                                <ListBox.Resources>
+                                    <DataTemplate DataType="{x:Type vModels:VacationAllowanceViewModel}">
+                                        <Grid Margin="10 0 0 0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="auto"/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Vacation_Name}"
+                                                           Width="180"
+                                                           TextAlignment="Center"
+                                                           FontSize="16"/>
+                                            <Rectangle Margin="8 0 0 0" Grid.Column="0" Grid.Row="1" Width="9" Height="9" Fill="{Binding Vacation_Color}" RadiusX="10" RadiusY="10"/>
+                                            <TextBlock TextAlignment="Center" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding Vacation_Days_Quantity, StringFormat={}Остаток дней: {0}}" TextTrimming="CharacterEllipsis" FontSize="15"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.Resources>
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignNavigationAccentListBoxItem}">
+                                        <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}"/>
+                                        <Setter Property="Height" Value="69" />
+                                        <Setter Property="BorderThickness" Value="2" />
+                                        <Setter Property="BorderBrush" Value="{StaticResource PrimaryHueMidBrush}" />
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Vacation_Days_Quantity}" Value="0">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+                            <md:Snackbar Grid.Row="1" MessageQueue="{Binding MessageQueueVacation,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" ActionButtonPlacement="SeparateLine"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </md:Card>
+        </md:Badged>
+
+        <md:Badged Grid.Row="1" BadgePlacementMode="Top"  Margin="0 7 0 0">
+            <md:Badged.Badge>
+                <TextBlock Text="Запланированные отпуска" Margin="3" FontSize="10"/>
+            </md:Badged.Badge>
+            <md:Card md:ElevationAssist.Elevation="Dp6" x:Name="cardPlannedDays">
+                <Border BorderBrush="{Binding BorderColorPLanedVacations}" BorderThickness="2" CornerRadius="10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <ListView Grid.Row="0" Margin="3" Name="ListView" SelectionMode="Single" MaxWidth="700"
+                                      ItemsSource="{Binding VacationsToAproval, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
+                                      SelectedIndex="{Binding PlannedIndex, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                      SelectedItem="{Binding PlannedItem, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto" FontSize="12"
+                                      ScrollViewer.CanContentScroll="False" Style="{StaticResource MaterialDesignListView}">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignGridViewItem}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="IsSelected" Value="True"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Width="140" DisplayMemberBinding="{Binding Name}" Header="Тип отпуска"></GridViewColumn>
+                                    <GridViewColumn Width="95" DisplayMemberBinding="{Binding Count}" Header="Дней"></GridViewColumn>
+                                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
+                                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_end,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
+                                    <GridViewColumn Width="115" DisplayMemberBinding="{Binding Status}" Header="Статус"></GridViewColumn>
+                                    <GridViewColumn Width="40" Header="">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="Red" Width="24" Height="24"
+                                                            Command="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=DataContext.CancelVacation}"
+                                                            CommandParameter="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=SelectedItem}">
+                                                    <md:PackIcon Kind="Close"  Width="20" Height="20"></md:PackIcon>
+                                                </Button>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Width="280" VerticalAlignment="Bottom"
+                            Margin="3 0 3 6"
+                            Style="{DynamicResource MaterialDesignOutlinedLightButton}"
+                            Command="{Binding CheckVacations}" Content="Проверить и отправить"
+                            IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                            </Button>
+                        </StackPanel>
+                        <md:Snackbar  Grid.Row="2" MessageQueue="{Binding MessageQueuePLanedVacations,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" ActionButtonPlacement="SeparateLine"/>
+                    </Grid>
+                </Border>
+            </md:Card>
+        </md:Badged>
     </Grid>
 </UserControl>
