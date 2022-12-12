@@ -194,7 +194,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         #endregion
 
-        public  MainWindowViewModel()
+        public MainWindowViewModel()
         {
 
             ITheme theme = _paletteHelper.GetTheme();
@@ -271,7 +271,49 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 App.SplashScreen.status.Text = "Ищу вас в базе данных...";
             });
-            await App.API.LoginAsync(Environment.UserName);
+            _ = await App.API.LoginAsync(Environment.UserName);
+
+            await foreach(Access item in App.API.Person.FetchAccessAsync(DateTime.Now.Year))
+            {
+                App.Current.Dispatcher.Invoke((Action) delegate
+                {
+                    App.SplashScreen.status.Text = "Приложение с доступом сотрудника";
+                    App.SplashScreen.status.Foreground = Brushes.Black;
+                });
+                if(item.Is_Accounting)
+                {
+                    App.API.Person.Is_Accounting = true;
+                    App.Current.Dispatcher.Invoke((Action) delegate
+                    {
+                        App.SplashScreen.status.Text = "Приложение с доступом табельщика";
+                        App.SplashScreen.status.Foreground = Brushes.Black;
+                    });
+                }
+                if(item.Is_Supervisor)
+                {
+                    App.API.Person.Is_Supervisor = true;
+                    App.Current.Dispatcher.Invoke((Action) delegate
+                    {
+                        App.SplashScreen.status.Text = "Приложение с доступом руководителя";
+                        App.SplashScreen.status.Foreground = Brushes.Black;
+                    });
+                }
+                if(item.Is_HR)
+                {
+                    App.API.Person.Is_HR = true;
+                    App.Current.Dispatcher.Invoke((Action) delegate
+                    {
+                        App.SplashScreen.status.Text = "Приложение с доступом HR сотрудника";
+                        App.SplashScreen.status.Foreground = Brushes.Black;
+                    });
+                }
+            }
+
+            await foreach(Settings item in App.API.Person.FetchSettingsAsync())
+            {
+                Color color = (Color) ColorConverter.ConvertFromString(item.Color);
+                SelectedColor = color;
+            }
             OnLoginSuccesed(App.API.Person);
         }
 
@@ -280,9 +322,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
             if(person != null)
             {
-                person.GetAccess();
-                person.GetSettings();
-                person.SettingsLoad += OnPerson_SettingsLoad;
                 person.MenuItemsChanged += OnPerson_MenuItemsChanged;
                 person.AddPages(_viewModel);
             }
@@ -294,12 +333,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             MenuItemsView.Filter = MenuItemsFilter;
             _homeViewModel.IsLogginIn = false;
             _homeViewModel.IsLoginSuccesed = true;
-        }
-
-        private void OnPerson_SettingsLoad(Settings obj)
-        {
-            Color color = (Color) ColorConverter.ConvertFromString(App.API.Person.Settings.Color);
-            SelectedColor = color;
         }
 
         private void ChangeCustomColor(object obj)

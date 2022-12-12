@@ -29,21 +29,16 @@ namespace Vacation_Portal.MVVM.Models
         public int Department_Id { get; set; }
         public int Vitrual_Department_Id { get; set; }
         public string Position { get; set; }
-        public static bool Is_HR { get; set; }
-        public static bool Is_Accounting { get; set; }
-        public static bool Is_Supervisor { get; set; }
+        public bool Is_HR { get; set; }
+        public bool Is_Accounting { get; set; }
+        public bool Is_Supervisor { get; set; }
         public Settings Settings { get; set; }
-
-        private readonly List<Settings> _listSettings = new List<Settings>();
-        public ObservableCollection<VacationViewModel> Vacations { get; set; } = new ObservableCollection<VacationViewModel>();
-        public event Action<Settings> SettingsLoad;
-        //public event Action<List<VacationViewModel>> VacationsLoad;
-        public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
-
         public override string ToString()
         {
             return $"{Surname} {Name} {Patronymic}";
         }
+
+        public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
         public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId, string position)
         {
@@ -55,29 +50,43 @@ namespace Vacation_Portal.MVVM.Models
             Department_Id = departmentId;
             Vitrual_Department_Id = virtualDepartmentId;
             Position = position;
-            //App.API.OnVacationsChanged += OnVacationsLoad;
         }
-        //public async void GetVacations()
-        //{
-        //    IEnumerable<VacationViewModel> vacations = await App.API.LoadVacationAsync(Id_SAP);
-        //    App.Current.Dispatcher.Invoke((Action) delegate
-        //    {
-        //        App.SplashScreen.status.Text = "Ищу ваши отпуска...";
-        //        App.SplashScreen.status.Foreground = Brushes.Black;
-        //    });
-        //    OnVacationsLoad(vacations);
-        //}
-        //public void OnVacationsLoad(IEnumerable<VacationViewModel> vacations)
-        //{
-        //    foreach(VacationViewModel vacation in vacations)
-        //    {
-        //        Vacations.Add(vacation);
-        //        App.API.Vacations.Add(vacation);
-        //    }
-        //    VacationsLoad?.Invoke(Vacations);
-        //}
+        public async IAsyncEnumerable<Access> FetchAccessAsync(int year)
+        {
+            App.Current.Dispatcher.Invoke((Action) delegate
+            {
+                App.SplashScreen.status.Text = "Проверяю разрешения вашего аккаунта...";
+                App.SplashScreen.status.Foreground = Brushes.Black;
+            });
+            IEnumerable<Access> access = await App.API.GetAccessAsync(Environment.UserName);
+
+            foreach(var item in access)
+            {
+                yield return item;
+            }
+        }
+        public async IAsyncEnumerable<Settings> FetchSettingsAsync()
+        {
+            App.Current.Dispatcher.Invoke((Action) delegate
+            {
+                App.SplashScreen.status.Text = "Ищу настройки вашего аккаунта...";
+                App.SplashScreen.status.Foreground = Brushes.Black;
+            });
+
+            IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
+
+            foreach(var item in settings)
+            {
+                yield return item;
+            }
+        }
         public async IAsyncEnumerable<VacationViewModel> FetchVacationsAsync(int year)
         {
+            App.Current.Dispatcher.Invoke((Action) delegate
+            {
+                App.SplashScreen.status.Text = "Загружаю ваши отпуска...";
+                App.SplashScreen.status.Foreground = Brushes.Black;
+            });
             IEnumerable<VacationViewModel> vacations = await App.API.LoadVacationAsync(App.API.Person.Id_SAP, year);
 
             foreach(var item in vacations)
@@ -93,110 +102,27 @@ namespace Vacation_Portal.MVVM.Models
                 yield return item;
             }
         }
-        public async void GetAccess()
-        {
-            IEnumerable<Access> access = await App.API.GetAccessAsync(Environment.UserName);
-            App.Current.Dispatcher.Invoke((Action) delegate
-            {
-                App.SplashScreen.status.Text = "Ищу настройки вашего аккаунта...";
-                App.SplashScreen.status.Foreground = Brushes.Black;
-            });
-            OnAccessLoad(access);
-        }
-        private static void OnAccessLoad(IEnumerable<Access> access)
-        {
-            App.Current.Dispatcher.Invoke((Action) delegate
-            {
-                App.SplashScreen.status.Text = "Приложение с доступом сотрудника";
-                App.SplashScreen.status.Foreground = Brushes.Black;
-            });
-            foreach(Access item in access)
-            {
-                if(item.Is_Accounting)
-                {
-                    Is_Accounting = true;
-                    App.Current.Dispatcher.Invoke((Action) delegate
-                    {
-                        App.SplashScreen.status.Text = "Приложение с доступом табельщика";
-                        App.SplashScreen.status.Foreground = Brushes.Black;
-                    });
-                }
-                if(item.Is_Supervisor)
-                {
-                    Is_Supervisor = true;
-                    App.Current.Dispatcher.Invoke((Action) delegate
-                    {
-                        App.SplashScreen.status.Text = "Приложение с доступом руководителя";
-                        App.SplashScreen.status.Foreground = Brushes.Black;
-                    });
-                }
-                if(item.Is_HR)
-                {
-                    Is_HR = true;
-                    App.SplashScreen.status.Text = "Приложение с доступом HR сотрудника";
-                    App.SplashScreen.status.Foreground = Brushes.Black;
-                }
-            }
-        }
-
-        public async void GetSettings()
-        {
-
-            IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
-            App.Current.Dispatcher.Invoke((Action) delegate
-            {
-                App.SplashScreen.status.Text = "Ищу настройки вашего аккаунта...";
-                App.SplashScreen.status.Foreground = Brushes.Black;
-            });
-            OnSettingsLoad(settings);
-        }
-        private void OnSettingsLoad(IEnumerable<Settings> settings)
-        {
-
-            _listSettings.AddRange(settings);
-
-            if(_listSettings.Count < 1)
-            {
-                App.Current.Dispatcher.Invoke((Action) delegate
-                {
-                    App.SplashScreen.status.Text = "Настройки приложения не найдены";
-                    App.SplashScreen.status.Foreground = Brushes.Orange;
-                });
-            } else
-            {
-                App.Current.Dispatcher.Invoke((Action) delegate
-                {
-                    App.SplashScreen.status.Text = "Применяю настройки вашего аккаунта...";
-                    App.SplashScreen.status.Foreground = Brushes.Black;
-                });
-                Settings = _listSettings[0];
-                SettingsLoad?.Invoke(Settings);
-            }
-        }
 
         public void AddPages(MainWindowViewModel _viewModel)
         {
             App.Current.Dispatcher.Invoke((Action) delegate
              {
-
-                 foreach(MenuItem menuItem in GenerateMenuItems())
+                 App.SplashScreen.status.Text = "Добавляю доступные вам страницы...";
+                 App.SplashScreen.status.Foreground = Brushes.Black;
+                 foreach(MenuItem menuItem in GenerateMenuItems(_viewModel))
                  {
                      if(!_viewModel.MenuItems.Contains(menuItem))
                      {
-
                          _viewModel.MenuItems.Add(menuItem);
-
                      }
                  }
-
-                 _viewModel.MenuItems.Add(new MenuItem(_holidaysPage, typeof(HolidaysView), selectedIcon: PackIconKind.BoxCog, unselectedIcon: PackIconKind.BoxCogOutline, new HolidaysViewModel()));
-                 _viewModel.MenuItems.Add(new MenuItem(_settingsPage, typeof(SettingsView), selectedIcon: PackIconKind.Cog, unselectedIcon: PackIconKind.CogOutline, new SettingsViewModel(_viewModel)));
 
                  MenuItem personalItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _personalVacationPlanning);
                  _viewModel.MainMenuItems = CreateMainMenuItems(personalItem, _viewModel);
 
                  if(Is_Supervisor)
                  {
+                    // _viewModel.MenuItems.Add(new MenuItem(_supervisorPage, typeof(VacationPlanningForSubordinatesView), selectedIcon: PackIconKind.AccountTie, unselectedIcon: PackIconKind.AccountTieOutline, new PersonalVacationPlanningViewModel()));
                      _viewModel.AdminString = "Аккаунт руководителя";
                      MenuItem supervisorItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _supervisorPage);
                      _viewModel.MainMenuItems = CreateMainMenuItems(supervisorItem, _viewModel);
@@ -213,13 +139,12 @@ namespace Vacation_Portal.MVVM.Models
         {
             MenuItemsChanged?.Invoke(menuItems);
         }
-
-        private ObservableCollection<MenuItem> CreateMainMenuItems(MenuItem menuItem, MainWindowViewModel _viewModel)
+        private ObservableCollection<MenuItem> CreateMainMenuItems(MenuItem menuItem, MainWindowViewModel viewModel)
         {
-            _viewModel.MainMenuItems.Add(menuItem);
-            return _viewModel.MainMenuItems;
+            viewModel.MainMenuItems.Add(menuItem);
+            return viewModel.MainMenuItems;
         }
-        private IEnumerable<MenuItem> GenerateMenuItems()
+        private IEnumerable<MenuItem> GenerateMenuItems(MainWindowViewModel viewModel)
         {
             yield return new MenuItem(
             _personalVacationPlanning,
@@ -227,6 +152,33 @@ namespace Vacation_Portal.MVVM.Models
             selectedIcon: PackIconKind.BagPersonalTag,
             unselectedIcon: PackIconKind.BagPersonalTagOutline,
             new PersonalVacationPlanningViewModel());
+
+            if(Is_Supervisor)
+            {
+                yield return new MenuItem(
+                _supervisorPage,
+                typeof(VacationPlanningForSubordinatesView),
+                selectedIcon: PackIconKind.AccountTie,
+                unselectedIcon: PackIconKind.AccountTieOutline,
+                new PersonalVacationPlanningViewModel());
+            }
+
+            if(Is_HR)
+            {
+                yield return new MenuItem(
+                _holidaysPage,
+                typeof(HolidaysView),
+                selectedIcon: PackIconKind.BoxCog,
+                unselectedIcon: PackIconKind.BoxCogOutline,
+                new HolidaysViewModel());
+            }
+
+            yield return new MenuItem(
+            _settingsPage,
+            typeof(SettingsView),
+            selectedIcon: PackIconKind.Cog,
+            unselectedIcon: PackIconKind.CogOutline,
+            new SettingsViewModel(viewModel));
         }
     }
 }

@@ -445,10 +445,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         {
             for(int k = 0; k < 2; k++)
             {
-                //await foreach(HolidayViewModel item in FetchHolidaysAsync(CurrentDate.Year + k))
-                //{
-                //    Holidays.Add(item);
-                //}
                 await foreach(VacationViewModel item in Person.FetchVacationsAsync(CurrentDate.Year + k))
                 {
                     Vacation vacation = new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.DateStart, item.DateEnd, item.Status);
@@ -502,16 +498,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 Calendars.Add(Calendar);
             }
             Calendar = Calendars[0];
-            //await Task.Run(() => Calendar.UpdateColor());
-        }
-        private async IAsyncEnumerable<HolidayViewModel> FetchHolidaysAsync(int year)
-        {
-            IEnumerable<HolidayViewModel> holidays = await App.API.GetHolidaysAsync(year, year + 1);
-
-            foreach(var item in holidays)
-            {
-                yield return item;
-            }
         }
 
         private void OnHolidaysChanged(List<HolidayViewModel> obj)
