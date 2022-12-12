@@ -406,9 +406,9 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <TextBlock Text="Декабрь" FontWeight="Bold" Margin="5 0 0 0" Style="{StaticResource MaterialDesignBody1TextBlock}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="WorkOutline" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                        <TextBlock Text="{Binding Calendar.FullYear[10].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[11].Days[0].WorkDaysCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                         <md:PackIcon Kind="HomeOutline" VerticalAlignment="Center" Margin="6 0 0 0"/>
-                        <TextBlock Text="{Binding Calendar.FullYear[10].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Calendar.FullYear[11].Days[0].DayOffCount}" Style="{StaticResource MaterialDesignBody1TextBlock}" Margin="3 0 0 0" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </md:ColorZone>
                 <UniformGrid Columns="7" Grid.Row="1" Margin="0 3 0 0" Cursor="Arrow">
