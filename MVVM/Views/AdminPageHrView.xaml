@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="Vacation_Portal.MVVM.Views.AdminPageHrView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages" 
+             xmlns:local="clr-namespace:Vacation_Portal.MVVM.Views.Controls"
+             xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
+             d:DataContext="{d:DesignInstance vm:AdminPageHrViewModel}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <WrapPanel>
+            <TextBlock Text="Отображение календаря на следующий год с " Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+            <DatePicker Margin="10 0 0 0" MinWidth="120"
+                                        SelectedDate="{Binding DateUnblockNextCalendar,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"            
+                                        Style="{StaticResource MaterialDesignDatePicker}"/>
+            <TextBlock Text="Разблокировка планирования на следующий год с" Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+            <DatePicker Margin="10 0 0 0" MinWidth="120"
+                                        SelectedDate="{Binding DateUnblockPlanningCalendar,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"            
+                                        Style="{StaticResource MaterialDesignDatePicker}"/>
+        </WrapPanel>
+        
+    </Grid>
+</UserControl>

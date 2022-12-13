@@ -10,6 +10,10 @@ namespace Vacation_Portal.Services.Providers.Interfaces
     public interface ILunchRepository
     {
         Person Person { get; set; }
+        DateTime DateUnblockNextCalendar { get; set; }
+        DateTime DateUnblockPlanning { get; set; }
+        bool IsCalendarUnblocked { get; set; }
+        bool IsCalendarPlannedOpen { get; set; }
         List<HolidayViewModel> Holidays { get; set; }
         //List<VacationViewModel> Vacations { get; set; }
         Action<List<HolidayViewModel>> OnHolidaysChanged { get; set; }
