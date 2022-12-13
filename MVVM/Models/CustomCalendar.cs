@@ -288,9 +288,9 @@ namespace Vacation_Portal.MVVM.Models
         }
         public void UcDays_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if(App.API.IsCalendarPlannedOpen)
+            if(App.API.IsCalendarPlannedOpen || CurrentYear == DateTime.Now.Year)
             {
-                if(_viewModel.SelectedItemAllowance != null && App.API.IsCalendarPlannedOpen)
+                if(_viewModel.SelectedItemAllowance != null)
                 {
                     for(int i = 0; i < _viewModel.VacationAllowances.Count; i++)
                     {
