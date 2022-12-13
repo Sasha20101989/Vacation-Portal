@@ -60,6 +60,32 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         //        OnPropertyChanged(nameof(Holidays));
         //    }
         //}
+        private bool _isNextCalendarUnblocked;
+        public bool IsNextCalendarUnblocked
+        {
+            get
+            {
+                return _isNextCalendarUnblocked;
+            }
+            set
+            {
+                _isNextCalendarUnblocked = value;
+                OnPropertyChanged(nameof(IsNextCalendarUnblocked));
+            }
+        }
+        private bool _isNextCalendarPlannedOpen;
+        public bool IsNextCalendarPlannedOpen
+        {
+            get
+            {
+                return _isNextCalendarPlannedOpen;
+            }
+            set
+            {
+                _isNextCalendarPlannedOpen = value;
+                OnPropertyChanged(nameof(IsNextCalendarPlannedOpen));
+            }
+        }
 
         private ObservableCollection<Vacation> _vacationsToAproval = new ObservableCollection<Vacation>();
         public ObservableCollection<Vacation> VacationsToAproval
@@ -454,7 +480,14 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         {
             VacationsToAprovalFromDataBase.Clear();
             VacationAllowancesFromDataBase.Clear();
-            for(int k = 0; k < 2; k++)
+            IsNextCalendarUnblocked = App.API.IsCalendarUnblocked;
+            IsNextCalendarPlannedOpen = App.API.IsCalendarPlannedOpen;
+            int interactionCount = 1;
+            if(IsNextCalendarUnblocked)
+            {
+                interactionCount = 2;
+            }
+            for(int k = 0; k < interactionCount; k++)
             {
                 await foreach(VacationViewModel item in Person.FetchVacationsAsync(CurrentDate.Year + k))
                 {

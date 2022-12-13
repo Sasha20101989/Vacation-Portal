@@ -18,6 +18,7 @@ namespace Vacation_Portal.MVVM.Models
         private static readonly string _holidaysPage = "Настройки выходных и праздников";
         private static readonly string _supervisorPage = "Страница руководителя";
         private static readonly string _hrPage = "Страница HR сотрудника";
+        private static readonly string _hrAdminPage = "Настройки календаря";
         //private static readonly string Табельщик = "Страница HR сотрудника";
         private static readonly string _personalVacationPlanning = "Страница персонального планирования отпуска";
         #endregion
@@ -186,6 +187,13 @@ namespace Vacation_Portal.MVVM.Models
                 selectedIcon: PackIconKind.BoxCog,
                 unselectedIcon: PackIconKind.BoxCogOutline,
                 new HolidaysViewModel());
+
+                yield return new MenuItem(
+                _hrAdminPage,
+                typeof(AdminPageHrView),
+                selectedIcon: PackIconKind.BoxCog,
+                unselectedIcon: PackIconKind.BoxCogOutline,
+                new AdminPageHrViewModel());
             }
 
             yield return new MenuItem(

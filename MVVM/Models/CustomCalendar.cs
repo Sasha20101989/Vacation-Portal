@@ -177,7 +177,6 @@ namespace Vacation_Portal.MVVM.Models
         public Range<DateTime> ReturnDateRange(DateTime start, DateTime end)
         {
             Range<DateTime> range = end > start ? start.To(end) : end.To(start);
-            //TODO: исправить
             return range;
         }
         public void BlockAndPaintButtons()
@@ -289,112 +288,80 @@ namespace Vacation_Portal.MVVM.Models
         }
         public void UcDays_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if(_viewModel.SelectedItemAllowance != null)
+            if(App.API.IsCalendarPlannedOpen)
             {
-                for(int i = 0; i < _viewModel.VacationAllowances.Count; i++)
+                if(_viewModel.SelectedItemAllowance != null && App.API.IsCalendarPlannedOpen)
                 {
-                    if(_viewModel.VacationAllowances[i].Vacation_Days_Quantity > 0)
+                    for(int i = 0; i < _viewModel.VacationAllowances.Count; i++)
                     {
-                        CalendarClickable = true;
-                        break;
-                    } else
-                    {
-                        CalendarClickable = false;
-                    }
-                }
-                if(CalendarClickable)
-                {
-                    if(e.OriginalSource is Grid)
-                    {
-                        Grid source = e.OriginalSource as Grid;
-                        UIElementCollection elems = source.Children as UIElementCollection;
-                        foreach(object elem in elems)
+                        if(_viewModel.VacationAllowances[i].Vacation_Days_Quantity > 0)
                         {
-                            if(elem is ContentPresenter)
-                            {
-                                ContentPresenter presenter = elem as ContentPresenter;
-                                TextBlock obj = presenter.Content as TextBlock;
-                                SelectedDay = Convert.ToInt32(obj.Text);
-                                SelectedMonth = Convert.ToInt32(obj.Tag.ToString().Split(".")[0]);
-                                SelectedYear = Convert.ToInt32(obj.Tag.ToString().Split(".")[1]);
-                                SelectedNameDay = obj.ToolTip.ToString();
-                            }
-                        }
-                    } else if(e.OriginalSource is TextBlock)
-                    {
-                        TextBlock obj = e.OriginalSource as TextBlock;
-
-                        SelectedDay = Convert.ToInt32(obj.Text);
-                        SelectedMonth = Convert.ToInt32(obj.Tag.ToString().Split(".")[0]);
-                        SelectedYear = Convert.ToInt32(obj.Tag.ToString().Split(".")[1]);
-                        SelectedNameDay = obj.ToolTip.ToString();
-                    } else if(e.OriginalSource is Button)
-                    {
-
-                    }
-
-                    ClicksOnCalendar++;
-                    int countHolidays = 0;
-                    int availableQuantity = 0;
-                    DateTime newDate = new DateTime();
-
-                    if(ClicksOnCalendar >= 3)
-                    {
-                        BlockAndPaintButtons();
-                        FirstSelectedDate = newDate;
-                        SecondSelectedDate = newDate;
-                        ClicksOnCalendar = 1;
-                        UpdateColor();
-                    }
-
-                    if(ClicksOnCalendar == 1)
-                    {
-                        FirstSelectedDate = new DateTime(SelectedYear, SelectedMonth, SelectedDay);
-                        CountSelectedDays = FirstSelectedDate.Subtract(FirstSelectedDate).Days + 1;
-                        if(CountSelectedDays <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
-                        {
-                            if(SelectedNameDay != "Праздник")
-                            {
-                                DayAddition = GetDayAddition(CountSelectedDays);
-                                _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.yyyy");
-                                _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Новый");
-                            } else
-                            {
-                                _viewModel.ShowAlert("Этот день является праздичным, начните планирование отпуска с другого дня");
-                            }
+                            CalendarClickable = true;
+                            break;
                         } else
                         {
-                            _viewModel.ShowAlert("Выбранный промежуток больше доступного колличества дней");
+                            CalendarClickable = false;
                         }
-                    } else
+                    }
+                    if(CalendarClickable)
                     {
-                        SecondSelectedDate = new DateTime(SelectedYear, SelectedMonth, SelectedDay);
-                        Range<DateTime> dateRange = ReturnDateRange(FirstSelectedDate, SecondSelectedDate);
-                        
-                        foreach(DateTime date in dateRange.Step(x => x.AddDays(1)))
+                        if(e.OriginalSource is Grid)
                         {
-                            for(int h = 0; h < App.API.Holidays.Count; h++)
+                            Grid source = e.OriginalSource as Grid;
+                            UIElementCollection elems = source.Children as UIElementCollection;
+                            foreach(object elem in elems)
                             {
-                                if(date == App.API.Holidays[h].Date)
+                                if(elem is ContentPresenter)
                                 {
-                                    countHolidays++;
+                                    ContentPresenter presenter = elem as ContentPresenter;
+                                    TextBlock obj = presenter.Content as TextBlock;
+                                    SelectedDay = Convert.ToInt32(obj.Text);
+                                    SelectedMonth = Convert.ToInt32(obj.Tag.ToString().Split(".")[0]);
+                                    SelectedYear = Convert.ToInt32(obj.Tag.ToString().Split(".")[1]);
+                                    SelectedNameDay = obj.ToolTip.ToString();
                                 }
                             }
-                        }
-                        if(SecondSelectedDate > FirstSelectedDate)
+                        } else if(e.OriginalSource is TextBlock)
                         {
-                            CountSelectedDays = SecondSelectedDate.Subtract(FirstSelectedDate).Days + 1;
-                            availableQuantity = CountSelectedDays - countHolidays;
-                            if(availableQuantity <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
+                            TextBlock obj = e.OriginalSource as TextBlock;
+
+                            SelectedDay = Convert.ToInt32(obj.Text);
+                            SelectedMonth = Convert.ToInt32(obj.Tag.ToString().Split(".")[0]);
+                            SelectedYear = Convert.ToInt32(obj.Tag.ToString().Split(".")[1]);
+                            SelectedNameDay = obj.ToolTip.ToString();
+                        } else if(e.OriginalSource is Button)
+                        {
+
+                        }
+
+                        ClicksOnCalendar++;
+                        int countHolidays = 0;
+                        int availableQuantity = 0;
+                        DateTime newDate = new DateTime();
+
+                        if(ClicksOnCalendar >= 3)
+                        {
+                            BlockAndPaintButtons();
+                            FirstSelectedDate = newDate;
+                            SecondSelectedDate = newDate;
+                            ClicksOnCalendar = 1;
+                            UpdateColor();
+                        }
+
+                        if(ClicksOnCalendar == 1)
+                        {
+                            FirstSelectedDate = new DateTime(SelectedYear, SelectedMonth, SelectedDay);
+                            CountSelectedDays = FirstSelectedDate.Subtract(FirstSelectedDate).Days + 1;
+                            if(CountSelectedDays <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
                             {
                                 if(SelectedNameDay != "Праздник")
                                 {
                                     DayAddition = GetDayAddition(CountSelectedDays);
-                                    _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
-                                    _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, "Новый");
+                                    _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.yyyy");
+                                    _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Новый");
                                 } else
                                 {
-                                    _viewModel.ShowAlert("Этот день является праздичным, закончите планирование отпуска другим днём");
+                                    _viewModel.ShowAlert("Этот день является праздичным, начните планирование отпуска с другого дня");
                                 }
                             } else
                             {
@@ -402,88 +369,126 @@ namespace Vacation_Portal.MVVM.Models
                             }
                         } else
                         {
-                            CountSelectedDays = FirstSelectedDate.Subtract(SecondSelectedDate).Days + 1;
-                            availableQuantity = CountSelectedDays - countHolidays;
-                            if(availableQuantity <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
+                            SecondSelectedDate = new DateTime(SelectedYear, SelectedMonth, SelectedDay);
+                            Range<DateTime> dateRange = ReturnDateRange(FirstSelectedDate, SecondSelectedDate);
+
+                            foreach(DateTime date in dateRange.Step(x => x.AddDays(1)))
                             {
-                                if(SelectedNameDay != "Праздник")
+                                for(int h = 0; h < App.API.Holidays.Count; h++)
                                 {
-
-                                    DayAddition = GetDayAddition(CountSelectedDays);
-                                    _viewModel.PlannedVacationString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
-                                    _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate, "Новый");
-                                } else
-                                {
-                                    _viewModel.ShowAlert("Этот день является праздичным, закончите планирование отпуска с другим днём");
-                                }
-                            } else
-                            {
-                                _viewModel.ShowAlert("Выбранный промежуток больше доступного колличества дней");
-                            }
-                        }
-                    }
-                    if(availableQuantity <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
-                    {
-                        if(_viewModel.PlannedItem != null)
-                        {
-
-                            Range<DateTime> range = ReturnRange(_viewModel.PlannedItem);
-                            List<bool> isGoToNext = new List<bool>();
-
-                            foreach(DateTime planedDate in range.Step(x => x.AddDays(1)))
-                            {
-                                for(int i = 0; i < _viewModel.VacationsToAproval.Count; i++)
-                                {
-                                    Vacation existingVacation = _viewModel.VacationsToAproval[i];
-
-                                    Range<DateTime> rangeExistingVacation = ReturnRange(existingVacation); ;
-
-                                    foreach(DateTime existingDate in rangeExistingVacation.Step(x => x.AddDays(1)))
+                                    if(date == App.API.Holidays[h].Date)
                                     {
-                                        if(existingDate == planedDate)
+                                        countHolidays++;
+                                    }
+                                }
+                            }
+                            if(SecondSelectedDate > FirstSelectedDate)
+                            {
+                                CountSelectedDays = SecondSelectedDate.Subtract(FirstSelectedDate).Days + 1;
+                                availableQuantity = CountSelectedDays - countHolidays;
+                                if(availableQuantity <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
+                                {
+                                    if(SelectedNameDay != "Праздник")
+                                    {
+                                        DayAddition = GetDayAddition(CountSelectedDays);
+                                        _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
+                                        _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, "Новый");
+                                    } else
+                                    {
+                                        _viewModel.ShowAlert("Этот день является праздичным, закончите планирование отпуска другим днём");
+                                    }
+                                } else
+                                {
+                                    _viewModel.ShowAlert("Выбранный промежуток больше доступного колличества дней");
+                                }
+                            } else
+                            {
+                                CountSelectedDays = FirstSelectedDate.Subtract(SecondSelectedDate).Days + 1;
+                                availableQuantity = CountSelectedDays - countHolidays;
+                                if(availableQuantity <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
+                                {
+                                    if(SelectedNameDay != "Праздник")
+                                    {
+
+                                        DayAddition = GetDayAddition(CountSelectedDays);
+                                        _viewModel.PlannedVacationString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
+                                        _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate, "Новый");
+                                    } else
+                                    {
+                                        _viewModel.ShowAlert("Этот день является праздичным, закончите планирование отпуска с другим днём");
+                                    }
+                                } else
+                                {
+                                    _viewModel.ShowAlert("Выбранный промежуток больше доступного колличества дней");
+                                }
+                            }
+                        }
+                        if(availableQuantity <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
+                        {
+                            if(_viewModel.PlannedItem != null)
+                            {
+
+                                Range<DateTime> range = ReturnRange(_viewModel.PlannedItem);
+                                List<bool> isGoToNext = new List<bool>();
+
+                                foreach(DateTime planedDate in range.Step(x => x.AddDays(1)))
+                                {
+                                    for(int i = 0; i < _viewModel.VacationsToAproval.Count; i++)
+                                    {
+                                        Vacation existingVacation = _viewModel.VacationsToAproval[i];
+
+                                        Range<DateTime> rangeExistingVacation = ReturnRange(existingVacation); ;
+
+                                        foreach(DateTime existingDate in rangeExistingVacation.Step(x => x.AddDays(1)))
                                         {
-                                            isGoToNext.Add(false);
+                                            if(existingDate == planedDate)
+                                            {
+                                                isGoToNext.Add(false);
+                                            }
+                                        }
+                                        if(isGoToNext.Contains(false))
+                                        {
+                                            break;
                                         }
                                     }
-                                    if(isGoToNext.Contains(false))
-                                    {
-                                        break;
-                                    }
+                                }
+
+                                if(!isGoToNext.Contains(false))
+                                {
+                                    BlockAndPaintButtons();
+                                } else
+                                {
+                                    _viewModel.ShowAlert("Пересечение отпусков не допустимо");
+                                    BlockAndPaintButtons();
+                                    FirstSelectedDate = newDate;
+                                    SecondSelectedDate = newDate;
+                                    ClicksOnCalendar = 0;
+                                    CountSelectedDays = 0;
+                                    _viewModel.PlannedVacationString = "";
+                                    UpdateColor();
                                 }
                             }
+                        } else
+                        {
 
-                            if(!isGoToNext.Contains(false))
-                            {
-                                BlockAndPaintButtons();
-                            } else
-                            {
-                                _viewModel.ShowAlert("Пересечение отпусков не допустимо");
-                                BlockAndPaintButtons();
-                                FirstSelectedDate = newDate;
-                                SecondSelectedDate = newDate;
-                                ClicksOnCalendar = 0;
-                                CountSelectedDays = 0;
-                                _viewModel.PlannedVacationString = "";
-                                UpdateColor();
-                            }
+                            _viewModel.ShowAlert("Выбранный промежуток больше доступного колличества дней");
+                            BlockAndPaintButtons();
+                            FirstSelectedDate = newDate;
+                            SecondSelectedDate = newDate;
+                            ClicksOnCalendar = 0;
+                            CountSelectedDays = 0;
+                            _viewModel.PlannedVacationString = "";
+                            UpdateColor();
+                            //PlannedItem = null;
                         }
-                    } else
-                    {
-
-                        _viewModel.ShowAlert("Выбранный промежуток больше доступного колличества дней");
-                        BlockAndPaintButtons();
-                        FirstSelectedDate = newDate;
-                        SecondSelectedDate = newDate;
-                        ClicksOnCalendar = 0;
-                        CountSelectedDays = 0;
-                        _viewModel.PlannedVacationString = "";
-                        UpdateColor();
-                        //PlannedItem = null;
                     }
+                } else
+                {
+                    _viewModel.ShowAlert("Выберете тип отпуска");
                 }
             } else
             {
-                _viewModel.ShowAlert("Выберете тип отпуска");
+                _viewModel.ShowAlert($"Планирование будет доступно c {App.API.DateUnblockPlanning:dd.MM.yyyy}");
             }
         }
     }

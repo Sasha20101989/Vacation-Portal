@@ -51,6 +51,15 @@ namespace Vacation_Portal.Services.Providers
 
         #region Props
         public Person Person { get; set; }
+        
+        public DateTime DateUnblockNextCalendar { get; set; }
+        public bool IsCalendarUnblocked { get; set; } = true;
+        //public bool IsCalendarUnblocked => DateUnblockNextCalendar <= DateTime.Now;
+
+        public DateTime DateUnblockPlanning { get; set; }
+        public bool IsCalendarPlannedOpen { get; set; } = false;
+        //public bool IsCalendarPlannedOpen => DateUnblockPlanning <= DateTime.Now;
+        
         public Action<List<HolidayViewModel>> OnHolidaysChanged { get; set; }
 
         private List<HolidayViewModel> _holidays = new List<HolidayViewModel>();
@@ -66,16 +75,6 @@ namespace Vacation_Portal.Services.Providers
         public Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
         public Action<Access> OnAccessChanged { get; set; }
 
-        //private List<VacationViewModel> _vacations = new List<VacationViewModel>();
-        //public List<VacationViewModel> Vacations
-        //{
-        //    get => _vacations;
-        //    set
-        //    {
-        //        _vacations = value;
-        //        OnPropertyChanged(nameof(Vacations));
-        //    }
-        //}
         public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
         
         #endregion

@@ -106,8 +106,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                             VacationsToAprovalClone[i].Count = countDays;
                             VacationsToAprovalClone.Remove(VacationsToAprovalClone[i - 1]);
                             _viewModel.ShowAlert("Несколько периодов объединены в один.");
-                            //TODO:Определить что делать если у меня запланированы отпуска и они имеют разные статусы подтверждения,
-                            //но я попытаюсь их объединить в один промежуток
+                            //TODO:#32
                         }
                     }
                 }

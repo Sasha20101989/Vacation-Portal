@@ -331,10 +331,10 @@
                             </ListView>
                         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
                             <Button Width="280" VerticalAlignment="Bottom"
-                            Margin="3 0 3 6"
-                            Style="{DynamicResource MaterialDesignOutlinedLightButton}"
-                            Command="{Binding CheckVacations}" Content="Проверить и отправить"
-                            IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                                    Margin="3 0 3 6"
+                                    Style="{DynamicResource MaterialDesignOutlinedLightButton}"
+                                    Command="{Binding CheckVacations}" Content="Проверить и отправить"
+                                    IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
                             </Button>
                         </StackPanel>
                         <md:Snackbar  Grid.Row="2" MessageQueue="{Binding MessageQueuePLanedVacations,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" ActionButtonPlacement="SeparateLine"/>
