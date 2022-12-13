@@ -66,16 +66,16 @@ namespace Vacation_Portal.Services.Providers
         public Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
         public Action<Access> OnAccessChanged { get; set; }
 
-        private List<VacationViewModel> _vacations = new List<VacationViewModel>();
-        public List<VacationViewModel> Vacations
-        {
-            get => _vacations;
-            set
-            {
-                _vacations = value;
-                OnPropertyChanged(nameof(Vacations));
-            }
-        }
+        //private List<VacationViewModel> _vacations = new List<VacationViewModel>();
+        //public List<VacationViewModel> Vacations
+        //{
+        //    get => _vacations;
+        //    set
+        //    {
+        //        _vacations = value;
+        //        OnPropertyChanged(nameof(Vacations));
+        //    }
+        //}
         public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
         
         #endregion
