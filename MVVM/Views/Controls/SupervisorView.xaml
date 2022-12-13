@@ -209,15 +209,53 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ComboBox Style="{StaticResource MaterialDesignOutlinedComboBox}" Margin="10" HorizontalContentAlignment="Center">
-                        <ComboBoxItem Content="Сотрудник 1"/>
-                        <ComboBoxItem Content="Сотрудник 2"/>
-                        <ComboBoxItem Content="Сотрудник 3"/>
+                    <ComboBox IsEditable="True"
+                              FontSize="13"
+                              Text="Должность" 
+                              Grid.Column="0" 
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
+                              Margin="10" 
+                              HorizontalContentAlignment="Center">
+                        <ComboBoxItem Content="Мастер"/>
+                        <ComboBoxItem Content="Контролёр"/>
+                        <ComboBoxItem Content="Рихтовщик"/>
+                    </ComboBox>
+                    <!--ItemsSource="{Binding Path=PersonCollection}"-->
+                    <ComboBox TextSearch.TextPath="FullName"
+                              IsTextSearchEnabled="True"
+                              IsEditable="True"
+                              FontSize="13"
+                              Text="Сотрудник" 
+                              Grid.Column="1" 
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
+                              ItemsSource="{Binding Person.Subordinates}"
+                              Margin="10" 
+                              HorizontalContentAlignment="Center">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock HorizontalAlignment="left" Grid.Row="0" Grid.Column="0" Text="{Binding FullName}" FontSize="13"/>
+                                    <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Id_SAP}" FontSize="11" Style="{StaticResource MaterialDesignCharacterCounterTextBlock}" HorizontalAlignment="Right"/>
+                                        <TextBlock Text="{Binding Position}" FontSize="11" Style="{StaticResource MaterialDesignCharacterCounterTextBlock}"/>
+                                    </WrapPanel>
+                                    
+                                </Grid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                     </ComboBox>
 
-                    <Border Grid.Row="1" Grid.RowSpan="2" CornerRadius="6" Margin="0 6 0 4">
+                    <Border Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="2" CornerRadius="6" Margin="0 6 0 4">
                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
@@ -271,7 +309,7 @@
             </md:Card>
         </md:Badged>
 
-        <md:Badged Grid.Row="1" BadgePlacementMode="Top"  Margin="0 7 0 0">
+        <md:Badged Grid.Row="1" BadgePlacementMode="Top"  Margin="0 8 0 0">
             <md:Badged.Badge>
                 <TextBlock Text="Запланированные отпуска" Margin="3" FontSize="10"/>
             </md:Badged.Badge>

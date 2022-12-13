@@ -11,10 +11,11 @@ namespace Vacation_Portal.Services.Providers.Interfaces
     {
         Person Person { get; set; }
         List<HolidayViewModel> Holidays { get; set; }
-        List<VacationViewModel> Vacations { get; set; }
+        //List<VacationViewModel> Vacations { get; set; }
         Action<List<HolidayViewModel>> OnHolidaysChanged { get; set; }
         Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
         Action<Access> OnAccessChanged { get; set; }
+        //Task<IEnumerable<SubordinateDTO>> GetSubordinateAsync(int Id_SAP);
         Task<IEnumerable<PersonDTO>> LoginAsync(string account);
         Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(int yearCurrent, int yearNext);
         Task<IEnumerable<Settings>> GetSettingsAsync(string account);

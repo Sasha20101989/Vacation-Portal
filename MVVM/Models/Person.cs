@@ -37,6 +37,7 @@ namespace Vacation_Portal.MVVM.Models
         {
             return $"{Surname} {Name} {Patronymic}";
         }
+        public ObservableCollection<Subordinate> Subordinates { get; set; } = new ObservableCollection<Subordinate>();
 
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
@@ -51,6 +52,20 @@ namespace Vacation_Portal.MVVM.Models
             Vitrual_Department_Id = virtualDepartmentId;
             Position = position;
         }
+        //public async IAsyncEnumerable<Access> FetchSubordinatesAsync()
+        //{
+        //    App.Current.Dispatcher.Invoke((Action) delegate
+        //    {
+        //        App.SplashScreen.status.Text = "Загружаю список подчинённых...";
+        //        App.SplashScreen.status.Foreground = Brushes.Black;
+        //    });
+        //    IEnumerable<Subordinate> subordinates = await App.API.GetSubordinateAsync(Id_SAP);
+
+        //    foreach(var item in subordinates)
+        //    {
+        //        yield return item;
+        //    }
+        //}
         public async IAsyncEnumerable<Access> FetchAccessAsync(int year)
         {
             App.Current.Dispatcher.Invoke((Action) delegate
