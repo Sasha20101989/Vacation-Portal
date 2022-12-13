@@ -174,6 +174,12 @@ namespace Vacation_Portal.MVVM.Models
             //TODO: исправить
             return range;
         }
+        public Range<DateTime> ReturnDateRange(DateTime start, DateTime end)
+        {
+            Range<DateTime> range = end > start ? start.To(end) : end.To(start);
+            //TODO: исправить
+            return range;
+        }
         public void BlockAndPaintButtons()
         {
             if(_viewModel.PlannedItem != null)
@@ -328,7 +334,8 @@ namespace Vacation_Portal.MVVM.Models
                     }
 
                     ClicksOnCalendar++;
-
+                    int countHolidays = 0;
+                    int availableQuantity = 0;
                     DateTime newDate = new DateTime();
 
                     if(ClicksOnCalendar >= 3)
@@ -362,14 +369,26 @@ namespace Vacation_Portal.MVVM.Models
                     } else
                     {
                         SecondSelectedDate = new DateTime(SelectedYear, SelectedMonth, SelectedDay);
+                        Range<DateTime> dateRange = ReturnDateRange(FirstSelectedDate, SecondSelectedDate);
+                        
+                        foreach(DateTime date in dateRange.Step(x => x.AddDays(1)))
+                        {
+                            for(int h = 0; h < App.API.Holidays.Count; h++)
+                            {
+                                if(date == App.API.Holidays[h].Date)
+                                {
+                                    countHolidays++;
+                                }
+                            }
+                        }
                         if(SecondSelectedDate > FirstSelectedDate)
                         {
                             CountSelectedDays = SecondSelectedDate.Subtract(FirstSelectedDate).Days + 1;
-                            if(CountSelectedDays <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
+                            availableQuantity = CountSelectedDays - countHolidays;
+                            if(availableQuantity <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
                             {
                                 if(SelectedNameDay != "Праздник")
                                 {
-
                                     DayAddition = GetDayAddition(CountSelectedDays);
                                     _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
                                     _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, "Новый");
@@ -384,7 +403,8 @@ namespace Vacation_Portal.MVVM.Models
                         } else
                         {
                             CountSelectedDays = FirstSelectedDate.Subtract(SecondSelectedDate).Days + 1;
-                            if(CountSelectedDays <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
+                            availableQuantity = CountSelectedDays - countHolidays;
+                            if(availableQuantity <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
                             {
                                 if(SelectedNameDay != "Праздник")
                                 {
@@ -402,7 +422,7 @@ namespace Vacation_Portal.MVVM.Models
                             }
                         }
                     }
-                    if(CountSelectedDays <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
+                    if(availableQuantity <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity)
                     {
                         if(_viewModel.PlannedItem != null)
                         {
