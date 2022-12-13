@@ -44,7 +44,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                             int buttonMonth = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[0]);
                             int buttonYear = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[1]);
                             string buttonNameOfDay = buttonTextBlock.ToolTip.ToString();
-                            if((buttonNameOfDay == "Рабочий" || buttonNameOfDay == "Рабочий в выходной") && 
+                            if((buttonNameOfDay == "Рабочий" || buttonNameOfDay == "Рабочий в выходной") &&
                                 date.Day == buttonDay &&
                                 date.Month == buttonMonth &&
                                 date.Year == buttonYear)
@@ -57,6 +57,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 }
             }
             _viewModel.VacationsToAproval.Add(_viewModel.PlannedItem);
+            _viewModel.VacationsToAprovalFromDataBase.Add(_viewModel.PlannedItem);
             _viewModel.SelectedItemAllowance.Vacation_Days_Quantity -= _viewModel.Calendar.CountSelectedDays;
 
             _viewModel.PlannedVacationString = "";
@@ -89,7 +90,19 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                         if(_viewModel.Calendar.WorkingDays.Contains(true))
                         {
                             VacationsToAprovalClone[i].Date_Start = VacationsToAprovalClone[i - 1].Date_Start;
-                            int countDays = GetCountDays(VacationsToAprovalClone[i]);
+                            int countHolidays = 0;
+                            Range<DateTime> rangePlannedDays = _viewModel.Calendar.ReturnRange(VacationsToAprovalClone[i]);
+                            foreach(DateTime date in rangePlannedDays.Step(x => x.AddDays(1)))
+                            {
+                                for(int h = 0; h < App.API.Holidays.Count; h++)
+                                {
+                                    if(date == App.API.Holidays[h].Date)
+                                    {
+                                        countHolidays++;
+                                    }
+                                }
+                            }
+                            int countDays = GetCountDays(VacationsToAprovalClone[i]) - countHolidays;
                             VacationsToAprovalClone[i].Count = countDays;
                             VacationsToAprovalClone.Remove(VacationsToAprovalClone[i - 1]);
                             _viewModel.ShowAlert("Несколько периодов объединены в один.");
@@ -102,13 +115,15 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             if(_viewModel.Calendar.WorkingDays.Contains(true))
             {
                 _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
-                _viewModel.VacationsToAprovalClone.Add(_viewModel.PlannedItem);
+                _viewModel.VacationsToAprovalFromDataBase = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
+                _viewModel.PlannedIndex = 0;
+                
             } else
             {
                 _viewModel.ShowAlert("В выбранном периоде, отсутствуют рабочие дни выбранного типа отпуска.");
                 _viewModel.SelectedItemAllowance.Vacation_Days_Quantity += _viewModel.Calendar.CountSelectedDays;
                 _viewModel.VacationsToAproval.Remove(_viewModel.PlannedItem);
-                _viewModel.VacationsToAprovalClone.Remove(_viewModel.PlannedItem);
+                _viewModel.VacationsToAprovalFromDataBase.Remove(_viewModel.PlannedItem);
                 _viewModel.Calendar.ClearVacationData();
             }
         }

@@ -72,14 +72,14 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
             }
         }
-        private ObservableCollection<Vacation> _vacationsToAprovalClone = new ObservableCollection<Vacation>();
-        public ObservableCollection<Vacation> VacationsToAprovalClone
+        private ObservableCollection<Vacation> _vacationsToAprovalFromDataBase = new ObservableCollection<Vacation>();
+        public ObservableCollection<Vacation> VacationsToAprovalFromDataBase
         {
-            get => _vacationsToAprovalClone;
+            get => _vacationsToAprovalFromDataBase;
             set
             {
-                _vacationsToAprovalClone = value;
-                OnPropertyChanged(nameof(VacationsToAprovalClone));
+                _vacationsToAprovalFromDataBase = value;
+                OnPropertyChanged(nameof(VacationsToAprovalFromDataBase));
 
             }
         }
@@ -95,14 +95,14 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        private ObservableCollection<VacationAllowanceViewModel> _vacationAllowancesClone = new ObservableCollection<VacationAllowanceViewModel>();
-        public ObservableCollection<VacationAllowanceViewModel> VacationAllowancesClone
+        private ObservableCollection<VacationAllowanceViewModel> _vacationAllowancesFromDataBase = new ObservableCollection<VacationAllowanceViewModel>();
+        public ObservableCollection<VacationAllowanceViewModel> VacationAllowancesFromDataBase
         {
-            get => _vacationAllowancesClone;
+            get => _vacationAllowancesFromDataBase;
             set
             {
-                _vacationAllowancesClone = value;
-                OnPropertyChanged(nameof(VacationAllowancesClone));
+                _vacationAllowancesFromDataBase = value;
+                OnPropertyChanged(nameof(VacationAllowancesFromDataBase));
             }
         }
 
@@ -400,7 +400,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             SaveDataModel = new SaveDataModelCommand(this);
             StartLearning = new StartLearningCommand(this);
             AddToApprovalList = new AddToApprovalListCommand(this);
-            CancelVacation = new RelayCommand(SelectedCommandHandler, CanExecuteSelectedCommand);
+            CancelVacation = new CancelVacationCommand(this);
 
             MovePrevYearCommand = new AnotherCommandImplementation(
                async _ =>
@@ -410,10 +410,12 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                    IsNextYearEnabled = true;
                    Calendar = Calendars[0];
                    CurrentYear = Calendars[0].CurrentYear;
+
                    VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
-                                                  VacationAllowancesClone.Where(f => f.Vacation_Year == CurrentYear));
+                                                  VacationAllowancesFromDataBase.Where(f => f.Vacation_Year == CurrentYear));
                    VacationsToAproval = new ObservableCollection<Vacation>(
-                                                    VacationsToAprovalClone.Where(f => f.Date_Start.Year == CurrentYear));
+                                                    VacationsToAprovalFromDataBase.Where(f => f.Date_Start.Year == CurrentYear));
+                   
                    await Task.Run(() => Calendar.UpdateColor());
                    IsLoadingCalendarPage = false;
                });
@@ -426,10 +428,12 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                    IsNextYearEnabled = false;
                    Calendar = Calendars[1];
                    CurrentYear = Calendars[1].CurrentYear;
+
                    VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
-                                                  VacationAllowancesClone.Where(f => f.Vacation_Year == CurrentYear));
+                                                  VacationAllowancesFromDataBase.Where(f => f.Vacation_Year == CurrentYear));
                    VacationsToAproval = new ObservableCollection<Vacation>(
-                                                    VacationsToAprovalClone.Where(f => f.Date_Start.Year == CurrentYear));
+                                                    VacationsToAprovalFromDataBase.Where(f => f.Date_Start.Year == CurrentYear));
+                   
                    await Task.Run(() => Calendar.UpdateColor());
                    IsLoadingCalendarPage = false;
                });
@@ -443,33 +447,40 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #region Task Lazy
         private async Task Initialize()
         {
+            await updateData();
+        }
+
+        public async Task updateData()
+        {
+            VacationsToAprovalFromDataBase.Clear();
+            VacationAllowancesFromDataBase.Clear();
             for(int k = 0; k < 2; k++)
             {
                 await foreach(VacationViewModel item in Person.FetchVacationsAsync(CurrentDate.Year + k))
                 {
                     Vacation vacation = new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.DateStart, item.DateEnd, item.Status);
-                    if(!VacationsToAprovalClone.Contains(vacation))
+                    if(!VacationsToAprovalFromDataBase.Contains(vacation))
                     {
-                        VacationsToAprovalClone.Add(vacation);
+                        VacationsToAprovalFromDataBase.Add(vacation);
                     }
                 }
                 await foreach(VacationAllowanceViewModel item in Person.FetchVacationAllowancesAsync(CurrentDate.Year + k))
                 {
-                    VacationAllowancesClone.Add(item);
-                    for(int i = 0; i < VacationAllowancesClone.Count; i++)
+                    VacationAllowancesFromDataBase.Add(item);
+                    for(int i = 0; i < VacationAllowancesFromDataBase.Count; i++)
                     {
-                        if(VacationAllowancesClone[i].Vacation_Days_Quantity > 0)
+                        if(VacationAllowancesFromDataBase[i].Vacation_Days_Quantity > 0)
                         {
                             SelectedIndexAllowance = i;
                             break;
                         }
                     }
-                    
+
                 }
                 VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
-                                                    VacationAllowancesClone.Where(f => f.Vacation_Year == CurrentYear));
+                                                    VacationAllowancesFromDataBase.Where(f => f.Vacation_Year == CurrentYear));
                 VacationsToAproval = new ObservableCollection<Vacation>(
-                                                    VacationsToAprovalClone.Where(f => f.Date_Start.Year == CurrentYear));
+                                                    VacationsToAprovalFromDataBase.Where(f => f.Date_Start.Year == CurrentYear));
                 await CreateCalendar(k);
             }
         }
@@ -514,41 +525,14 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             _sampleError.ErrorName.Text = alert;
             Task<object> result = DialogHost.Show(_sampleError, "RootDialog", ExtendedClosingEventHandler);
         }
-        private void SelectedCommandHandler(object data)
-        {
-            Vacation deletedItem = (Vacation) data;
-            if(deletedItem != null)
-            {
-                int index = 0;
-                for(int i = 0; i < VacationAllowances.Count; i++)
-                {
-                    if(VacationAllowances[i].Vacation_Name == deletedItem.Name)
-                    {
-                        index = i;
-                        break;
-                    }
-                }
-                VacationAllowances[index].Vacation_Days_Quantity += deletedItem.Count;
-                Task.Run(async () => await UpdateVacationAllowance(deletedItem.Vacation_Id, deletedItem.Date_Start.Year, VacationAllowances[index].Vacation_Days_Quantity));
-                Task.Run(async () => await DeleteVacation(deletedItem));
-                VacationsToAproval.Remove(deletedItem);
-                VacationsToAprovalClone.Remove(deletedItem);
-                PlannedIndex = 0;
-                Calendar.UpdateColor();
-            }
-        }
 
         public async Task UpdateVacationAllowance(int vacation_Id, int year, int count)
         {
             await App.API.UpdateVacationAllowanceAsync(vacation_Id, year, count);
         }
-        private async Task DeleteVacation(Vacation vacation)
+        public async Task DeleteVacation(Vacation vacation)
         {
             await App.API.DeleteVacationAsync(vacation);
-        }
-        private bool CanExecuteSelectedCommand(object data)
-        {
-            return true;
         }
         public void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
         {
