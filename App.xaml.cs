@@ -32,9 +32,9 @@ namespace Vacation_Portal
         protected override void OnExit(ExitEventArgs e)
         {
             _host.StopAsync();
-            DependencyDetector.stopDependencyPerson();
-            DependencyDetector.stopDependencyPlannedHoliday();
-            DependencyDetector.stopDependencyPlannedVacation();
+            DependencyDetector.StopDependencyPerson();
+            DependencyDetector.StopDependencyPlannedHoliday();
+            DependencyDetector.StopDependencyPlannedVacation();
         }
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -43,9 +43,9 @@ namespace Vacation_Portal
             API = new LunchRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
             DependencyDetector = new DependencyDetector(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
 
-            DependencyDetector.startDependencyPerson();
-            DependencyDetector.startDependencyPlannedHoliday();
-            DependencyDetector.startDependencyPlannedVacation();
+            DependencyDetector.StartDependencyPerson();
+            DependencyDetector.StartDependencyPlannedHoliday();
+            DependencyDetector.StartDependencyPlannedVacation();
 
             MainWindow = _host.Services.GetRequiredService<MainWindow>();
             SplashScreen = new SplashScreen(MainWindow);

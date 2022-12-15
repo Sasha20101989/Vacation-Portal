@@ -448,10 +448,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #region Task Lazy
         private async Task Initialize()
         {
-            await updateData();
+            await UpdateData();
         }
 
-        public async Task updateData()
+        public async Task UpdateData()
         {
             VacationsToAprovalFromDataBase.Clear();
             VacationAllowancesFromDataBase.Clear();
@@ -483,7 +483,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                             break;
                         }
                     }
-
                 }
                 VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                                                     VacationAllowancesFromDataBase.Where(f => f.Vacation_Year == CurrentYear));

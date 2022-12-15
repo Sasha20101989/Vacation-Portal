@@ -15,7 +15,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
     public class CheckVacationsCommand : CommandBase
     {
         private readonly PersonalVacationPlanningViewModel _viewModel;
-        private readonly SampleError _sampleError = new SampleError();
         private readonly CheckVacationView _checkVacationView = new CheckVacationView();
         private Vacation CheckedVacation { get; set; }
         public CheckVacationsCommand(PersonalVacationPlanningViewModel viewModel)

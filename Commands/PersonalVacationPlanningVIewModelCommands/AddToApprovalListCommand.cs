@@ -33,7 +33,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     foreach(DayControl item in month)
                     {
                         Grid parentItem = item.Content as Grid;
-                        UIElementCollection buttons = parentItem.Children as UIElementCollection;
+                        UIElementCollection buttons = parentItem.Children;
 
                         for(int i = 0; i < buttons.Count; i++)
                         {

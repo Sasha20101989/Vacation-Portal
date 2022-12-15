@@ -26,7 +26,6 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Click="AcceptButton_Click" HorizontalAlignment="Left"
-                        ex:VisibilityAnimation.IsActive="True"
                         Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" md:ElevationAssist.Elevation="Dp0">
                     <Button.Background>
                         <SolidColorBrush Color="Green" />
