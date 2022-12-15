@@ -3,7 +3,6 @@ using MiscUtil.Collections.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -21,7 +20,7 @@ namespace Vacation_Portal.MVVM.Models
         public List<ObservableCollection<DayControl>> Year { get; set; } = new List<ObservableCollection<DayControl>>();
         public ObservableCollection<CalendarViewModel> FullYear { get; set; } = new ObservableCollection<CalendarViewModel>();
 
-        private PersonalVacationPlanningViewModel _viewModel;
+        private readonly PersonalVacationPlanningViewModel _viewModel;
         public string DayAddition { get; set; }
         public int ClicksOnCalendar { get; set; }
         public int CountSelectedDays { get; set; }
@@ -126,7 +125,7 @@ namespace Vacation_Portal.MVVM.Models
                     FullYear.Add(new CalendarViewModel(FullDays, daysOfWeek, countRows));
                     Year.Add(Days);
                 }
-               await Task.Run( async() => await PaintButtons());
+                await Task.Run(async () => await PaintButtons());
             });
         }
 
@@ -251,34 +250,34 @@ namespace Vacation_Portal.MVVM.Models
             App.Current.Dispatcher.Invoke((Action) delegate
             {
                 foreach(Vacation vacation in _viewModel.VacationsToAproval)
-            {
-                Range<DateTime> range = ReturnRange(vacation);
-                foreach(DateTime date in range.Step(x => x.AddDays(1)))
                 {
-                    foreach(ObservableCollection<DayControl> month in Year)
+                    Range<DateTime> range = ReturnRange(vacation);
+                    foreach(DateTime date in range.Step(x => x.AddDays(1)))
                     {
-                        foreach(DayControl itemContol in month)
+                        foreach(ObservableCollection<DayControl> month in Year)
                         {
-                            Grid parentItem = itemContol.Content as Grid;
-                            UIElementCollection buttons = parentItem.Children as UIElementCollection;
-                            foreach(object elem in buttons)
+                            foreach(DayControl itemContol in month)
                             {
-                                Button button = elem as Button;
-                                TextBlock buttonTextBlock = button.Content as TextBlock;
-                                int buttonDay = Convert.ToInt32(buttonTextBlock.Text);
-                                int buttonMonth = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[0]);
-                                int buttonYear = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[1]);
-                                if(date.Day == buttonDay && date.Month == buttonMonth && date.Year == buttonYear)
+                                Grid parentItem = itemContol.Content as Grid;
+                                UIElementCollection buttons = parentItem.Children as UIElementCollection;
+                                foreach(object elem in buttons)
                                 {
-                                    //button.IsEnabled = false;
-                                    button.Background = vacation.Color;
+                                    Button button = elem as Button;
+                                    TextBlock buttonTextBlock = button.Content as TextBlock;
+                                    int buttonDay = Convert.ToInt32(buttonTextBlock.Text);
+                                    int buttonMonth = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[0]);
+                                    int buttonYear = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[1]);
+                                    if(date.Day == buttonDay && date.Month == buttonMonth && date.Year == buttonYear)
+                                    {
+                                        //button.IsEnabled = false;
+                                        button.Background = vacation.Color;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-        });
+            });
         }
         public void ClearVacationData()
         {

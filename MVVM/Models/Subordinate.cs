@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Vacation_Portal.MVVM.Models
+﻿namespace Vacation_Portal.MVVM.Models
 {
     public class Subordinate
     {
@@ -16,7 +12,7 @@ namespace Vacation_Portal.MVVM.Models
         {
             return $"{Surname} {Name} {Patronymic}";
         }
-        public Subordinate(int idSAP,string name, string surname, string patronymic, string position)
+        public Subordinate(int idSAP, string name, string surname, string patronymic, string position)
         {
             Id_SAP = idSAP;
             Name = name;

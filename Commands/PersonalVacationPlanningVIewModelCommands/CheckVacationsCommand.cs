@@ -5,7 +5,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
@@ -31,7 +30,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
         {
             _checkVacationView.DataContext = _viewModel;
             _checkVacationView.ClearVisibility();
-            
+
             Task<object> openCheck = DialogHost.Show(_checkVacationView, "RootDialog", _viewModel.ExtendedClosingEventHandler);
             _viewModel.IsEnabled = false;
             bool isFirstCheckDaysPlaned = false;

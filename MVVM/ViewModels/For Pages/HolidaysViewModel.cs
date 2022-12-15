@@ -1,9 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -124,7 +122,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        private DateTime _nextDate = new DateTime(DateTime.Now.Year + 1, DateTime.Now.Month,DateTime.Now.Day);
+        private DateTime _nextDate = new DateTime(DateTime.Now.Year + 1, DateTime.Now.Month, DateTime.Now.Day);
         public DateTime NextDate
         {
             get => _nextDate;
@@ -227,7 +225,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                         App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
                     }
                 }
-                
+
             }
         }
 
