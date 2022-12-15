@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Media.Animation;
 
@@ -51,7 +49,7 @@ namespace Vacation_Portal.Extensions
 
         private static void OnIsActivePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var fe = d as FrameworkElement;
+            FrameworkElement fe = d as FrameworkElement;
             if(fe == null)
             {
                 return;
@@ -80,7 +78,7 @@ namespace Vacation_Portal.Extensions
 
         private static object CoerceVisibility(DependencyObject d, object baseValue)
         {
-            var fe = d as FrameworkElement;
+            FrameworkElement fe = d as FrameworkElement;
             if(fe == null)
             {
                 return baseValue;
@@ -94,9 +92,9 @@ namespace Vacation_Portal.Extensions
             // animation. In any case return value of this method will be
             // Visibility.Visible. 
 
-            var visibility = (Visibility) baseValue;
+            Visibility visibility = (Visibility) baseValue;
 
-            var da = new DoubleAnimation
+            DoubleAnimation da = new DoubleAnimation
             {
                 Duration = new Duration(TimeSpan.FromMilliseconds(DURATION_MS))
             };
@@ -127,13 +125,13 @@ namespace Vacation_Portal.Extensions
 
         private static bool CheckAndUpdateAnimationStartedFlag(FrameworkElement fe)
         {
-            var hookedElement = _hookedElements.Contains(fe);
+            bool hookedElement = _hookedElements.Contains(fe);
             if(!hookedElement)
             {
                 return true; // don't need to animate unhooked elements.
             }
 
-            var animationStarted = (bool) _hookedElements[fe];
+            bool animationStarted = (bool) _hookedElements[fe];
             _hookedElements[fe] = !animationStarted;
 
             return animationStarted;

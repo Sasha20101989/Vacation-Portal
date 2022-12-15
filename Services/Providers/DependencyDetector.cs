@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using System.Windows;
 using TableDependency.SqlClient;
 using TableDependency.SqlClient.Base.Enums;
 using TableDependency.SqlClient.Base.EventArgs;
 using Vacation_Portal.DbContext;
 using Vacation_Portal.DTOs;
-using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.Services.Providers.Interfaces;
 
 namespace Vacation_Portal.Services.Providers
@@ -61,7 +58,7 @@ namespace Vacation_Portal.Services.Providers
         {
             try
             {
-                var changedEntity = e.Entity;
+                HolidayDTO changedEntity = e.Entity;
                 switch(e.ChangeType)
                 {
                     case ChangeType.None:
@@ -126,7 +123,7 @@ namespace Vacation_Portal.Services.Providers
         {
             try
             {
-                var changedEntity = e.Entity;
+                VacationDTO changedEntity = e.Entity;
                 switch(e.ChangeType)
                 {
                     case ChangeType.None:
@@ -191,7 +188,7 @@ namespace Vacation_Portal.Services.Providers
         {
             try
             {
-                var changedEntity = e.Entity;
+                PersonDTO changedEntity = e.Entity;
                 switch(e.ChangeType)
                 {
                     case ChangeType.None:

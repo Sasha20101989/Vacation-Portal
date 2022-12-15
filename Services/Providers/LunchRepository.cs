@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using TableDependency.SqlClient;
-using TableDependency.SqlClient.Base.Enums;
-using TableDependency.SqlClient.Base.EventArgs;
 using Vacation_Portal.DbContext;
 using Vacation_Portal.DTOs;
 using Vacation_Portal.MVVM.Models;
@@ -51,15 +49,15 @@ namespace Vacation_Portal.Services.Providers
 
         #region Props
         public Person Person { get; set; }
-        
+
         public DateTime DateUnblockNextCalendar { get; set; }
         public bool IsCalendarUnblocked { get; set; } = true;
         //public bool IsCalendarUnblocked => DateUnblockNextCalendar <= DateTime.Now;
 
         public DateTime DateUnblockPlanning { get; set; }
-        public bool IsCalendarPlannedOpen { get; set; } = false;
+        public bool IsCalendarPlannedOpen { get; set; } = true;
         //public bool IsCalendarPlannedOpen => DateUnblockPlanning <= DateTime.Now;
-        
+
         public Action<List<HolidayViewModel>> OnHolidaysChanged { get; set; }
 
         private List<HolidayViewModel> _holidays = new List<HolidayViewModel>();
@@ -76,7 +74,7 @@ namespace Vacation_Portal.Services.Providers
         public Action<Access> OnAccessChanged { get; set; }
 
         public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
-        
+
         #endregion
 
         #region Person
@@ -162,7 +160,7 @@ namespace Vacation_Portal.Services.Providers
             };
             try
             {
-                
+
                 IEnumerable<HolidayDTO> holidayDTOs = await database.QueryAsync<HolidayDTO>("usp_Load_Holidays", parameters, commandType: CommandType.StoredProcedure);
                 return holidayDTOs.Select(ToHolidays);
             } catch(Exception)
@@ -248,7 +246,7 @@ namespace Vacation_Portal.Services.Providers
             {
                 MessageBox.Show(ex.Message);
             }
-            
+
         }
         public async Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation)
         {
@@ -264,7 +262,7 @@ namespace Vacation_Portal.Services.Providers
             };
             try
             {
-               IEnumerable<VacationDTO> vacationDTOs = await database.QueryAsync<VacationDTO>("usp_Load_Conflicting_Vacation_For_User", parameters, commandType: CommandType.StoredProcedure);
+                IEnumerable<VacationDTO> vacationDTOs = await database.QueryAsync<VacationDTO>("usp_Load_Conflicting_Vacation_For_User", parameters, commandType: CommandType.StoredProcedure);
                 return vacationDTOs;
             } catch(Exception ex)
             {
@@ -323,7 +321,7 @@ namespace Vacation_Portal.Services.Providers
         {
             BrushConverter converter = new System.Windows.Media.BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
-            return new VacationAllowanceViewModel(dto.User_Id_SAP,dto.Vacation_Name, dto.Vacation_Id, dto.Vacation_Year, dto.Vacation_Days_Quantity, brushColor);
+            return new VacationAllowanceViewModel(dto.User_Id_SAP, dto.Vacation_Name, dto.Vacation_Id, dto.Vacation_Year, dto.Vacation_Days_Quantity, brushColor);
         }
         private HolidayViewModel ToHolidays(HolidayDTO dto)
         {

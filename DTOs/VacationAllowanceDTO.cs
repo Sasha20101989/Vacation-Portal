@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Media;
-
-namespace Vacation_Portal.DTOs
+﻿namespace Vacation_Portal.DTOs
 {
     public class VacationAllowanceDTO
     {

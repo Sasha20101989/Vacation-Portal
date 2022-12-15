@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.ViewModels.For_Pages
@@ -10,30 +8,24 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private DateTime _dateUnblockNextCalendar;
         public DateTime DateUnblockNextCalendar
         {
-            get
-            {
-                return _dateUnblockNextCalendar;
-            }
+            get => _dateUnblockNextCalendar;
             set
             {
                 _dateUnblockNextCalendar = value;
                 App.API.DateUnblockNextCalendar = _dateUnblockNextCalendar;
                 OnPropertyChanged(nameof(DateUnblockNextCalendar));
-                
+
             }
         }
         private DateTime _dateUnblockPlanningCalendar;
         public DateTime DateUnblockPlanningCalendar
         {
-            get
-            {
-                return _dateUnblockPlanningCalendar;
-            }
+            get => _dateUnblockPlanningCalendar;
             set
             {
                 _dateUnblockPlanningCalendar = value;
                 OnPropertyChanged(nameof(DateUnblockPlanningCalendar));
-                
+
             }
         }
         public AdminPageHrViewModel()

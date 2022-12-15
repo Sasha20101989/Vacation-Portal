@@ -1,6 +1,4 @@
-﻿using MaterialDesignThemes.Wpf;
-using MiscUtil.Collections;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,7 +10,6 @@ using Vacation_Portal.DTOs;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
-using Vacation_Portal.MVVM.Views.Controls;
 
 namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 {
@@ -45,7 +42,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     {
                         CheckedVacation = null;
                         _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
-                        
+
                         _viewModel.IsSaveComplete = true;
                         _viewModel.IsSaving = false;
 
@@ -59,7 +56,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                         timer1.Enabled = true;
                     }
                 }), Dispatcher.CurrentDispatcher);
-            foreach(var item in _viewModel.VacationsToAproval)
+            foreach(Vacation item in _viewModel.VacationsToAproval)
             {
                 item.Status = "На согласовании";
                 int countConflicts = 0;
@@ -84,7 +81,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
         private VacationAllowanceViewModel GetVacationAllowance(string name)
         {
-            foreach(var item in _viewModel.VacationAllowances)
+            foreach(VacationAllowanceViewModel item in _viewModel.VacationAllowances)
             {
                 if(item.Vacation_Name == name)
                 {

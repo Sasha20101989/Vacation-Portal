@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Vacation_Portal.MVVM.Views.Controls
 {
@@ -36,14 +26,14 @@ namespace Vacation_Portal.MVVM.Views.Controls
             SaveBtn.IsEnabled = false;
         }
 
-        public void VisibilityButton7()
+        public void VisibilityButtonSecondCheck()
         {
             isNotCheck7.Visibility = Visibility.Hidden;
             isCheck7.Visibility = Visibility.Visible;
             SaveBtn.IsEnabled = true;
         }
 
-        internal void NotVisibilityButton7()
+        internal void NotVisibilityButtonSecondCheck()
         {
             isCheck7.Visibility = Visibility.Hidden;
             isNotCheck7.Visibility = Visibility.Visible;

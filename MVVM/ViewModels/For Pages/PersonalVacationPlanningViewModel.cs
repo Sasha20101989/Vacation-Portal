@@ -1,21 +1,15 @@
 ﻿using MaterialDesignThemes.Wpf;
-using MiscUtil.Collections;
-using MiscUtil.Collections.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands;
-using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.Base;
-using Vacation_Portal.MVVM.ViewModels.Calendar;
 using Vacation_Portal.MVVM.Views.Controls;
 
 namespace Vacation_Portal.MVVM.ViewModels.For_Pages
@@ -28,10 +22,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private CustomCalendar _calendar;
         public CustomCalendar Calendar
         {
-            get
-            {
-                return _calendar;
-            }
+            get => _calendar;
             set
             {
                 _calendar = value;
@@ -50,23 +41,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        //private List<HolidayViewModel> _holidays = new List<HolidayViewModel>();
-        //public List<HolidayViewModel> Holidays
-        //{
-        //    get => _holidays;
-        //    set
-        //    {
-        //        _holidays = value;
-        //        OnPropertyChanged(nameof(Holidays));
-        //    }
-        //}
         private bool _isNextCalendarUnblocked;
         public bool IsNextCalendarUnblocked
         {
-            get
-            {
-                return _isNextCalendarUnblocked;
-            }
+            get => _isNextCalendarUnblocked;
             set
             {
                 _isNextCalendarUnblocked = value;
@@ -76,10 +54,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private bool _isNextCalendarPlannedOpen;
         public bool IsNextCalendarPlannedOpen
         {
-            get
-            {
-                return _isNextCalendarPlannedOpen;
-            }
+            get => _isNextCalendarPlannedOpen;
             set
             {
                 _isNextCalendarPlannedOpen = value;
@@ -441,7 +416,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                                                   VacationAllowancesFromDataBase.Where(f => f.Vacation_Year == CurrentYear));
                    VacationsToAproval = new ObservableCollection<Vacation>(
                                                     VacationsToAprovalFromDataBase.Where(f => f.Date_Start.Year == CurrentYear));
-                   
+
                    await Task.Run(() => Calendar.UpdateColor());
                    IsLoadingCalendarPage = false;
                });
@@ -459,7 +434,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                                                   VacationAllowancesFromDataBase.Where(f => f.Vacation_Year == CurrentYear));
                    VacationsToAproval = new ObservableCollection<Vacation>(
                                                     VacationsToAprovalFromDataBase.Where(f => f.Date_Start.Year == CurrentYear));
-                   
+
                    await Task.Run(() => Calendar.UpdateColor());
                    IsLoadingCalendarPage = false;
                });

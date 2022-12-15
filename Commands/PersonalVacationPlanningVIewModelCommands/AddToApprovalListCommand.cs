@@ -116,7 +116,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
                 _viewModel.VacationsToAprovalFromDataBase = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
                 _viewModel.PlannedIndex = 0;
-                
+
             } else
             {
                 _viewModel.ShowAlert("В выбранном периоде, отсутствуют рабочие дни выбранного типа отпуска.");

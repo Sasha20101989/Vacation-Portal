@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.ViewModels
@@ -15,10 +12,7 @@ namespace Vacation_Portal.MVVM.ViewModels
         private int _vacation_Year;
         public int Vacation_Year
         {
-            get
-            {
-                return _vacation_Year;
-            }
+            get => _vacation_Year;
             set
             {
                 _vacation_Year = value;
@@ -29,10 +23,7 @@ namespace Vacation_Portal.MVVM.ViewModels
         private int _vacation_Days_Quantity;
         public int Vacation_Days_Quantity
         {
-            get
-            {
-                return _vacation_Days_Quantity;
-            }
+            get => _vacation_Days_Quantity;
             set
             {
                 _vacation_Days_Quantity = value;

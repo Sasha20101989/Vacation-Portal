@@ -76,7 +76,7 @@ namespace Vacation_Portal.MVVM.Models
             });
             IEnumerable<Access> access = await App.API.GetAccessAsync(Environment.UserName);
 
-            foreach(var item in access)
+            foreach(Access item in access)
             {
                 yield return item;
             }
@@ -91,7 +91,7 @@ namespace Vacation_Portal.MVVM.Models
 
             IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
 
-            foreach(var item in settings)
+            foreach(Settings item in settings)
             {
                 yield return item;
             }
@@ -105,7 +105,7 @@ namespace Vacation_Portal.MVVM.Models
             });
             IEnumerable<VacationViewModel> vacations = await App.API.LoadVacationAsync(App.API.Person.Id_SAP, year);
 
-            foreach(var item in vacations)
+            foreach(VacationViewModel item in vacations)
             {
                 yield return item;
             }
@@ -113,7 +113,7 @@ namespace Vacation_Portal.MVVM.Models
         public async IAsyncEnumerable<VacationAllowanceViewModel> FetchVacationAllowancesAsync(int year)
         {
             IEnumerable<VacationAllowanceViewModel> vacationAllowances = await App.API.GetVacationAllowanceAsync(App.API.Person.Id_SAP, year);
-            foreach(var item in vacationAllowances)
+            foreach(VacationAllowanceViewModel item in vacationAllowances)
             {
                 yield return item;
             }
@@ -138,7 +138,7 @@ namespace Vacation_Portal.MVVM.Models
 
                  if(Is_Supervisor)
                  {
-                    // _viewModel.MenuItems.Add(new MenuItem(_supervisorPage, typeof(VacationPlanningForSubordinatesView), selectedIcon: PackIconKind.AccountTie, unselectedIcon: PackIconKind.AccountTieOutline, new PersonalVacationPlanningViewModel()));
+                     // _viewModel.MenuItems.Add(new MenuItem(_supervisorPage, typeof(VacationPlanningForSubordinatesView), selectedIcon: PackIconKind.AccountTie, unselectedIcon: PackIconKind.AccountTieOutline, new PersonalVacationPlanningViewModel()));
                      _viewModel.AdminString = "Аккаунт руководителя";
                      MenuItem supervisorItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _supervisorPage);
                      _viewModel.MainMenuItems = CreateMainMenuItems(supervisorItem, _viewModel);
