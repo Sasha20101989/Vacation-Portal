@@ -17,7 +17,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
     {
         private readonly PersonalVacationPlanningViewModel _viewModel;
         public ObservableCollection<Vacation> VacationsToAprovalClone { get; set; } = new ObservableCollection<Vacation>();
-        private Vacation CheckedVacation { get; set; }
         public SaveDataModelCommand(PersonalVacationPlanningViewModel viewModel)
         {
             _viewModel = viewModel;
@@ -40,7 +39,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
                     if(_viewModel.SaveProgress >= 100)
                     {
-                        CheckedVacation = null;
                         _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
 
                         _viewModel.IsSaveComplete = true;

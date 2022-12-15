@@ -273,7 +273,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             });
             _ = await App.API.LoginAsync(Environment.UserName);
 
-            await foreach(Access item in App.API.Person.FetchAccessAsync(DateTime.Now.Year))
+            await foreach(Access item in App.API.Person.FetchAccessAsync())
             {
                 App.Current.Dispatcher.Invoke((Action) delegate
                 {

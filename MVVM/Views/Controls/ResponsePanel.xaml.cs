@@ -29,8 +29,8 @@ namespace Vacation_Portal.MVVM.Views.Controls
             for(int i = 0; i < 10; i++)
             {
                 await Task.Delay(30);
-                DeclineBorder.Opacity = DeclineBorder.Opacity - 0.1;
-                DeclineRoot.Opacity = DeclineRoot.Opacity - 0.1;
+                DeclineBorder.Opacity -= 0.1;
+                DeclineRoot.Opacity -= 0.1;
             }
         }
         private async Task SetDeclinedStateAsync()
@@ -38,8 +38,8 @@ namespace Vacation_Portal.MVVM.Views.Controls
             for(int i = 0; i < 10; i++)
             {
                 await Task.Delay(30);
-                AcceptBorder.Opacity = AcceptBorder.Opacity - 0.1;
-                AcceptRoot.Opacity = AcceptRoot.Opacity - 0.1;
+                AcceptBorder.Opacity -= 0.1;
+                AcceptRoot.Opacity -= 0.1;
             }
             ScaleTransform scaleTransform1 = new ScaleTransform(1.5, 2.0, 50, 50);
             AcceptRoot.RenderTransform = scaleTransform1;

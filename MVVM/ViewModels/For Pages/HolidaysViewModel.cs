@@ -225,7 +225,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                         App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
                     }
                 }
-
             }
         }
 

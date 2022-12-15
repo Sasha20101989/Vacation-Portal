@@ -14,23 +14,23 @@ namespace Vacation_Portal.Services.Providers
     {
         private readonly SqlDbConnectionFactory _sqlDbConnectionFactory;
 
-        private SqlTableDependency<HolidayDTO> tableDependencyPlannedHoliday;
-        private SqlTableDependency<VacationDTO> tableDependencyPlannedVacation;
-        private SqlTableDependency<PersonDTO> tableDependencyPerson;
+        private SqlTableDependency<HolidayDTO> _tableDependencyPlannedHoliday;
+        private SqlTableDependency<VacationDTO> _tableDependencyPlannedVacation;
+        private SqlTableDependency<PersonDTO> _tableDependencyPerson;
 
         public DependencyDetector(SqlDbConnectionFactory sqlDbConnectionFactory)
         {
             _sqlDbConnectionFactory = sqlDbConnectionFactory;
         }
 
-        public bool startDependencyPlannedHoliday()
+        public bool StartDependencyPlannedHoliday()
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             try
             {
-                tableDependencyPlannedHoliday = new SqlTableDependency<HolidayDTO>(database.ConnectionString, "tbd_Planned_Holidays");
-                tableDependencyPlannedHoliday.OnChanged += TableDependencyHoliday_OnChanged;
-                tableDependencyPlannedHoliday.Start();
+                _tableDependencyPlannedHoliday = new SqlTableDependency<HolidayDTO>(database.ConnectionString, "tbd_Planned_Holidays");
+                _tableDependencyPlannedHoliday.OnChanged += TableDependencyHoliday_OnChanged;
+                _tableDependencyPlannedHoliday.Start();
                 return true;
             } catch(Exception ex)
             {
@@ -38,14 +38,14 @@ namespace Vacation_Portal.Services.Providers
             }
             return false;
         }
-        public bool stopDependencyPlannedHoliday()
+        public bool StopDependencyPlannedHoliday()
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             try
             {
-                if(tableDependencyPlannedHoliday != null)
+                if(_tableDependencyPlannedHoliday != null)
                 {
-                    tableDependencyPlannedHoliday.Stop();
+                    _tableDependencyPlannedHoliday.Stop();
                     return true;
                 }
             } catch(Exception ex)
@@ -88,14 +88,14 @@ namespace Vacation_Portal.Services.Providers
             }
         }
 
-        public bool startDependencyPlannedVacation()
+        public bool StartDependencyPlannedVacation()
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             try
             {
-                tableDependencyPlannedVacation = new SqlTableDependency<VacationDTO>(database.ConnectionString, "tbd_Planned_Vacations");
-                tableDependencyPlannedVacation.OnChanged += TableDependencyPlannedVacation_OnChanged;
-                tableDependencyPlannedVacation.Start();
+                _tableDependencyPlannedVacation = new SqlTableDependency<VacationDTO>(database.ConnectionString, "tbd_Planned_Vacations");
+                _tableDependencyPlannedVacation.OnChanged += TableDependencyPlannedVacation_OnChanged;
+                _tableDependencyPlannedVacation.Start();
                 return true;
             } catch(Exception ex)
             {
@@ -103,14 +103,14 @@ namespace Vacation_Portal.Services.Providers
             }
             return false;
         }
-        public bool stopDependencyPlannedVacation()
+        public bool StopDependencyPlannedVacation()
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             try
             {
-                if(tableDependencyPlannedVacation != null)
+                if(_tableDependencyPlannedVacation != null)
                 {
-                    tableDependencyPlannedVacation.Stop();
+                    _tableDependencyPlannedVacation.Stop();
                     return true;
                 }
             } catch(Exception ex)
@@ -153,14 +153,14 @@ namespace Vacation_Portal.Services.Providers
             }
         }
 
-        public bool startDependencyPerson()
+        public bool StartDependencyPerson()
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             try
             {
-                tableDependencyPerson = new SqlTableDependency<PersonDTO>(database.ConnectionString, "tbd_Users");
-                tableDependencyPerson.OnChanged += TableDependencyPerson_OnChanged;
-                tableDependencyPerson.Start();
+                _tableDependencyPerson = new SqlTableDependency<PersonDTO>(database.ConnectionString, "tbd_Users");
+                _tableDependencyPerson.OnChanged += TableDependencyPerson_OnChanged;
+                _tableDependencyPerson.Start();
                 return true;
             } catch(Exception ex)
             {
@@ -168,14 +168,14 @@ namespace Vacation_Portal.Services.Providers
             }
             return false;
         }
-        public bool stopDependencyPerson()
+        public bool StopDependencyPerson()
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             try
             {
-                if(tableDependencyPerson != null)
+                if(_tableDependencyPerson != null)
                 {
-                    tableDependencyPerson.Stop();
+                    _tableDependencyPerson.Stop();
                     return true;
                 }
             } catch(Exception ex)

@@ -2,11 +2,11 @@
 {
     public interface IDependencyDetector
     {
-        bool startDependencyPlannedHoliday();
-        bool stopDependencyPlannedHoliday();
-        bool startDependencyPlannedVacation();
-        bool stopDependencyPlannedVacation();
-        bool startDependencyPerson();
-        bool stopDependencyPerson();
+        bool StartDependencyPlannedHoliday();
+        bool StopDependencyPlannedHoliday();
+        bool StartDependencyPlannedVacation();
+        bool StopDependencyPlannedVacation();
+        bool StartDependencyPerson();
+        bool StopDependencyPerson();
     }
 }

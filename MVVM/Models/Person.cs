@@ -67,7 +67,7 @@ namespace Vacation_Portal.MVVM.Models
         //        yield return item;
         //    }
         //}
-        public async IAsyncEnumerable<Access> FetchAccessAsync(int year)
+        public async IAsyncEnumerable<Access> FetchAccessAsync()
         {
             App.Current.Dispatcher.Invoke((Action) delegate
             {
