@@ -29,7 +29,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             _ = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(50),
                 DispatcherPriority.Normal,
-                new EventHandler(async (o, e) =>
+                new EventHandler((o, e) =>
                 {
                     long totalDuration = started.AddSeconds(3).Ticks - started.Ticks;
                     long currentProgress = DateTime.Now.Ticks - started.Ticks;
