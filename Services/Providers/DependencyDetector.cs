@@ -34,7 +34,7 @@ namespace Vacation_Portal.Services.Providers
                 return true;
             } catch(Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                _ = MessageBox.Show(ex.Message);
             }
             return false;
         }

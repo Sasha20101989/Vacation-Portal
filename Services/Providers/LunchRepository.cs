@@ -93,7 +93,7 @@ namespace Vacation_Portal.Services.Providers
                 return userDTOs;
             } catch(Exception)
             {
-                App.Current.Dispatcher.Invoke((Action) delegate
+                Application.Current.Dispatcher.Invoke((Action) delegate
                 {
                     App.SplashScreen.status.Text = "Вас нет в базе данных";
                     App.SplashScreen.status.Foreground = Brushes.Red;
@@ -203,7 +203,7 @@ namespace Vacation_Portal.Services.Providers
             {
                 IEnumerable<VacationAllowanceDTO> vacationAllowanceDTOs = await database.QueryAsync<VacationAllowanceDTO>("usp_Load_Vacation_Allowance_For_User", parameters, commandType: CommandType.StoredProcedure);
                 return vacationAllowanceDTOs.Select(ToVacationAllowance);
-            } catch(Exception ex)
+            } catch(Exception)
             {
                 return null;
             }
@@ -246,7 +246,6 @@ namespace Vacation_Portal.Services.Providers
             {
                 MessageBox.Show(ex.Message);
             }
-
         }
         public async Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation)
         {
@@ -288,7 +287,6 @@ namespace Vacation_Portal.Services.Providers
             {
                 MessageBox.Show(ex.Message);
             }
-
         }
         public async Task<IEnumerable<VacationViewModel>> LoadVacationAsync(int UserIdSAP, int year)
         {
