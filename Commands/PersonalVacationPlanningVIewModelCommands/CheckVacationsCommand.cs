@@ -1,4 +1,5 @@
-﻿using MaterialDesignThemes.Wpf;
+﻿
+using MaterialDesignThemes.Wpf;
 using MiscUtil.Collections;
 using System;
 using System.Collections.ObjectModel;
@@ -22,7 +23,10 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
         {
             _viewModel = viewModel;
         }
+        public void ChangeStatus14Days()
+        {
 
+        }
         public override void Execute(object parameter)
         {
             _checkVacationView.DataContext = _viewModel;
@@ -30,8 +34,8 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             
             Task<object> openCheck = DialogHost.Show(_checkVacationView, "RootDialog", _viewModel.ExtendedClosingEventHandler);
             _viewModel.IsEnabled = false;
-            bool is14DaysPlaned = false;
-            bool is7DaysPlaned = false;
+            bool isFirstCheckDaysPlaned = false;
+            bool isSecondCheckDaysPlaned = false;
             _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderByDescending(i => i.Count));
             for(int i = 0; i < _viewModel.VacationsToAproval.Count; i++)
             {
@@ -44,52 +48,56 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                         countFirstPeriod++;
                         if(countFirstPeriod >= 14)
                         {
-                            is14DaysPlaned = true;
+                            isFirstCheckDaysPlaned = true;
                             CheckedVacation = _viewModel.VacationsToAproval[i];
+                        }
+                        if(countFirstPeriod >= 21 && countFirstPeriod % 7 >= 0)
+                        {
+                            isSecondCheckDaysPlaned = true;
                         }
                     }
                 }
-                if(is14DaysPlaned)
+                if(isFirstCheckDaysPlaned)
                 {
                     break;
                 }
             }
-            if(is14DaysPlaned)
+            if(isFirstCheckDaysPlaned)
             {
-                _checkVacationView.VisibilityButton14();
-                for(int i = 0; i < _viewModel.VacationsToAproval.Count; i++)
+                _checkVacationView.VisibilityButtonFirstCheck();
+                if(isSecondCheckDaysPlaned)
                 {
-                    int countSecondPeriod = 0;
-                    if(_viewModel.VacationsToAproval[i].Name == "Основной" && _viewModel.VacationsToAproval[i] != CheckedVacation)
+                    _checkVacationView.VisibilityButtonSecondCheck();
+                } else
+                {
+                    for(int i = 0; i < _viewModel.VacationsToAproval.Count; i++)
                     {
-                        Range<DateTime> range = _viewModel.Calendar.ReturnRange(_viewModel.VacationsToAproval[i]);
-                        foreach(DateTime planedDate in range.Step(x => x.AddDays(1)))
+                        int countSecondPeriod = 0;
+                        if(_viewModel.VacationsToAproval[i].Name == "Основной" && _viewModel.VacationsToAproval[i] != CheckedVacation)
                         {
-                            countSecondPeriod++;
-                            if(countSecondPeriod >= 7)
+                            Range<DateTime> range = _viewModel.Calendar.ReturnRange(_viewModel.VacationsToAproval[i]);
+                            foreach(DateTime planedDate in range.Step(x => x.AddDays(1)))
                             {
-                                is7DaysPlaned = true;
+                                countSecondPeriod++;
+                                if(countSecondPeriod >= 7)
+                                {
+                                    isSecondCheckDaysPlaned = true;
+                                }
                             }
-                        }
-                        if(is7DaysPlaned)
-                        {
-                            _checkVacationView.VisibilityButton7();
-                            //_viewModel.ShowAlert("Успех");
-                            //Task<object> result = DialogHost.Show(_sampleError, "RootDialog", _viewModel.ExtendedClosingEventHandler);
-                            break;
-                        } else
-                        {
-                            _checkVacationView.NotVisibilityButton7();
-                            //_viewModel.ShowAlert("Среди периодов планового основного отпуска, должен быть один длительностью не менее 7");
-                            //Task<object> result = DialogHost.Show(_sampleError, "RootDialog", _viewModel.ExtendedClosingEventHandler);
+                            if(isSecondCheckDaysPlaned)
+                            {
+                                _checkVacationView.VisibilityButtonSecondCheck();
+                                break;
+                            } else
+                            {
+                                _checkVacationView.NotVisibilityButtonSecondCheck();
+                            }
                         }
                     }
                 }
             } else
             {
-                _checkVacationView.NotVisibilityButton14();
-               // _viewModel.ShowAlert("Среди периодов планового основного отпуска, должен быть один длительностью не менее 14 дней");
-                //Task<object> result = DialogHost.Show(_sampleError, "RootDialog", _viewModel.ExtendedClosingEventHandler);
+                _checkVacationView.NotVisibilityButtonFirstCheck();
             }
             _viewModel.IsEnabled = true;
         }

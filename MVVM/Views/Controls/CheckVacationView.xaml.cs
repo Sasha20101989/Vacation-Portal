@@ -22,14 +22,14 @@ namespace Vacation_Portal.MVVM.Views.Controls
         {
             InitializeComponent();
         }
-        public void VisibilityButton14()
+        public void VisibilityButtonFirstCheck()
         {
             isNotCheck14.Visibility = Visibility.Hidden;
             isCheck14.Visibility = Visibility.Visible;
             SaveBtn.IsEnabled = false;
         }
 
-        internal void NotVisibilityButton14()
+        internal void NotVisibilityButtonFirstCheck()
         {
             isCheck14.Visibility = Visibility.Hidden;
             isNotCheck14.Visibility = Visibility.Visible;
