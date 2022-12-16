@@ -185,14 +185,14 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             LoadHolidayTypes = new AnotherCommandImplementation(
                 async _ =>
                 {
-                    IEnumerable<Holiday> holidayTypes = await Task.Run(async () => await App.API.GetHolidayTypesAsync());
+                    IEnumerable<Holiday> holidayTypes =  await App.API.GetHolidayTypesAsync();
                     OnHolidayTypesLoad(holidayTypes);
                 });
             LoadHolidays = new AnotherCommandImplementation(
                 async _ =>
                 {
                     IsLoading = true;
-                    IEnumerable<HolidayViewModel> holidays = await Task.Run(async () => await App.API.GetHolidaysAsync(CurrentDate.Year, CurrentDate.Year + 1));
+                    IEnumerable<HolidayViewModel> holidays =  await App.API.GetHolidaysAsync(CurrentDate.Year, CurrentDate.Year + 1);
                     IsLoading = false;
                     OnHolidaysLoad(holidays);
                 });

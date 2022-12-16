@@ -271,69 +271,121 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 App.SplashScreen.status.Text = "Ищу вас в базе данных...";
             });
+            _ = await App.API.Login(Environment.UserName);
             _ = await App.API.LoginAsync(Environment.UserName);
+            
 
-            await foreach(Access item in App.API.Person.FetchAccessAsync())
+            //await foreach(Access item in App.API.Person.FetchAccessAsync())
+            //{
+            //    App.Current.Dispatcher.Invoke((Action) delegate
+            //    {
+            //        App.SplashScreen.status.Text = "Приложение с доступом сотрудника";
+            //        App.SplashScreen.status.Foreground = Brushes.Black;
+            //    });
+            //    if(item.Is_Accounting)
+            //    {
+            //        App.API.Person.Is_Accounting = true;
+            //        App.Current.Dispatcher.Invoke((Action) delegate
+            //        {
+            //            App.SplashScreen.status.Text = "Приложение с доступом табельщика";
+            //            App.SplashScreen.status.Foreground = Brushes.Black;
+            //        });
+            //    }
+            //    if(item.Is_Supervisor)
+            //    {
+            //        App.API.Person.Is_Supervisor = true;
+            //        App.Current.Dispatcher.Invoke((Action) delegate
+            //        {
+            //            App.SplashScreen.status.Text = "Приложение с доступом руководителя";
+            //            App.SplashScreen.status.Foreground = Brushes.Black;
+            //        });
+            //    }
+            //    if(item.Is_HR)
+            //    {
+            //        App.API.Person.Is_HR = true;
+            //        App.Current.Dispatcher.Invoke((Action) delegate
+            //        {
+            //            App.SplashScreen.status.Text = "Приложение с доступом HR сотрудника";
+            //            App.SplashScreen.status.Foreground = Brushes.Black;
+            //        });
+            //    }
+            //}
+            //:TODO сделать новый способ получения
+            //if(App.API.Person.Is_Supervisor)
+            //{
+            //    App.API.Person.Subordinates.Add(new Subordinate(32002225, "Петр", "Николаев", "Анатольевич", "Мастер"));
+            //    App.API.Person.Subordinates.Add(new Subordinate(32003335, "Вася", "Пупкин", "Анатольевич", "Контролёр"));
+            //    App.API.Person.Subordinates.Add(new Subordinate(32004445, "Александр", "Кириленко", "Анатольевич", "Рихтовщик"));
+            //    App.API.Person.Subordinates.Add(new Subordinate(32005555, "Константин", "Федотов", "Анатольевич", "Оператор"));
+            //    //await foreach(Subordinate item in App.API.Person.FetchSubordinatesAsync())
+            //    //{
+            //    //    App.API.Person.Subordinates.Add(item);
+            //    //}
+            //}
+            //await foreach(Settings item in App.API.Person.FetchSettingsAsync())
+            //{
+            //    Color color = (Color) ColorConverter.ConvertFromString(item.Color);
+            //    SelectedColor = color;
+            //}
+            //:TODO сделать новый способ получения
+
+            OnLoginSuccesed(App.API.Person);
+        }
+
+        private void OnLoginSuccesed(Person person)
+        {
+            
+            
+            if(person != null)
+            {
+                AccessSetting(person.User_Role);
+                person.MenuItemsChanged += OnPerson_MenuItemsChanged;
+                person.AddPages(_viewModel);
+                if(person.User_App_Color != null)
+                {
+                    Color color = (Color) ColorConverter.ConvertFromString(person.User_App_Color);
+                    SelectedColor = color;
+                }
+                
+            }
+        }
+
+        private void AccessSetting(string userRole)
+        {
+            if(userRole == "Worker")
             {
                 App.Current.Dispatcher.Invoke((Action) delegate
                 {
                     App.SplashScreen.status.Text = "Приложение с доступом сотрудника";
                     App.SplashScreen.status.Foreground = Brushes.Black;
                 });
-                if(item.Is_Accounting)
-                {
-                    App.API.Person.Is_Accounting = true;
-                    App.Current.Dispatcher.Invoke((Action) delegate
-                    {
-                        App.SplashScreen.status.Text = "Приложение с доступом табельщика";
-                        App.SplashScreen.status.Foreground = Brushes.Black;
-                    });
-                }
-                if(item.Is_Supervisor)
-                {
-                    App.API.Person.Is_Supervisor = true;
-                    App.Current.Dispatcher.Invoke((Action) delegate
-                    {
-                        App.SplashScreen.status.Text = "Приложение с доступом руководителя";
-                        App.SplashScreen.status.Foreground = Brushes.Black;
-                    });
-                }
-                if(item.Is_HR)
-                {
-                    App.API.Person.Is_HR = true;
-                    App.Current.Dispatcher.Invoke((Action) delegate
-                    {
-                        App.SplashScreen.status.Text = "Приложение с доступом HR сотрудника";
-                        App.SplashScreen.status.Foreground = Brushes.Black;
-                    });
-                }
             }
-            if(App.API.Person.Is_Supervisor)
+            if(userRole == "Accounting")
             {
-                App.API.Person.Subordinates.Add(new Subordinate(32002225, "Петр", "Николаев", "Анатольевич", "Мастер"));
-                App.API.Person.Subordinates.Add(new Subordinate(32003335, "Вася", "Пупкин", "Анатольевич", "Контролёр"));
-                App.API.Person.Subordinates.Add(new Subordinate(32004445, "Александр", "Кириленко", "Анатольевич", "Рихтовщик"));
-                App.API.Person.Subordinates.Add(new Subordinate(32005555, "Константин", "Федотов", "Анатольевич", "Оператор"));
-                //await foreach(Subordinate item in App.API.Person.FetchSubordinatesAsync())
-                //{
-                //    App.API.Person.Subordinates.Add(item);
-                //}
+                App.API.Person.Is_Accounting = true;
+                App.Current.Dispatcher.Invoke((Action) delegate
+                {
+                    App.SplashScreen.status.Text = "Приложение с доступом табельщика";
+                    App.SplashScreen.status.Foreground = Brushes.Black;
+                });
             }
-            await foreach(Settings item in App.API.Person.FetchSettingsAsync())
+            if(userRole == "Supervisor")
             {
-                Color color = (Color) ColorConverter.ConvertFromString(item.Color);
-                SelectedColor = color;
+                App.API.Person.Is_Supervisor = true;
+                App.Current.Dispatcher.Invoke((Action) delegate
+                {
+                    App.SplashScreen.status.Text = "Приложение с доступом руководителя";
+                    App.SplashScreen.status.Foreground = Brushes.Black;
+                });
             }
-            OnLoginSuccesed(App.API.Person);
-        }
-
-        private void OnLoginSuccesed(Person person)
-        {
-
-            if(person != null)
+            if(userRole == "HR")
             {
-                person.MenuItemsChanged += OnPerson_MenuItemsChanged;
-                person.AddPages(_viewModel);
+                App.API.Person.Is_HR = true;
+                App.Current.Dispatcher.Invoke((Action) delegate
+                {
+                    App.SplashScreen.status.Text = "Приложение с доступом HR сотрудника";
+                    App.SplashScreen.status.Foreground = Brushes.Black;
+                });
             }
         }
 

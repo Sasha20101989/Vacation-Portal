@@ -21,6 +21,7 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         Action<Access> OnAccessChanged { get; set; }
         //Task<IEnumerable<SubordinateDTO>> GetSubordinateAsync(int Id_SAP);
         Task<IEnumerable<PersonDTO>> LoginAsync(string account);
+        Task<Person> Login(string account);
         Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(int yearCurrent, int yearNext);
         Task<IEnumerable<Settings>> GetSettingsAsync(string account);
         Task<IEnumerable<Access>> GetAccessAsync(string account);

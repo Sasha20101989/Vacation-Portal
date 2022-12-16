@@ -27,31 +27,41 @@ namespace Vacation_Portal.MVVM.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Patronymic { get; set; }
-        public int Department_Id { get; set; }
-        public int Vitrual_Department_Id { get; set; }
+        public int User_Department_Id { get; set; }
+        public int User_Sub_Department_Id { get; set; }
+        public int User_Virtual_Department_Id { get; set; }
+        public int User_Supervisor_Id_SAP { get; set; }
         public string Position { get; set; }
+        public string User_Role { get; set; }
         public bool Is_HR { get; set; }
         public bool Is_Accounting { get; set; }
         public bool Is_Supervisor { get; set; }
-        public Settings Settings { get; set; }
+        public string User_App_Color { get; set; }
+        public List<VacationViewModel> User_Vacations { get; set; } = new List<VacationViewModel>();
         public override string ToString()
         {
             return $"{Surname} {Name} {Patronymic}";
         }
+
         public ObservableCollection<Subordinate> Subordinates { get; set; } = new ObservableCollection<Subordinate>();
 
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
-        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId, string position)
+        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId,int subDepartmentId, string position, string roleId, string appColor, int userSupervisorIdSAP, List<VacationViewModel> userVacations)
         {
             Id_SAP = id_SAP;
             Id_Account = id_Account;
             Name = name;
             Surname = surname;
             Patronymic = patronymic;
-            Department_Id = departmentId;
-            Vitrual_Department_Id = virtualDepartmentId;
+            User_Department_Id = departmentId;
+            User_Virtual_Department_Id = virtualDepartmentId;
+            User_Sub_Department_Id = subDepartmentId;
             Position = position;
+            User_Role = roleId;
+            User_App_Color = appColor;
+            User_Supervisor_Id_SAP = userSupervisorIdSAP;
+            User_Vacations = userVacations;
         }
         //public async IAsyncEnumerable<Access> FetchSubordinatesAsync()
         //{
@@ -145,7 +155,7 @@ namespace Vacation_Portal.MVVM.Models
                  } else if(Is_HR)
                  {
                      _viewModel.AdminString = "Аккаунт HR сотрудника";
-                     MenuItem hRItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _hrPage);
+                     MenuItem hRItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _holidaysPage);
                      _viewModel.MainMenuItems = CreateMainMenuItems(hRItem, _viewModel);
                  }
                  OnMenuItemsChanged(_viewModel.MenuItems);
@@ -202,6 +212,20 @@ namespace Vacation_Portal.MVVM.Models
             selectedIcon: PackIconKind.Cog,
             unselectedIcon: PackIconKind.CogOutline,
             new SettingsViewModel(viewModel));
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Person person &&
+                   Id_SAP == person.Id_SAP &&
+                   Name == person.Name &&
+                   Surname == person.Surname &&
+                   Patronymic == person.Patronymic;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id_SAP, Name, Surname, Patronymic);
         }
     }
 }

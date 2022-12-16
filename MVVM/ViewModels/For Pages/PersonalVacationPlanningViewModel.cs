@@ -153,7 +153,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         }
 
         #region Person props
-        private Person _person = App.API.Person;
+        private Person _person;
         public Person Person
         {
             get => _person;
@@ -403,6 +403,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             AddToApprovalList = new AddToApprovalListCommand(this);
             CancelVacation = new CancelVacationCommand(this);
 
+            _person = App.API.Person;
+
             MovePrevYearCommand = new AnotherCommandImplementation(
                async _ =>
                {
@@ -438,7 +440,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                    await Task.Run(() => Calendar.UpdateColor());
                    IsLoadingCalendarPage = false;
                });
-
+            
             _initializeLazy = new Lazy<Task>(async () => await Initialize());
             LoadModel.Execute(new object());
             App.API.OnHolidaysChanged += OnHolidaysChanged;
@@ -453,7 +455,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
         public async Task UpdateData()
         {
-            VacationsToAprovalFromDataBase.Clear();
+            //VacationsToAprovalFromDataBase.Clear();
             VacationAllowancesFromDataBase.Clear();
             IsNextCalendarUnblocked = App.API.IsCalendarUnblocked;
             IsNextCalendarPlannedOpen = App.API.IsCalendarPlannedOpen;
@@ -472,6 +474,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                         VacationsToAprovalFromDataBase.Add(vacation);
                     }
                 }
+
                 await foreach(VacationAllowanceViewModel item in Person.FetchVacationAllowancesAsync(CurrentDate.Year + k))
                 {
                     VacationAllowancesFromDataBase.Add(item);
