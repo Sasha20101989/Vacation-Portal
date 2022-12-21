@@ -1,14 +1,17 @@
 ﻿using Dapper;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using TableDependency.SqlClient;
+using Vacation_Portal.Commands;
 using Vacation_Portal.DbContext;
 using Vacation_Portal.DTOs;
 using Vacation_Portal.MVVM.Models;
@@ -21,7 +24,9 @@ namespace Vacation_Portal.Services.Providers
     {
         public SqlTableDependency<HolidayDTO> tableDependencyHoliday;
         private readonly SqlDbConnectionFactory _sqlDbConnectionFactory;
-
+        public ICommand LoadHolidays { get; } = new LoadHolidaysCommand();
+        public ICommand LoadHolidayTypes { get; } = new LoadHolidayTypesCommand();
+        public ICommand Login { get; } = new LoginCommand();
         #region PropChange
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -58,10 +63,11 @@ namespace Vacation_Portal.Services.Providers
         public bool IsCalendarPlannedOpen { get; set; } = true;
         //public bool IsCalendarPlannedOpen => DateUnblockPlanning <= DateTime.Now;
 
-        public Action<List<HolidayViewModel>> OnHolidaysChanged { get; set; }
+        public Action<ObservableCollection<HolidayViewModel>> OnHolidaysChanged { get; set; }
+        public Action<ObservableCollection<Holiday>> OnHolidayTypesChanged { get; set; }
 
-        private List<HolidayViewModel> _holidays = new List<HolidayViewModel>();
-        public List<HolidayViewModel> Holidays
+        private ObservableCollection<HolidayViewModel> _holidays = new ObservableCollection<HolidayViewModel>();
+        public ObservableCollection<HolidayViewModel> Holidays
         {
             get => _holidays;
             set
@@ -70,10 +76,20 @@ namespace Vacation_Portal.Services.Providers
                 OnPropertyChanged(nameof(Holidays));
             }
         }
+        private ObservableCollection<Holiday> _holidayTypes = new ObservableCollection<Holiday>();
+        public ObservableCollection<Holiday> HolidayTypes
+        {
+            get => _holidayTypes;
+            set
+            {
+                _holidayTypes = value;
+                OnPropertyChanged(nameof(HolidayTypes));
+            }
+        }
         private List<VacationViewModel> Vacations = new List<VacationViewModel>();
         public Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
         public Action<Access> OnAccessChanged { get; set; }
-
+        public Action<Person> OnLoginSuccess { get; set; }
         public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
         public List<Person> FullPersons { get; set; } = new List<Person>();
 
@@ -139,7 +155,7 @@ namespace Vacation_Portal.Services.Providers
         //        return null;
         //    }
         //}
-        public async Task<Person> Login(string account)
+        public async Task<Person> LoginAsyncNew(string account)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             try
@@ -200,6 +216,9 @@ namespace Vacation_Portal.Services.Providers
                         }
                         Console.WriteLine("--");
                     }
+
+                    OnLoginSuccess?.Invoke(Person);
+
                     return Person;
                 }
             } 
@@ -251,6 +270,9 @@ namespace Vacation_Portal.Services.Providers
                                     Persons[0].User_App_Color,
                                     Persons[0].User_Supervisor_Id_SAP,
                                     Vacations);
+
+                OnLoginSuccess?.Invoke(Person);
+
                 return userDTOs;
             } catch(Exception)
             {
@@ -304,6 +326,7 @@ namespace Vacation_Portal.Services.Providers
             try
             {
                 IEnumerable<HolidayDTO> holidayTypesDTOs = await database.QueryAsync<HolidayDTO>("usp_Load_Holiday_Types", commandType: CommandType.StoredProcedure);
+                
                 return holidayTypesDTOs.Select(ToHolidayTypes);
             } catch(Exception ex)
             {

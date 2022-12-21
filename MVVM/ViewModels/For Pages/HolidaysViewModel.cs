@@ -172,9 +172,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public ICommand Submit { get; }
         public ICommand Load { get; }
         public ICommand CancelHoliday { get; }
-        public AnotherCommandImplementation LoadHolidayTypes { get; }
-        public AnotherCommandImplementation LoadHolidays { get; }
 
+        public AnotherCommandImplementation LoadHolidays { get; }
         public HolidaysViewModel()
         {
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(2000));
@@ -182,53 +181,52 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             Submit = new AddHolidayCommand(this);
             CancelHoliday = new CancelHolidayCommand(this);
 
-            LoadHolidayTypes = new AnotherCommandImplementation(
-                async _ =>
-                {
-                    IEnumerable<Holiday> holidayTypes =  await App.API.GetHolidayTypesAsync();
-                    OnHolidayTypesLoad(holidayTypes);
-                });
+
+
+            //LoadHolidayTypes = new AnotherCommandImplementation(
+            //     _ =>
+            //    {
+            //        IsLoading = true;
+            //        
+            //        IsLoading = false;
+            //    });
             LoadHolidays = new AnotherCommandImplementation(
-                async _ =>
+                 _ =>
                 {
                     IsLoading = true;
-                    IEnumerable<HolidayViewModel> holidays =  await App.API.GetHolidaysAsync(CurrentDate.Year, CurrentDate.Year + 1);
+                    App.API.LoadHolidays.Execute(new object());
                     IsLoading = false;
-                    OnHolidaysLoad(holidays);
                 });
-            LoadHolidays.Execute(new object());
-            LoadHolidayTypes.Execute(new object());
+
+            App.API.OnHolidaysChanged += OnHolidaysChanged;
+            App.API.OnHolidayTypesChanged += onHolidayTypesChanged;
+
+            App.API.LoadHolidays.Execute(new object());
+            App.API.LoadHolidayTypes.Execute(new object());
         }
 
-        private void OnHolidaysLoad(IEnumerable<HolidayViewModel> holidays)
+        private void OnHolidaysChanged(ObservableCollection<HolidayViewModel> holidays)
         {
-
             foreach(HolidayViewModel holiday in holidays)
             {
                 if(holiday.Date.Year == CurrentDate.Year)
                 {
                     if(!HolidaysCurrentYear.Contains(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year))))
                     {
-                        App.API.Holidays.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year)));
                         HolidaysCurrentYear.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year)));
                         HolidaysCurrentYear = new ObservableCollection<HolidayViewModel>(HolidaysCurrentYear.OrderBy(i => i.Date));
-
-                        App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
                     }
                 } else
                 {
                     if(!HolidaysNextYear.Contains(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year))))
                     {
-                        App.API.Holidays.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year)));
                         HolidaysNextYear.Add(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year)));
                         HolidaysNextYear = new ObservableCollection<HolidayViewModel>(HolidaysNextYear.OrderBy(i => i.Date));
-                        App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
                     }
                 }
             }
         }
-
-        private void OnHolidayTypesLoad(IEnumerable<Holiday> holidayTypes)
+        private void onHolidayTypesChanged(ObservableCollection<Holiday> holidayTypes)
         {
             foreach(Holiday holidayType in holidayTypes)
             {
