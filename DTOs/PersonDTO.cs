@@ -1,7 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using Vacation_Portal.MVVM.ViewModels;
 
 namespace Vacation_Portal.DTOs

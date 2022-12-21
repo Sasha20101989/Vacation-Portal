@@ -1,9 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.Commands.HolidaysViewCommands;

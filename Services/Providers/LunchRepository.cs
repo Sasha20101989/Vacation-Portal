@@ -86,7 +86,7 @@ namespace Vacation_Portal.Services.Providers
                 OnPropertyChanged(nameof(HolidayTypes));
             }
         }
-        private List<VacationViewModel> Vacations = new List<VacationViewModel>();
+        private readonly List<VacationViewModel> Vacations = new List<VacationViewModel>();
         public Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
         public Action<Access> OnAccessChanged { get; set; }
         public Action<Person> OnLoginSuccess { get; set; }
@@ -170,7 +170,7 @@ namespace Vacation_Portal.Services.Providers
                     //IEnumerable<FullPersonDTO> fullPersonDTOs = await multi.ReadAsync<FullPersonDTO>();
                     IEnumerable<PersonDTO> persons = await multi.ReadAsync<PersonDTO>();
                     IEnumerable<VacationDTO> vacations = await multi.ReadAsync<VacationDTO>();
-                    var partitioned = persons.OrderBy(data => data.User_Id_SAP).GroupBy(data => data.User_Id_SAP);
+                    IEnumerable<IGrouping<int, PersonDTO>> partitioned = persons.OrderBy(data => data.User_Id_SAP).GroupBy(data => data.User_Id_SAP);
                     foreach(IGrouping<int, PersonDTO> grouping in partitioned)
                     {
                         Console.WriteLine(grouping.Key);
@@ -221,8 +221,7 @@ namespace Vacation_Portal.Services.Providers
 
                     return Person;
                 }
-            } 
-            catch(Exception ex)
+            } catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 Application.Current.Dispatcher.Invoke((Action) delegate
@@ -326,7 +325,7 @@ namespace Vacation_Portal.Services.Providers
             try
             {
                 IEnumerable<HolidayDTO> holidayTypesDTOs = await database.QueryAsync<HolidayDTO>("usp_Load_Holiday_Types", commandType: CommandType.StoredProcedure);
-                
+
                 return holidayTypesDTOs.Select(ToHolidayTypes);
             } catch(Exception ex)
             {

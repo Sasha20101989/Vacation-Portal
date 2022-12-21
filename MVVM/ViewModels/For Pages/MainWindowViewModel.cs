@@ -1,12 +1,10 @@
 ﻿using MaterialDesignThemes.Wpf;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using Vacation_Portal.Commands;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.Commands.NotificationCommands;
 using Vacation_Portal.Commands.ThemeInteractionCommands;
@@ -298,7 +296,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     Color color = (Color) ColorConverter.ConvertFromString(person.User_App_Color);
                     SelectedColor = color;
                 }
-                
+
             }
         }
 

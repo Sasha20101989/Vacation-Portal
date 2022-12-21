@@ -47,7 +47,7 @@ namespace Vacation_Portal.MVVM.Models
 
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
-        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId,int subDepartmentId, string position, string roleId, string appColor, int userSupervisorIdSAP, List<VacationViewModel> userVacations)
+        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId, int subDepartmentId, string position, string roleId, string appColor, int userSupervisorIdSAP, List<VacationViewModel> userVacations)
         {
             Id_SAP = id_SAP;
             Id_Account = id_Account;

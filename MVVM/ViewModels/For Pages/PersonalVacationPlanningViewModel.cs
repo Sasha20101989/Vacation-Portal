@@ -440,7 +440,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                    await Task.Run(() => Calendar.UpdateColor());
                    IsLoadingCalendarPage = false;
                });
-            
+
             _initializeLazy = new Lazy<Task>(async () => await Initialize());
             LoadModel.Execute(new object());
         }

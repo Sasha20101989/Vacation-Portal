@@ -53,7 +53,7 @@ namespace Vacation_Portal
 
             MainWindow = _host.Services.GetRequiredService<MainWindow>();
             SplashScreen = new SplashScreen(MainWindow);
-            
+
             SplashScreen.Show();
 
             API.Login.Execute(new object());

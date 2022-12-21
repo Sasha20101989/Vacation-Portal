@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.MVVM.ViewModels;
 
@@ -20,7 +18,7 @@ namespace Vacation_Portal.Commands
         }
         public async IAsyncEnumerable<HolidayViewModel> FetchHolidaysAsync()
         {
-            var holidays = await App.API.GetHolidaysAsync(CurrentDate.Year, CurrentDate.Year + 1);
+            IEnumerable<HolidayViewModel> holidays = await App.API.GetHolidaysAsync(CurrentDate.Year, CurrentDate.Year + 1);
 
             foreach(HolidayViewModel item in holidays)
             {
