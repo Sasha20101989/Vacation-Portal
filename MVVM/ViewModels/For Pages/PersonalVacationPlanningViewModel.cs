@@ -443,7 +443,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             
             _initializeLazy = new Lazy<Task>(async () => await Initialize());
             LoadModel.Execute(new object());
-            App.API.OnHolidaysChanged += OnHolidaysChanged;
         }
         #endregion Constructor
 

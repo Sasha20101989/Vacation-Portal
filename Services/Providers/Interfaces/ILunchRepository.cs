@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Vacation_Portal.DTOs;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels;
@@ -14,14 +16,20 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         DateTime DateUnblockPlanning { get; set; }
         bool IsCalendarUnblocked { get; set; }
         bool IsCalendarPlannedOpen { get; set; }
-        List<HolidayViewModel> Holidays { get; set; }
+        ICommand LoadHolidays { get; }
+        ICommand LoadHolidayTypes { get; }
+        ICommand Login { get; }
+        ObservableCollection<HolidayViewModel> Holidays { get; set; }
+        ObservableCollection<Holiday> HolidayTypes { get; set; }
         //List<VacationViewModel> Vacations { get; set; }
-        Action<List<HolidayViewModel>> OnHolidaysChanged { get; set; }
+        Action<ObservableCollection<HolidayViewModel>> OnHolidaysChanged { get; set; }
+        Action<ObservableCollection<Holiday>> OnHolidayTypesChanged { get; set; }
         Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
+        Action<Person> OnLoginSuccess { get; set; }
         Action<Access> OnAccessChanged { get; set; }
         //Task<IEnumerable<SubordinateDTO>> GetSubordinateAsync(int Id_SAP);
         Task<IEnumerable<PersonDTO>> LoginAsync(string account);
-        Task<Person> Login(string account);
+        Task<Person> LoginAsyncNew(string account);
         Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(int yearCurrent, int yearNext);
         Task<IEnumerable<Settings>> GetSettingsAsync(string account);
         Task<IEnumerable<Access>> GetAccessAsync(string account);

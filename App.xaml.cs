@@ -17,6 +17,7 @@ namespace Vacation_Portal
     {
         private readonly IHost _host;
         public static ILunchRepository API { get; private set; }
+        public static IInformationSplashScreenService SplashScreenService { get; private set; }
         public static IDependencyDetector DependencyDetector { get; private set; }
         public static SplashScreen SplashScreen { get; set; }
         public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
@@ -41,6 +42,9 @@ namespace Vacation_Portal
             _host.Start();
 
             API = new LunchRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
+            SplashScreenService = new InformationSplashScreenService();
+            API.LoadHolidays.Execute(new object());
+            //API.LoadHolidayTypes.Execute(null);
             DependencyDetector = new DependencyDetector(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
 
             DependencyDetector.StartDependencyPerson();
@@ -49,8 +53,10 @@ namespace Vacation_Portal
 
             MainWindow = _host.Services.GetRequiredService<MainWindow>();
             SplashScreen = new SplashScreen(MainWindow);
-
+            
             SplashScreen.Show();
+
+            API.Login.Execute(new object());
 
             base.OnStartup(e);
         }
