@@ -207,7 +207,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         {
             foreach(HolidayViewModel holiday in holidays)
             {
-                if(holiday.Date.Year == CurrentDate.Year)
+                if(holiday.Date.Year == DateTime.Now.Year)
                 {
                     if(!HolidaysCurrentYear.Contains(new HolidayViewModel(holiday.Id, holiday.TypeOfHoliday, holiday.Date, Convert.ToInt32(holiday.Date.Year))))
                     {

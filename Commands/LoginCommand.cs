@@ -12,8 +12,8 @@ namespace Vacation_Portal.Commands
             {
                 App.SplashScreen.status.Text = "Ищу вас в базе данных...";
             });
-            //_ = await App.API.LoginAsyncNew(Environment.UserName);
             _ = await App.API.LoginAsync(Environment.UserName);
+            //_ = await App.API.LoginAsync(Environment.UserName);
         }
     }
 }

@@ -102,7 +102,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 _isLoading = value;
                 OnPropertyChanged(nameof(IsLoading));
-
             }
         }
 

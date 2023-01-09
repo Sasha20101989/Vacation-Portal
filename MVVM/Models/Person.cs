@@ -31,7 +31,6 @@ namespace Vacation_Portal.MVVM.Models
         public int User_Sub_Department_Id { get; set; }
         public int User_Virtual_Department_Id { get; set; }
         public int User_Supervisor_Id_SAP { get; set; }
-        public string Position { get; set; }
         public string User_Role { get; set; }
         public bool Is_HR { get; set; }
         public bool Is_Accounting { get; set; }
@@ -47,7 +46,7 @@ namespace Vacation_Portal.MVVM.Models
 
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
-        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId, int subDepartmentId, string position, string roleId, string appColor, int userSupervisorIdSAP, List<VacationViewModel> userVacations)
+        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId, int subDepartmentId, string roleName, string appColor, int userSupervisorIdSAP, List<VacationViewModel> userVacations)
         {
             Id_SAP = id_SAP;
             Id_Account = id_Account;
@@ -57,8 +56,7 @@ namespace Vacation_Portal.MVVM.Models
             User_Department_Id = departmentId;
             User_Virtual_Department_Id = virtualDepartmentId;
             User_Sub_Department_Id = subDepartmentId;
-            Position = position;
-            User_Role = roleId;
+            User_Role = roleName;
             User_App_Color = appColor;
             User_Supervisor_Id_SAP = userSupervisorIdSAP;
             User_Vacations = userVacations;
