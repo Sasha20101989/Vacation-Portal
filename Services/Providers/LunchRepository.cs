@@ -109,11 +109,19 @@ namespace Vacation_Portal.Services.Providers
                 };
                 using(var multi = await database.QueryMultipleAsync("usp_Get_Users", parametersPerson, commandType: CommandType.StoredProcedure))
                 {
-                    BrushConverter converter = new BrushConverter();
+                    BrushConverter converter = new System.Windows.Media.BrushConverter();
                     IEnumerable<FullPersonDTO> fullPersonDTOs = await multi.ReadAsync<FullPersonDTO>();
                     foreach(FullPersonDTO item in fullPersonDTOs)
                     {
-                        Brush brushColor = (Brush) converter.ConvertFromString(item.Vacation_Color);
+                        Brush brushColor;
+                        if(item.Vacation_Color == null)
+                        {
+                            brushColor = Brushes.Gray;
+                        } else
+                        {
+                            brushColor = (Brush) converter.ConvertFromString(item.Vacation_Color);
+                        }
+                        
                         Vacations.Add(new VacationViewModel(item.Vacation_Name,
                                                             item.User_Id_SAP, item.Remained_Vacation_Id, brushColor, item.Vacation_Start_Date,
                                                             item.Vacation_End_Date, item.Vacation_Status_Id, item.Creator_Id));
@@ -183,134 +191,7 @@ namespace Vacation_Portal.Services.Providers
                 return null;
             }
         }
-        //public async Task<Person> LoginAsyncNew(string account)
-        //{
-        //    using IDbConnection database = _sqlDbConnectionFactory.Connect();
-        //    try
-        //    {
-        //        object parametersPerson = new
-        //        {
-        //            Account = account
-        //        };
-        //        using(SqlMapper.GridReader multi = await database.QueryMultipleAsync("usp_Get_Users", parametersPerson, commandType: CommandType.StoredProcedure))
-        //        {
-        //            BrushConverter converter = new System.Windows.Media.BrushConverter();
-        //            //IEnumerable<FullPersonDTO> fullPersonDTOs = await multi.ReadAsync<FullPersonDTO>();
-        //            IEnumerable<PersonDTO> persons = await multi.ReadAsync<PersonDTO>();
-        //            IEnumerable<VacationDTO> vacations = await multi.ReadAsync<VacationDTO>();
-        //            IEnumerable<IGrouping<int, PersonDTO>> partitioned = persons.OrderBy(data => data.User_Id_SAP).GroupBy(data => data.User_Id_SAP);
-        //            foreach(IGrouping<int, PersonDTO> grouping in partitioned)
-        //            {
-        //                Console.WriteLine(grouping.Key);
-        //                foreach(PersonDTO personItem in grouping)
-        //                {
-        //                    Person = new Person(personItem.User_Id_SAP,
-        //                                               personItem.User_Id_Account,
-        //                                               personItem.Role_Name,
-        //                                               personItem.User_Surname,
-        //                                               personItem.User_Patronymic_Name,
-        //                                               personItem.User_Department_Id,
-        //                                               personItem.User_Virtual_Department_Id,
-        //                                               personItem.User_Sub_Department_Id,
-        //                                               personItem.User_Position_Id,
-        //                                               personItem.Role_Name,
-        //                                               personItem.User_App_Color,
-        //                                               personItem.User_Supervisor_Id_SAP,
-        //                                               personItem.User_Vacations);
 
-        //                    Console.WriteLine(Person);
-        //                    Person.User_Vacations = new List<VacationViewModel>();
-        //                    foreach(VacationDTO vacation in vacations)
-        //                    {
-        //                        if(vacation.User_Id_SAP == grouping.Key)
-        //                        {
-        //                            foreach(PersonDTO data in grouping)
-        //                            {
-        //                                Brush brushColor = (Brush) converter.ConvertFromString(vacation.Vacation_Color);
-        //                                VacationViewModel vacationItem = new VacationViewModel(vacation.Vacation_Name,
-        //                                                                    vacation.User_Id_SAP,
-        //                                                                    vacation.Vacation_Id,
-        //                                                                    brushColor,
-        //                                                                    vacation.Vacation_Start_Date,
-        //                                                                    vacation.Vacation_End_Date,
-        //                                                                    vacation.Vacation_Status,
-        //                                                                    vacation.Creator_Id);
-        //                                Person.User_Vacations.Add(vacationItem);
-        //                                Console.WriteLine(vacationItem);
-        //                            }
-        //                        }
-        //                    }
-        //                    Console.WriteLine(Person);
-        //                }
-        //                Console.WriteLine("--");
-        //            }
-
-        //            OnLoginSuccess?.Invoke(Person);
-
-        //            return Person;
-        //        }
-        //    } catch(Exception ex)
-        //    {
-        //        MessageBox.Show(ex.Message);
-        //        Application.Current.Dispatcher.Invoke((Action) delegate
-        //        {
-        //            App.SplashScreen.status.Text = "Вас нет в базе данных";
-        //            App.SplashScreen.status.Foreground = Brushes.Red;
-        //        });
-        //        return null;
-        //    }
-        //}
-        //public async Task<IEnumerable<PersonDTO>> LoginAsync(string account)
-        //{
-        //    BrushConverter converter = new System.Windows.Media.BrushConverter();
-        //    using IDbConnection database = _sqlDbConnectionFactory.Connect();
-        //    try
-        //    {
-        //        object parametersPerson = new
-        //        {
-        //            Account = account
-        //        };
-        //        IEnumerable<PersonDTO> userDTOs = await database.QueryAsync<PersonDTO>("usp_Get_User", parametersPerson, commandType: CommandType.StoredProcedure);
-        //        Persons.AddRange(userDTOs);
-        //        object parametersVacation = new
-        //        {
-        //            User_Id_SAP = Persons[0].User_Id_SAP,
-        //            Year = 2022
-        //        };
-        //        IEnumerable<VacationDTO> vacationDTOs = await database.QueryAsync<VacationDTO>("usp_Load_Vacation_For_User", parametersVacation, commandType: CommandType.StoredProcedure);
-
-        //        foreach(VacationDTO item in vacationDTOs)
-        //        {
-        //            Brush brushColor = (Brush) converter.ConvertFromString(item.Vacation_Color);
-        //            Vacations.Add(new VacationViewModel(item.Vacation_Name, item.User_Id_SAP, item.Vacation_Id, brushColor, item.Vacation_Start_Date, item.Vacation_End_Date, item.Vacation_Status, item.Creator_Id));
-        //        }
-        //        Person = new Person(Persons[0].User_Id_SAP,
-        //                            Persons[0].User_Id_Account,
-        //                            Persons[0].User_Name,
-        //                            Persons[0].User_Surname,
-        //                            Persons[0].User_Patronymic_Name,
-        //                            Persons[0].User_Department_Id,
-        //                            Persons[0].User_Virtual_Department_Id,
-        //                            Persons[0].User_Sub_Department_Id,
-        //                            Persons[0].User_Position_Id,
-        //                            Persons[0].Role_Name,
-        //                            Persons[0].User_App_Color,
-        //                            Persons[0].User_Supervisor_Id_SAP,
-        //                            Vacations);
-
-        //        OnLoginSuccess?.Invoke(Person);
-
-        //        return userDTOs;
-        //    } catch(Exception)
-        //    {
-        //        Application.Current.Dispatcher.Invoke((Action) delegate
-        //        {
-        //            App.SplashScreen.status.Text = "Вас нет в базе данных";
-        //            App.SplashScreen.status.Foreground = Brushes.Red;
-        //        });
-        //        return null;
-        //    }
-        //}
         public async Task<IEnumerable<Settings>> GetSettingsAsync(string account)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
