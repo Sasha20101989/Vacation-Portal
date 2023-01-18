@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.ViewModels
@@ -39,6 +40,19 @@ namespace Vacation_Portal.MVVM.ViewModels
             Vacation_Year = vacation_Year;
             Vacation_Days_Quantity = vacation_Days_Quantity;
             Vacation_Color = vacation_color;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is VacationAllowanceViewModel model &&
+                   User_Id_SAP == model.User_Id_SAP &&
+                   Vacation_Id == model.Vacation_Id &&
+                   Vacation_Year == model.Vacation_Year;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(User_Id_SAP, Vacation_Id, Vacation_Year);
         }
     }
 }

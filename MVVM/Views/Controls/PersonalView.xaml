@@ -213,7 +213,7 @@
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBox Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding PersonName,UpdateSourceTrigger=PropertyChanged}" 
+                        <TextBox Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Person.FullName,UpdateSourceTrigger=PropertyChanged}" 
                                  IsReadOnly="True"
                                  HorizontalAlignment="Stretch"
                                  TextAlignment="Center" 
@@ -230,7 +230,7 @@
                             <ListBox Grid.Row="0" Margin="6" 
                                      SelectedIndex="{Binding SelectedIndexAllowance, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                      SelectedItem="{Binding SelectedItemAllowance, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
-                                     ItemsSource="{Binding VacationAllowances,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     ItemsSource="{Binding VacationAllowancesForPerson,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource MaterialDesignChoiceChipAccentOutlineListBox}">
                                 <ListBox.Resources>
                                     <DataTemplate DataType="{x:Type vModels:VacationAllowanceViewModel}">
@@ -288,9 +288,9 @@
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                         <ListView Grid.Row="0" Margin="3" Name="ListView" SelectionMode="Single" MaxWidth="700"
-                                      ItemsSource="{Binding VacationsToAproval, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
-                                      SelectedIndex="{Binding PlannedIndex, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
-                                      SelectedItem="{Binding PlannedItem, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                      ItemsSource="{Binding VacationsToAprovalForPerson, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
+                                      SelectedIndex="{Binding PlannedPersonIndex, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                      SelectedItem="{Binding PlannedPersonItem, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                       ScrollViewer.VerticalScrollBarVisibility="Auto" FontSize="12"
                                       ScrollViewer.CanContentScroll="False" Style="{StaticResource MaterialDesignListView}">
                             <ListView.ItemContainerStyle>

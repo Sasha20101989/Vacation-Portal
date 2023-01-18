@@ -216,11 +216,30 @@
                               Text="Должность" 
                               Grid.Column="0" 
                               Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
+                              ItemsSource="{Binding PositionNames}"
+                              SelectedValue="{Binding SelectedPositionName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                               Margin="10" 
                               HorizontalContentAlignment="Center">
-                        <ComboBoxItem Content="Мастер"/>
-                        <ComboBoxItem Content="Контролёр"/>
-                        <ComboBoxItem Content="Рихтовщик"/>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock HorizontalAlignment="left" Grid.Row="0" Grid.Column="0" Text="{Binding}" FontSize="13"/>
+                                    <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Id_SAP}" FontSize="11" Style="{StaticResource MaterialDesignCharacterCounterTextBlock}" HorizontalAlignment="Right"/>
+                                        <TextBlock Text="{Binding Position}" FontSize="11" Style="{StaticResource MaterialDesignCharacterCounterTextBlock}"/>
+                                    </WrapPanel>
+
+                                </Grid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                     </ComboBox>
                     <!--ItemsSource="{Binding Path=PersonCollection}"-->
                     <ComboBox TextSearch.TextPath="FullName"
@@ -230,7 +249,8 @@
                               Text="Сотрудник" 
                               Grid.Column="1" 
                               Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
-                              ItemsSource="{Binding Person.Subordinates}"
+                              ItemsSource="{Binding FilteredSubordinates}"
+                              SelectedValue="{Binding SelectedPerson, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                               Margin="10" 
                               HorizontalContentAlignment="Center">
                         <ComboBox.ItemTemplate>
@@ -367,7 +387,7 @@
                             <Button Width="280" VerticalAlignment="Bottom"
                             Margin="3 0 3 6"
                             Style="{DynamicResource MaterialDesignOutlinedLightButton}"
-                            Command="{Binding CheckVacations}" Content="Проверить и отправить"
+                            Command="{Binding CheckVacations}" Content="Проверить и согласовать"
                             IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
                             </Button>
                         </StackPanel>

@@ -261,27 +261,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             AddNewNotificationCommand.Execute(new object());
             App.API.OnLoginSuccess += OnLoginSuccesed;
         }
-        public async Task GetUserAsync()
-        {
-            //:TODO сделать новый способ получения
-            //if(App.API.Person.Is_Supervisor)
-            //{
-            //    App.API.Person.Subordinates.Add(new Subordinate(32002225, "Петр", "Николаев", "Анатольевич", "Мастер"));
-            //    App.API.Person.Subordinates.Add(new Subordinate(32003335, "Вася", "Пупкин", "Анатольевич", "Контролёр"));
-            //    App.API.Person.Subordinates.Add(new Subordinate(32004445, "Александр", "Кириленко", "Анатольевич", "Рихтовщик"));
-            //    App.API.Person.Subordinates.Add(new Subordinate(32005555, "Константин", "Федотов", "Анатольевич", "Оператор"));
-            //    //await foreach(Subordinate item in App.API.Person.FetchSubordinatesAsync())
-            //    //{
-            //    //    App.API.Person.Subordinates.Add(item);
-            //    //}
-            //}
-            //await foreach(Settings item in App.API.Person.FetchSettingsAsync())
-            //{
-            //    Color color = (Color) ColorConverter.ConvertFromString(item.Color);
-            //    SelectedColor = color;
-            //}
-            //:TODO сделать новый способ получения
-        }
 
         private void OnLoginSuccesed(Person person)
         {
