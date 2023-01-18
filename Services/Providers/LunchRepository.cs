@@ -86,8 +86,8 @@ namespace Vacation_Portal.Services.Providers
                 OnPropertyChanged(nameof(HolidayTypes));
             }
         }
-        private readonly List<VacationViewModel> Vacations = new List<VacationViewModel>();
-        private readonly ObservableCollection<Subordinate> Subordinates = new ObservableCollection<Subordinate>();
+        private readonly ObservableCollection<VacationViewModel> Vacations = new ObservableCollection<VacationViewModel>();
+        private readonly ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
         public Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
         public Action<Access> OnAccessChanged { get; set; }
         public Action<Person> OnLoginSuccess { get; set; }
@@ -121,14 +121,28 @@ namespace Vacation_Portal.Services.Providers
                         {
                             brushColor = (Brush) converter.ConvertFromString(item.Vacation_Color);
                         }
-                        
-                        Vacations.Add(new VacationViewModel(item.Vacation_Name,
+                        VacationViewModel vacationViewModel = new VacationViewModel(item.Vacation_Name,
                                                             item.User_Id_SAP, item.Remained_Vacation_Id, brushColor, item.Vacation_Start_Date,
-                                                            item.Vacation_End_Date, item.Vacation_Status_Id, item.Creator_Id));
+                                                            item.Vacation_End_Date, item.Vacation_Status_Id, item.Creator_Id);
+                        if(!Vacations.Contains(vacationViewModel))
+                        {
+                            if(vacationViewModel.Name != null) {
+                               Vacations.Add(vacationViewModel);
+                            }
+                        }
+                        VacationAllowanceViewModel vacationAllowanceViewModel = new VacationAllowanceViewModel(item.Remained_Allowance_User_Id_SAP, item.Vacation_Name, item.Remained_Allowance_Vacation_Id, item.Remained_Allowance_Vacation_Year, item.Remained_Allowance_Vacation_Days_Quantity, brushColor);
+                        if(!VacationAllowances.Contains(vacationAllowanceViewModel))
+                        {
+                            if(vacationAllowanceViewModel.Vacation_Name != null)
+                            {
+                                VacationAllowances.Add(vacationAllowanceViewModel);
+                            }
+                        }
                     }
                     foreach(FullPersonDTO item in fullPersonDTOs)
                     {
-                        List<VacationViewModel> VacationsForPerson = new List<VacationViewModel>();
+                        ObservableCollection<VacationViewModel> VacationsForPerson = new ObservableCollection<VacationViewModel>();
+                        ObservableCollection<VacationAllowanceViewModel> VacationAllowancesForPerson = new ObservableCollection<VacationAllowanceViewModel>();
                         foreach(VacationViewModel vacationForPerson in Vacations)
                         {
                             if(vacationForPerson.User_Id_SAP == item.User_Id_SAP)
@@ -136,10 +150,20 @@ namespace Vacation_Portal.Services.Providers
                                 VacationsForPerson.Add(vacationForPerson);
                             }
                         }
+                        foreach(VacationAllowanceViewModel vacationAllowanceForPerson in VacationAllowances)
+                        {
+                            if(vacationAllowanceForPerson.User_Id_SAP == item.User_Id_SAP)
+                            {
+                                if(!VacationAllowancesForPerson.Contains(vacationAllowanceForPerson))
+                                {
+                                    VacationAllowancesForPerson.Add(vacationAllowanceForPerson);
+                                }
+                            }
+                        }
                         Person person = new Person(item.User_Id_SAP, item.User_Id_Account, item.User_Name, item.User_Surname,
                                                    item.User_Patronymic_Name, item.User_Department_Id, item.User_Virtual_Department_Id,
                                                    item.User_Sub_Department_Id, item.Role_Name, item.User_App_Color,
-                                                   item.User_Supervisor_Id_SAP, VacationsForPerson);
+                                                   item.User_Supervisor_Id_SAP, VacationsForPerson, VacationAllowancesForPerson);
                         if(!FullPersons.Contains(person))
                         {
                             FullPersons.Add(person);
@@ -161,7 +185,8 @@ namespace Vacation_Portal.Services.Providers
                                 FullPersons[i].User_Role,
                                 FullPersons[i].User_App_Color,
                                 FullPersons[i].User_Supervisor_Id_SAP,
-                                FullPersons[i].User_Vacations);
+                                FullPersons[i].User_Vacations,
+                                FullPersons[i].User_Vacation_Allowances);
                             break;
                         }
                     }
@@ -174,7 +199,8 @@ namespace Vacation_Portal.Services.Providers
                                 FullPersons[i].Name,
                                 FullPersons[i].Surname,
                                 FullPersons[i].Patronymic,
-                                FullPersons[i].User_Vacations));
+                                FullPersons[i].User_Vacations,
+                                FullPersons[i].User_Vacation_Allowances));
                         }
                     }
                     OnLoginSuccess?.Invoke(Person);

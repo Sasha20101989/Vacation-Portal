@@ -18,7 +18,8 @@ namespace Vacation_Portal.DTOs
         public string Role_Name { get; set; }
 
 
-        //VacationTDO
+        //VacationDTO
+        public int Remained_User_Id_SAP { get; set; }
         public int Remained_Vacation_Id { get; set; }
         public int Remained_Vacation_Year { get; set; }
         public DateTime Vacation_Start_Date { get; set; }
@@ -28,5 +29,11 @@ namespace Vacation_Portal.DTOs
         public string Vacation_Color { get; set; }
         public int Remained_Vacation_Days_Quantity { get; set; }
         public string Creator_Id { get; set; }
+
+        //VacationAllowanceDTO
+        public int Remained_Allowance_User_Id_SAP { get; set; }
+        public int Remained_Allowance_Vacation_Id { get; set; }
+        public int Remained_Allowance_Vacation_Year { get; set; }
+        public int Remained_Allowance_Vacation_Days_Quantity { get; set; }
     }
 }

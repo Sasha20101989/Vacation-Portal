@@ -45,7 +45,7 @@ namespace Vacation_Portal.MVVM.Models
             Name = name;
             User_Id_SAP = user_Id_SAP;
             Vacation_Id = vacation_Id;
-            _count = count;
+            Count = count;
             Color = color;
             Date_Start = date_Start;
             Date_end = date_end;

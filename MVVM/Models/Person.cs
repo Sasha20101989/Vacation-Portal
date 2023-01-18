@@ -36,7 +36,11 @@ namespace Vacation_Portal.MVVM.Models
         public bool Is_Accounting { get; set; }
         public bool Is_Supervisor { get; set; }
         public string User_App_Color { get; set; }
-        public List<VacationViewModel> User_Vacations { get; set; } = new List<VacationViewModel>();
+        public string Position { get; set; }
+
+        public string FullName { get; set; }
+        public ObservableCollection<VacationViewModel> User_Vacations { get; set; } = new ObservableCollection<VacationViewModel>();
+        public ObservableCollection<VacationAllowanceViewModel> User_Vacation_Allowances { get; set; } = new ObservableCollection<VacationAllowanceViewModel>();
         public override string ToString()
         {
             return $"{Surname} {Name} {Patronymic}";
@@ -46,7 +50,7 @@ namespace Vacation_Portal.MVVM.Models
 
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
-        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId, int subDepartmentId, string roleName, string appColor, int userSupervisorIdSAP, List<VacationViewModel> userVacations)
+        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId, int subDepartmentId, string roleName, string appColor, int userSupervisorIdSAP, ObservableCollection<VacationViewModel> userVacations, ObservableCollection<VacationAllowanceViewModel> userVacationAllowances)
         {
             Id_SAP = id_SAP;
             Id_Account = id_Account;
@@ -60,6 +64,7 @@ namespace Vacation_Portal.MVVM.Models
             User_App_Color = appColor;
             User_Supervisor_Id_SAP = userSupervisorIdSAP;
             User_Vacations = userVacations;
+            User_Vacation_Allowances = userVacationAllowances;
         }
         //public async IAsyncEnumerable<Access> FetchSubordinatesAsync()
         //{
@@ -100,28 +105,6 @@ namespace Vacation_Portal.MVVM.Models
             IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
 
             foreach(Settings item in settings)
-            {
-                yield return item;
-            }
-        }
-        public async IAsyncEnumerable<VacationViewModel> FetchVacationsAsync(int year)
-        {
-            App.Current.Dispatcher.Invoke((Action) delegate
-            {
-                App.SplashScreen.status.Text = "Загружаю ваши отпуска...";
-                App.SplashScreen.status.Foreground = Brushes.Black;
-            });
-            IEnumerable<VacationViewModel> vacations = await App.API.LoadVacationAsync(App.API.Person.Id_SAP, year);
-
-            foreach(VacationViewModel item in vacations)
-            {
-                yield return item;
-            }
-        }
-        public async IAsyncEnumerable<VacationAllowanceViewModel> FetchVacationAllowancesAsync(int year)
-        {
-            IEnumerable<VacationAllowanceViewModel> vacationAllowances = await App.API.GetVacationAllowanceAsync(App.API.Person.Id_SAP, year);
-            foreach(VacationAllowanceViewModel item in vacationAllowances)
             {
                 yield return item;
             }
