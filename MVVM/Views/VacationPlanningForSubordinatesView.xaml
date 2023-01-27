@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:controls="clr-namespace:Vacation_Portal.MVVM.Views.Controls"
              xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages"  
-             xmlns:ex="clr-namespace:Vacation_Portal.Extensions"  
+             xmlns:ex="clr-namespace:Vacation_Portal.Extensions"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
              mc:Ignorable="d" 

@@ -3,6 +3,7 @@ using MiscUtil.Collections.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -125,7 +126,6 @@ namespace Vacation_Portal.MVVM.Models
                     FullYear.Add(new CalendarViewModel(FullDays, daysOfWeek, countRows));
                     Year.Add(Days);
                 }
-                await Task.Run(async () => await PaintButtons());
             });
         }
 
@@ -152,16 +152,26 @@ namespace Vacation_Portal.MVVM.Models
         private void FillPlanedDays(Button button)
         {
             TextBlock textBlock = button.Content as TextBlock;
-            for(int i = 0; i < _viewModel.VacationsToAproval.Count; i++)
+            ObservableCollection<Vacation> VacationsToAproval = new ObservableCollection<Vacation>();
+            if(_viewModel.SelectedPerson == null)
             {
-                Range<DateTime> range = ReturnRange(_viewModel.VacationsToAproval[i]);
+                VacationsToAproval = new ObservableCollection<Vacation>(
+                    _viewModel.VacationsToAprovalForPerson.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
+            } else
+            {
+                VacationsToAproval = new ObservableCollection<Vacation>(
+                    _viewModel.VacationsToAproval.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
+            }
+            for(int i = 0; i < VacationsToAproval.Count; i++)
+            {
+                Range<DateTime> range = ReturnRange(VacationsToAproval[i]);
                 foreach(DateTime date in range.Step(x => x.AddDays(1)))
                 {
                     if(date.Day == Convert.ToInt32(textBlock.Text) &&
                         date.Month == Convert.ToInt32(textBlock.Tag.ToString().Split(".")[0]) &&
                         date.Year == Convert.ToInt32(textBlock.Tag.ToString().Split(".")[1]))
                     {
-                        button.Background = _viewModel.VacationsToAproval[i].Color;
+                        button.Background = VacationsToAproval[i].Color;
                         //button.IsEnabled = false;
                     }
                 }
@@ -244,12 +254,12 @@ namespace Vacation_Portal.MVVM.Models
                     return days + " Дней";
             }
         }
-        public async Task PaintButtons()
+        public async Task PaintButtons(ObservableCollection<Vacation> VacationsToAproval)
         {
             await Task.Delay(100);
             App.Current.Dispatcher.Invoke((Action) delegate
-            {
-                foreach(Vacation vacation in _viewModel.VacationsToAproval)
+           {
+                foreach(Vacation vacation in VacationsToAproval)
                 {
                     Range<DateTime> range = ReturnRange(vacation);
                     foreach(DateTime date in range.Step(x => x.AddDays(1)))
@@ -291,9 +301,22 @@ namespace Vacation_Portal.MVVM.Models
             {
                 if(_viewModel.SelectedItemAllowance != null)
                 {
-                    for(int i = 0; i < _viewModel.VacationAllowances.Count; i++)
+                    ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
+                    ObservableCollection<Vacation> VacationsToAproval = new ObservableCollection<Vacation>();
+                    if(_viewModel.SelectedPerson != null)
                     {
-                        if(_viewModel.VacationAllowances[i].Vacation_Days_Quantity > 0)
+                        VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
+                            _viewModel.VacationAllowancesForSubordinate.Where(f => f.Vacation_Year == CurrentYear));
+                        VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.Where(f => f.Date_Start.Year == CurrentYear));
+                    } else
+                    {
+                        VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
+                            _viewModel.VacationAllowancesForPerson.Where(f => f.Vacation_Year == CurrentYear));
+                        VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAprovalForPerson.Where(f => f.Date_Start.Year == CurrentYear));
+                    }
+                    for(int i = 0; i < VacationAllowances.Count; i++)
+                    {
+                        if(VacationAllowances[i].Vacation_Days_Quantity > 0)
                         {
                             CalendarClickable = true;
                             break;
@@ -391,7 +414,7 @@ namespace Vacation_Portal.MVVM.Models
                                     {
                                         DayAddition = GetDayAddition(CountSelectedDays);
                                         _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
-                                        _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, "Новый");
+                                        _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, "Новый");
                                     } else
                                     {
                                         _viewModel.ShowAlert("Этот день является праздичным, закончите планирование отпуска другим днём");
@@ -432,9 +455,9 @@ namespace Vacation_Portal.MVVM.Models
 
                                 foreach(DateTime planedDate in range.Step(x => x.AddDays(1)))
                                 {
-                                    for(int i = 0; i < _viewModel.VacationsToAproval.Count; i++)
+                                    for(int i = 0; i < VacationsToAproval.Count; i++)
                                     {
-                                        Vacation existingVacation = _viewModel.VacationsToAproval[i];
+                                        Vacation existingVacation = VacationsToAproval[i];
 
                                         Range<DateTime> rangeExistingVacation = ReturnRange(existingVacation); ;
 

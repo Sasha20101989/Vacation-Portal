@@ -35,11 +35,11 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         Task<IEnumerable<Holiday>> GetHolidayTypesAsync();
         Task AddHolidayAsync(HolidayViewModel holiday);
         Task DeleteHolidayAsync(HolidayViewModel holiday);
-        Task<IEnumerable<VacationAllowanceViewModel>> GetVacationAllowanceAsync(int UserIdSAP, int year);
-        Task UpdateVacationAllowanceAsync(int vacation_Id, int year, int count);
+        Task<IEnumerable<VacationAllowanceViewModel>> GetVacationAllowanceAsync(int UserIdSAP);
+        Task UpdateVacationAllowanceAsync(int userIdSAP, int vacation_Id, int year, int count);
         Task AddVacationAsync(Vacation vacation);
         Task DeleteVacationAsync(Vacation vacation);
-        Task<IEnumerable<VacationViewModel>> LoadVacationAsync(int UserIdSAP, int year);
+        Task<IEnumerable<VacationViewModel>> LoadVacationAsync(int UserIdSAP);
         Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation);
     }
 }

@@ -5,7 +5,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Vacation_Portal.Commands.BaseCommands;
+using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
+using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 using Vacation_Portal.MVVM.Views.Controls;
 
@@ -56,8 +58,27 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     }
                 }
             }
-            _viewModel.VacationsToAproval.Add(_viewModel.PlannedItem);
-            _viewModel.VacationsToAprovalFromDataBase.Add(_viewModel.PlannedItem);
+            ObservableCollection<Vacation> VacationsToAproval = new ObservableCollection<Vacation>();
+            ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
+            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
+            {
+                VacationsToAproval = new ObservableCollection<Vacation>(
+                    _viewModel.VacationsToAproval.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
+                _viewModel.VacationsToAproval.Add(_viewModel.PlannedItem);
+                VacationsToAproval = _viewModel.VacationsToAproval;
+                VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
+                    _viewModel.VacationAllowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
+            } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
+            {
+                VacationsToAproval = new ObservableCollection<Vacation>(
+                    _viewModel.VacationsToAprovalForPerson.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
+                _viewModel.VacationsToAprovalForPerson.Add(_viewModel.PlannedItem);
+                VacationsToAproval = _viewModel.VacationsToAprovalForPerson;
+                VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
+                    _viewModel.VacationAllowancesForPerson.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
+            }
+            
+            //_viewModel.VacationsToAprovalFromDataBase.Add(_viewModel.PlannedItem);
             _viewModel.SelectedItemAllowance.Vacation_Days_Quantity -= _viewModel.Calendar.CountSelectedDays;
 
             _viewModel.PlannedVacationString = "";
@@ -65,11 +86,11 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
             if(_viewModel.SelectedItemAllowance.Vacation_Days_Quantity == 0)
             {
-                for(int i = 0; i < _viewModel.VacationAllowances.Count; i++)
+                for(int i = 0; i < VacationAllowances.Count; i++)
                 {
-                    if(_viewModel.VacationAllowances[i].Vacation_Days_Quantity > 0)
+                    if(VacationAllowances[i].Vacation_Days_Quantity > 0)
                     {
-                        _viewModel.SelectedItemAllowance = _viewModel.VacationAllowances[i];
+                        _viewModel.SelectedItemAllowance = VacationAllowances[i];
                         break;
                     }
                 }
@@ -77,8 +98,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
             //_viewModel.VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
             //TODO: исправить
-
-            VacationsToAprovalClone = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderBy(i => i.Date_Start));
+            VacationsToAprovalClone = new ObservableCollection<Vacation>(VacationsToAproval.OrderBy(i => i.Date_Start));
 
             for(int i = VacationsToAprovalClone.Count - 1; i > 0; i--)
             {
@@ -113,16 +133,29 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             }
             if(_viewModel.Calendar.WorkingDays.Contains(true))
             {
-                _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
-                _viewModel.VacationsToAprovalFromDataBase = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
+                if(_viewModel.SelectedPerson != null)
+                {
+                    _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
+                } else
+                {
+                    _viewModel.VacationsToAprovalForPerson = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
+                }
+                
+                //_viewModel.VacationsToAprovalFromDataBase = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
                 _viewModel.PlannedIndex = 0;
 
             } else
             {
                 _viewModel.ShowAlert("В выбранном периоде, отсутствуют рабочие дни выбранного типа отпуска.");
                 _viewModel.SelectedItemAllowance.Vacation_Days_Quantity += _viewModel.Calendar.CountSelectedDays;
-                _viewModel.VacationsToAproval.Remove(_viewModel.PlannedItem);
-                _viewModel.VacationsToAprovalFromDataBase.Remove(_viewModel.PlannedItem);
+                if(_viewModel.SelectedPerson != null)
+                {
+                    _viewModel.VacationsToAproval.Remove(_viewModel.PlannedItem);
+                } else
+                {
+                    _viewModel.VacationsToAprovalForPerson.Remove(_viewModel.PlannedItem);
+                }
+                //_viewModel.VacationsToAprovalFromDataBase.Remove(_viewModel.PlannedItem);
                 _viewModel.Calendar.ClearVacationData();
             }
         }

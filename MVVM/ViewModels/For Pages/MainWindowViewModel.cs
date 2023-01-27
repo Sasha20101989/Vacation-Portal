@@ -143,6 +143,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     Title = _selectedItem.Name;
                 }
                 OnPropertyChanged(nameof(SelectedItem));
+                App.SelectedMode = SelectedItem.Name;
             }
         }
 

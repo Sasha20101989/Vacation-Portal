@@ -40,6 +40,10 @@
             <md:PackIcon Kind="CloseBold"  Width="20" Height="20"></md:PackIcon>
         </Button>
         <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource MaterialDesignIconForegroundButton}" 
+                Foreground="Orange" Width="24" Height="24" x:Name="isExclamation7" Visibility="Hidden" Cursor="Arrow">
+            <md:PackIcon Kind="ExclamationThick"  Width="20" Height="20"></md:PackIcon>
+        </Button>
+        <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource MaterialDesignIconForegroundButton}" 
                 Foreground="Green" Width="24" Height="24"  x:Name="isCheck7" Visibility="Hidden" Cursor="Arrow">
             <md:PackIcon Kind="CheckBold"  Width="20" Height="20"></md:PackIcon>
         </Button>
@@ -88,7 +92,7 @@
                             </Style>
                         </md:PackIcon.Style>
                     </md:PackIcon>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10 0 0 0">
+                    <TextBlock x:Name="ButtonSubmit" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10 0 0 0">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
                                 <Setter Property="Text" Value="отправить на согласование"/>

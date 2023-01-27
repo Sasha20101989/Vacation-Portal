@@ -16,12 +16,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Roles.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="SplashIllustration.png" />
 	  <None Remove="нами.png" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.0.123" />
+		<PackageReference Include="Enums.NET" Version="4.0.1" />
+		<PackageReference Include="iTextSharp" Version="5.5.13.3" />
 		<PackageReference Include="JonSkeet.MiscUtil" Version="0.2.0" />
 		<PackageReference Include="MaterialDesignColors" Version="2.0.9" />
 		<PackageReference Include="MaterialDesignThemes" Version="4.6.1" />

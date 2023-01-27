@@ -4,7 +4,7 @@ namespace Vacation_Portal.Extensions
 {
     public static class MyEnumExtensions
     {
-        public static string ToDescriptionString(this Roles val)
+        public static string ToDescriptionString(this Modes val)
         {
             DescriptionAttribute[] attributes = (DescriptionAttribute[]) val
                .GetType()

@@ -53,7 +53,10 @@ namespace Vacation_Portal.Services.Providers
         }
 
         #region Props
-        public Person Person { get; set; }
+        public Person Person { 
+            get; 
+            set; 
+        }
 
         public DateTime DateUnblockNextCalendar { get; set; }
         public bool IsCalendarUnblocked { get; set; } = true;
@@ -97,7 +100,28 @@ namespace Vacation_Portal.Services.Providers
         #endregion
 
         #region Person
+        public async IAsyncEnumerable<VacationViewModel> FetchVacationsAsync(int sapId)
+        {
+            App.Current.Dispatcher.Invoke((Action) delegate
+            {
+                App.SplashScreen.status.Text = "Загружаю ваши отпуска...";
+                App.SplashScreen.status.Foreground = Brushes.Black;
+            });
+            IEnumerable<VacationViewModel> vacations = await LoadVacationAsync(sapId);
 
+            foreach(VacationViewModel item in vacations)
+            {
+                yield return item;
+            }
+        }
+        public async IAsyncEnumerable<VacationAllowanceViewModel> FetchVacationAllowances(int sapId)
+        {
+            IEnumerable<VacationAllowanceViewModel> vacationAllowances = await GetVacationAllowanceAsync(sapId);
+            foreach(VacationAllowanceViewModel item in vacationAllowances)
+            {
+                yield return item;
+            }
+        }
         public async Task<Person> LoginAsync(string account)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
@@ -107,105 +131,122 @@ namespace Vacation_Portal.Services.Providers
                 {
                     Account = account
                 };
-                using(var multi = await database.QueryMultipleAsync("usp_Get_Users", parametersPerson, commandType: CommandType.StoredProcedure))
+                BrushConverter converter = new System.Windows.Media.BrushConverter();
+                IEnumerable<PersonDTO> fullPersonDTOs = await database.QueryAsync<PersonDTO>("usp_Get_Users", parametersPerson, commandType: CommandType.StoredProcedure);
+                //собираю общие списки с отпусками и доступными днями
+                foreach(PersonDTO personDTO in fullPersonDTOs)
                 {
-                    BrushConverter converter = new System.Windows.Media.BrushConverter();
-                    IEnumerable<FullPersonDTO> fullPersonDTOs = await multi.ReadAsync<FullPersonDTO>();
-                    foreach(FullPersonDTO item in fullPersonDTOs)
+
+                    await foreach(VacationViewModel vacation in FetchVacationsAsync(personDTO.User_Id_SAP))
                     {
                         Brush brushColor;
-                        if(item.Vacation_Color == null)
+                        if(vacation.Color == null)
                         {
                             brushColor = Brushes.Gray;
                         } else
                         {
-                            brushColor = (Brush) converter.ConvertFromString(item.Vacation_Color);
+                            brushColor = vacation.Color;
                         }
-                        VacationViewModel vacationViewModel = new VacationViewModel(item.Vacation_Name,
-                                                            item.User_Id_SAP, item.Remained_Vacation_Id, brushColor, item.Vacation_Start_Date,
-                                                            item.Vacation_End_Date, item.Vacation_Status_Id, item.Creator_Id);
+                        VacationViewModel vacationViewModel = new VacationViewModel(vacation.Name,
+                                                            vacation.User_Id_SAP, vacation.Vacation_Id,
+                                                            brushColor, vacation.DateStart, vacation.DateEnd,
+                                                            vacation.Status, vacation.Creator_Id);
                         if(!Vacations.Contains(vacationViewModel))
                         {
-                            if(vacationViewModel.Name != null) {
-                               Vacations.Add(vacationViewModel);
-                            }
+                            Vacations.Add(vacationViewModel);
                         }
-                        VacationAllowanceViewModel vacationAllowanceViewModel = new VacationAllowanceViewModel(item.Remained_Allowance_User_Id_SAP, item.Vacation_Name, item.Remained_Allowance_Vacation_Id, item.Remained_Allowance_Vacation_Year, item.Remained_Allowance_Vacation_Days_Quantity, brushColor);
+                    }
+
+                    await foreach(VacationAllowanceViewModel vacationAllowance in FetchVacationAllowances(personDTO.User_Id_SAP))
+                    {
+                        VacationAllowanceViewModel vacationAllowanceViewModel = new VacationAllowanceViewModel(vacationAllowance.User_Id_SAP, vacationAllowance.Vacation_Name, vacationAllowance.Vacation_Id, vacationAllowance.Vacation_Year, vacationAllowance.Vacation_Days_Quantity, vacationAllowance.Vacation_Color);
                         if(!VacationAllowances.Contains(vacationAllowanceViewModel))
                         {
-                            if(vacationAllowanceViewModel.Vacation_Name != null)
-                            {
-                                VacationAllowances.Add(vacationAllowanceViewModel);
-                            }
+                            VacationAllowances.Add(vacationAllowanceViewModel);
                         }
                     }
-                    foreach(FullPersonDTO item in fullPersonDTOs)
-                    {
-                        ObservableCollection<VacationViewModel> VacationsForPerson = new ObservableCollection<VacationViewModel>();
-                        ObservableCollection<VacationAllowanceViewModel> VacationAllowancesForPerson = new ObservableCollection<VacationAllowanceViewModel>();
-                        foreach(VacationViewModel vacationForPerson in Vacations)
-                        {
-                            if(vacationForPerson.User_Id_SAP == item.User_Id_SAP)
-                            {
-                                VacationsForPerson.Add(vacationForPerson);
-                            }
-                        }
-                        foreach(VacationAllowanceViewModel vacationAllowanceForPerson in VacationAllowances)
-                        {
-                            if(vacationAllowanceForPerson.User_Id_SAP == item.User_Id_SAP)
-                            {
-                                if(!VacationAllowancesForPerson.Contains(vacationAllowanceForPerson))
-                                {
-                                    VacationAllowancesForPerson.Add(vacationAllowanceForPerson);
-                                }
-                            }
-                        }
-                        Person person = new Person(item.User_Id_SAP, item.User_Id_Account, item.User_Name, item.User_Surname,
-                                                   item.User_Patronymic_Name, item.User_Department_Id, item.User_Virtual_Department_Id,
-                                                   item.User_Sub_Department_Id, item.Role_Name, item.User_App_Color,
-                                                   item.User_Supervisor_Id_SAP, VacationsForPerson, VacationAllowancesForPerson);
-                        if(!FullPersons.Contains(person))
-                        {
-                            FullPersons.Add(person);
-                        }
-                    }
-                    for(int i = 0; i < FullPersons.Count; i++)
-                    {
-                        if(FullPersons[i].Id_Account == Environment.UserName)
-                        {
-                            Person = new Person(
-                                FullPersons[i].Id_SAP,
-                                FullPersons[i].Id_Account,
-                                FullPersons[i].Name,
-                                FullPersons[i].Surname,
-                                FullPersons[i].Patronymic,
-                                FullPersons[i].User_Department_Id,
-                                FullPersons[i].User_Virtual_Department_Id,
-                                FullPersons[i].User_Sub_Department_Id,
-                                FullPersons[i].User_Role,
-                                FullPersons[i].User_App_Color,
-                                FullPersons[i].User_Supervisor_Id_SAP,
-                                FullPersons[i].User_Vacations,
-                                FullPersons[i].User_Vacation_Allowances);
-                            break;
-                        }
-                    }
-                    for(int i = 0; i < FullPersons.Count; i++)
-                    {
-                        if(FullPersons[i].Id_Account != Environment.UserName)
-                        {
-                            Person.Subordinates.Add(new Subordinate(
-                                FullPersons[i].Id_SAP,
-                                FullPersons[i].Name,
-                                FullPersons[i].Surname,
-                                FullPersons[i].Patronymic,
-                                FullPersons[i].User_Vacations,
-                                FullPersons[i].User_Vacation_Allowances));
-                        }
-                    }
-                    OnLoginSuccess?.Invoke(Person);
-                    return Person;
                 }
+                //собираю общий список с персонами и их отпусками
+                foreach(PersonDTO item in fullPersonDTOs)
+                {
+                    ObservableCollection<VacationViewModel> VacationsForPerson = new ObservableCollection<VacationViewModel>();
+                    ObservableCollection<VacationAllowanceViewModel> VacationAllowancesForPerson = new ObservableCollection<VacationAllowanceViewModel>();
+                    foreach(VacationViewModel vacationForPerson in Vacations)
+                    {
+                        if(vacationForPerson.User_Id_SAP == item.User_Id_SAP)
+                        {
+                            VacationsForPerson.Add(vacationForPerson);
+                        }
+                    }
+                    foreach(VacationAllowanceViewModel vacationAllowanceForPerson in VacationAllowances)
+                    {
+                        if(vacationAllowanceForPerson.User_Id_SAP == item.User_Id_SAP)
+                        {
+                            if(!VacationAllowancesForPerson.Contains(vacationAllowanceForPerson))
+                            {
+                                VacationAllowancesForPerson.Add(vacationAllowanceForPerson);
+                            }
+                        }
+                    }
+                    VacationAllowancesForPerson = new ObservableCollection<VacationAllowanceViewModel>(VacationAllowancesForPerson.OrderBy(i => i.Vacation_Id));
+
+                    Person person = new Person(item.User_Id_SAP, item.User_Id_Account, item.User_Name, item.User_Surname,
+                                               item.User_Patronymic_Name, item.User_Department_Id, item.User_Virtual_Department_Id,
+                                               item.User_Sub_Department_Id, item.Role_Name, item.User_App_Color,
+                                               item.User_Supervisor_Id_SAP,item.Position, VacationsForPerson, VacationAllowancesForPerson);
+                    Brush brushColor;
+                    if(item.User_App_Color == null)
+                    {
+                        brushColor = Brushes.Gray;
+                    } else
+                    {
+                        brushColor = (Brush) converter.ConvertFromString(item.User_App_Color);
+                    }
+                        if(!FullPersons.Contains(person))
+                    {
+                        FullPersons.Add(person);
+                    }
+                }
+                // выделяю текущего пользователя из общего списка персон, если имя компьютера равно итерируемому id то персон
+                for(int i = 0; i < FullPersons.Count; i++)
+                {
+                    if(FullPersons[i].Id_Account == Environment.UserName)
+                    {
+                        Person = new Person(
+                            FullPersons[i].Id_SAP,
+                            FullPersons[i].Id_Account,
+                            FullPersons[i].Name,
+                            FullPersons[i].Surname,
+                            FullPersons[i].Patronymic,
+                            FullPersons[i].User_Department_Id,
+                            FullPersons[i].User_Virtual_Department_Id,
+                            FullPersons[i].User_Sub_Department_Id,
+                            FullPersons[i].User_Role,
+                            FullPersons[i].User_App_Color,
+                            FullPersons[i].User_Supervisor_Id_SAP,
+                            FullPersons[i].Position,
+                            FullPersons[i].User_Vacations,
+                            FullPersons[i].User_Vacation_Allowances);
+                        break;
+                    }
+                }
+                // выделяю подчиненных из общего списка персон, если имя компьютера не равен итерируемому id то подчинённый
+                for(int i = 0; i < FullPersons.Count; i++)
+                {
+                    if(FullPersons[i].Id_Account != Environment.UserName)
+                    {
+                        Person.Subordinates.Add(new Subordinate(
+                            FullPersons[i].Id_SAP,
+                            FullPersons[i].Name,
+                            FullPersons[i].Surname,
+                            FullPersons[i].Patronymic,
+                            FullPersons[i].Position,
+                            FullPersons[i].User_Vacations,
+                            FullPersons[i].User_Vacation_Allowances));
+                    }
+                }
+                OnLoginSuccess?.Invoke(Person);
+                return Person;
             } catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);
@@ -310,13 +351,12 @@ namespace Vacation_Portal.Services.Providers
         #endregion
 
         #region Vacations
-        public async Task<IEnumerable<VacationAllowanceViewModel>> GetVacationAllowanceAsync(int UserIdSAP, int year)
+        public async Task<IEnumerable<VacationAllowanceViewModel>> GetVacationAllowanceAsync(int UserIdSAP)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             object parameters = new
             {
-                User_Id_SAP = UserIdSAP,
-                Year = year
+                User_Id_SAP = UserIdSAP
             };
             try
             {
@@ -327,12 +367,12 @@ namespace Vacation_Portal.Services.Providers
                 return null;
             }
         }
-        public async Task UpdateVacationAllowanceAsync(int vacation_Id, int year, int count)
+        public async Task UpdateVacationAllowanceAsync(int userIdSAP, int vacation_Id, int year, int count)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             object parameters = new
             {
-                User_Id_SAP = Person.Id_SAP,
+                User_Id_SAP = userIdSAP,
                 Vacation_Id = vacation_Id,
                 Vacation_Year = year,
                 Quantity = count
@@ -348,6 +388,26 @@ namespace Vacation_Portal.Services.Providers
         public async Task AddVacationAsync(Vacation vacation)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            int status = 0;
+            if(vacation.Status == "Новый")
+            {
+                status = 1;
+            } else if(vacation.Status == "На согласовании")
+            {
+                status = 2;
+            } else if(vacation.Status == "Согласован")
+            {
+                status = 3;
+            } else if(vacation.Status == "Перешел в отдел кадров")
+            {
+                status = 4;
+            } else if(vacation.Status == "Проведён")
+            {
+                status = 5;
+            } else if(vacation.Status == "Удалён")
+            {
+                status = 6;
+            }
             object parameters = new
             {
                 User_Id_SAP = vacation.User_Id_SAP,
@@ -355,7 +415,7 @@ namespace Vacation_Portal.Services.Providers
                 Vacation_Year = vacation.Date_Start.Year,
                 Vacation_Start_Date = vacation.Date_Start,
                 Vacation_End_Date = vacation.Date_end,
-                Vacation_Status = vacation.Status,
+                Vacation_Status_Id = status,
                 Creator_Id = Person.Id_Account
             };
             try
@@ -369,6 +429,26 @@ namespace Vacation_Portal.Services.Providers
         public async Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            int status = 0;
+            if(vacation.Status == "Новый")
+            {
+                status = 1;
+            } else if(vacation.Status == "На согласовании")
+            {
+                status = 2;
+            } else if(vacation.Status == "Согласован")
+            {
+                status = 3;
+            } else if(vacation.Status == "Перешел в отдел кадров")
+            {
+                status = 4;
+            } else if(vacation.Status == "Проведён")
+            {
+                status = 5;
+            } else if(vacation.Status == "Удалён")
+            {
+                status = 6;
+            }
             object parameters = new
             {
                 User_Id_SAP = vacation.User_Id_SAP,
@@ -376,7 +456,7 @@ namespace Vacation_Portal.Services.Providers
                 Vacation_Year = vacation.Date_Start.Year,
                 Vacation_Date_Start = vacation.Date_Start,
                 Vacation_Date_End = vacation.Date_end,
-                Vacation_Status = vacation.Status
+                Vacation_Status_Id = status
             };
             try
             {
@@ -407,13 +487,12 @@ namespace Vacation_Portal.Services.Providers
                 MessageBox.Show(ex.Message);
             }
         }
-        public async Task<IEnumerable<VacationViewModel>> LoadVacationAsync(int UserIdSAP, int year)
+        public async Task<IEnumerable<VacationViewModel>> LoadVacationAsync(int UserIdSAP)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             object parameters = new
             {
-                User_Id_SAP = UserIdSAP,
-                Year = year
+                User_Id_SAP = UserIdSAP
             };
             try
             {
@@ -432,7 +511,7 @@ namespace Vacation_Portal.Services.Providers
         {
             BrushConverter converter = new System.Windows.Media.BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
-            return new VacationViewModel(dto.Vacation_Name, dto.User_Id_SAP, dto.Vacation_Id, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status, dto.Creator_Id);
+            return new VacationViewModel(dto.Vacation_Name, dto.User_Id_SAP, dto.Vacation_Id, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status_Id, dto.Creator_Id);
         }
         private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto)
         {
