@@ -33,7 +33,7 @@ namespace Vacation_Portal
             if(progressBar.Value == 100)
             {
                 Close();
-                _mainWindow.ShowDialog();
+                _mainWindow.Show();
             }
             if(status.Text == "Вас нет в базе данных")
             {
@@ -47,7 +47,7 @@ namespace Vacation_Portal
             for(int i = 0; i <= 100; i++)
             {
                 (sender as BackgroundWorker).ReportProgress(i);
-                Thread.Sleep(80);
+                Thread.Sleep(100);
             }
         }
     }

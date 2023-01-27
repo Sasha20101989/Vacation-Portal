@@ -10,6 +10,7 @@ using Vacation_Portal.HostBuilders;
 using Vacation_Portal.MVVM.Views;
 using Vacation_Portal.Services.Providers;
 using Vacation_Portal.Services.Providers.Interfaces;
+using Vacation_Portal.Extensions;
 
 namespace Vacation_Portal
 {
@@ -20,6 +21,7 @@ namespace Vacation_Portal
         public static IInformationSplashScreenService SplashScreenService { get; private set; }
         public static IDependencyDetector DependencyDetector { get; private set; }
         public static SplashScreen SplashScreen { get; set; }
+        public static string SelectedMode {get;set;}
         public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
         public App()
         {

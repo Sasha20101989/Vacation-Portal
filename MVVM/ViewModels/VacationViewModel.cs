@@ -32,6 +32,7 @@ namespace Vacation_Portal.MVVM.ViewModels
         public override bool Equals(object obj)
         {
             return obj is VacationViewModel model &&
+                   User_Id_SAP == model.User_Id_SAP &&
                    Name == model.Name &&
                    DateStart == model.DateStart &&
                    DateEnd == model.DateEnd;
@@ -39,7 +40,7 @@ namespace Vacation_Portal.MVVM.ViewModels
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name, DateStart, DateEnd);
+            return HashCode.Combine(User_Id_SAP, Name, DateStart, DateEnd);
         }
 
         public Range<DateTime> ReturnVacationRange()

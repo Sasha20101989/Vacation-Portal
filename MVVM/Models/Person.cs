@@ -50,7 +50,7 @@ namespace Vacation_Portal.MVVM.Models
 
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
-        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId, int subDepartmentId, string roleName, string appColor, int userSupervisorIdSAP, ObservableCollection<VacationViewModel> userVacations, ObservableCollection<VacationAllowanceViewModel> userVacationAllowances)
+        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId, int subDepartmentId, string roleName, string appColor, int userSupervisorIdSAP,string position, ObservableCollection<VacationViewModel> userVacations, ObservableCollection<VacationAllowanceViewModel> userVacationAllowances)
         {
             Id_SAP = id_SAP;
             Id_Account = id_Account;
@@ -63,6 +63,7 @@ namespace Vacation_Portal.MVVM.Models
             User_Role = roleName;
             User_App_Color = appColor;
             User_Supervisor_Id_SAP = userSupervisorIdSAP;
+            Position = position;
             User_Vacations = userVacations;
             User_Vacation_Allowances = userVacationAllowances;
         }
@@ -80,35 +81,35 @@ namespace Vacation_Portal.MVVM.Models
         //        yield return item;
         //    }
         //}
-        public async IAsyncEnumerable<Access> FetchAccessAsync()
-        {
-            App.Current.Dispatcher.Invoke((Action) delegate
-            {
-                App.SplashScreen.status.Text = "Проверяю разрешения вашего аккаунта...";
-                App.SplashScreen.status.Foreground = Brushes.Black;
-            });
-            IEnumerable<Access> access = await App.API.GetAccessAsync(Environment.UserName);
+        //public async IAsyncEnumerable<Access> FetchAccessAsync()
+        //{
+        //    App.Current.Dispatcher.Invoke((Action) delegate
+        //    {
+        //        App.SplashScreen.status.Text = "Проверяю разрешения вашего аккаунта...";
+        //        App.SplashScreen.status.Foreground = Brushes.Black;
+        //    });
+        //    IEnumerable<Access> access = await App.API.GetAccessAsync(Environment.UserName);
 
-            foreach(Access item in access)
-            {
-                yield return item;
-            }
-        }
-        public async IAsyncEnumerable<Settings> FetchSettingsAsync()
-        {
-            App.Current.Dispatcher.Invoke((Action) delegate
-            {
-                App.SplashScreen.status.Text = "Ищу настройки вашего аккаунта...";
-                App.SplashScreen.status.Foreground = Brushes.Black;
-            });
+        //    foreach(Access item in access)
+        //    {
+        //        yield return item;
+        //    }
+        //}
+        //public async IAsyncEnumerable<Settings> FetchSettingsAsync()
+        //{
+        //    App.Current.Dispatcher.Invoke((Action) delegate
+        //    {
+        //        App.SplashScreen.status.Text = "Ищу настройки вашего аккаунта...";
+        //        App.SplashScreen.status.Foreground = Brushes.Black;
+        //    });
 
-            IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
+        //    IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
 
-            foreach(Settings item in settings)
-            {
-                yield return item;
-            }
-        }
+        //    foreach(Settings item in settings)
+        //    {
+        //        yield return item;
+        //    }
+        //}
 
         public void AddPages(MainWindowViewModel _viewModel)
         {

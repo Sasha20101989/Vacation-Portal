@@ -12,31 +12,61 @@ namespace Vacation_Portal.MVVM.Views.Controls
         {
             InitializeComponent();
         }
-        public void VisibilityButtonFirstCheck()
+        public void VisibilityButtonFirstCheck(bool isSupervisor)
         {
-            isNotCheck14.Visibility = Visibility.Hidden;
+            ClearVisibility();
             isCheck14.Visibility = Visibility.Visible;
+            if(isSupervisor)
+            {
+                ButtonSubmit.Text = "Согласовать";
+            }
             SaveBtn.IsEnabled = false;
         }
 
-        internal void NotVisibilityButtonFirstCheck()
+        internal void NotVisibilityButtonFirstCheck(bool isSupervisor)
         {
-            isCheck14.Visibility = Visibility.Hidden;
+            ClearVisibility();
             isNotCheck14.Visibility = Visibility.Visible;
+            if(isSupervisor)
+            {
+                ButtonSubmit.Text = "Согласовать";
+            }
             SaveBtn.IsEnabled = false;
         }
 
-        public void VisibilityButtonSecondCheck()
+        public void VisibilityButtonSecondCheck(bool isSupervisor)
         {
-            isNotCheck7.Visibility = Visibility.Hidden;
+            ClearVisibility();
+            isCheck14.Visibility = Visibility.Visible;
             isCheck7.Visibility = Visibility.Visible;
+            if(isSupervisor)
+            {
+                ButtonSubmit.Text = "Согласовать";
+            }
             SaveBtn.IsEnabled = true;
         }
 
-        internal void NotVisibilityButtonSecondCheck()
+        internal void NotVisibilityButtonSecondCheck(bool isSupervisor)
         {
-            isCheck7.Visibility = Visibility.Hidden;
+            ClearVisibility();
+            isCheck14.Visibility = Visibility.Visible;
             isNotCheck7.Visibility = Visibility.Visible;
+            if(isSupervisor)
+            {
+                ButtonSubmit.Text = "Согласовать";
+            }
+            SaveBtn.IsEnabled = true;
+        }
+
+        public void VisibilityExclamationButtonSecondCheck(bool isSupervisor)
+        {
+            isCheck14.Visibility = Visibility.Visible;
+            isExclamation7.Visibility = Visibility.Visible;
+            isExclamation7.ToolTip = "Не запланированно 7 дней основного отпуска, но вы можете согласовать текущее состояние.";
+            if(isSupervisor)
+            {
+                ButtonSubmit.Text = "Согласовать";
+            }
             SaveBtn.IsEnabled = true;
         }
 
@@ -47,6 +77,7 @@ namespace Vacation_Portal.MVVM.Views.Controls
             isNotCheck14.Visibility = Visibility.Hidden;
             isCheck7.Visibility = Visibility.Hidden;
             isNotCheck7.Visibility = Visibility.Hidden;
+            isExclamation7.Visibility = Visibility.Hidden;
         }
     }
 }
