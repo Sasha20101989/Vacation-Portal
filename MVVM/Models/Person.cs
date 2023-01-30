@@ -39,18 +39,18 @@ namespace Vacation_Portal.MVVM.Models
         public string Position { get; set; }
 
         public string FullName { get; set; }
-        public ObservableCollection<VacationViewModel> User_Vacations { get; set; } = new ObservableCollection<VacationViewModel>();
+        public ObservableCollection<Vacation> User_Vacations { get; set; } = new ObservableCollection<Vacation>();
         public ObservableCollection<VacationAllowanceViewModel> User_Vacation_Allowances { get; set; } = new ObservableCollection<VacationAllowanceViewModel>();
         public override string ToString()
         {
             return $"{Surname} {Name} {Patronymic}";
         }
 
-        public ObservableCollection<Subordinate> Subordinates { get; set; } = new ObservableCollection<Subordinate>();
+        public List<Subordinate> Subordinates { get; set; } = new List<Subordinate>();
 
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
-        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId, int subDepartmentId, string roleName, string appColor, int userSupervisorIdSAP,string position, ObservableCollection<VacationViewModel> userVacations, ObservableCollection<VacationAllowanceViewModel> userVacationAllowances)
+        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId, int subDepartmentId, string roleName, string appColor, int userSupervisorIdSAP,string position, ObservableCollection<Vacation> userVacations, ObservableCollection<VacationAllowanceViewModel> userVacationAllowances)
         {
             Id_SAP = id_SAP;
             Id_Account = id_Account;

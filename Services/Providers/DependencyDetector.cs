@@ -63,17 +63,17 @@ namespace Vacation_Portal.Services.Providers
                 {
                     case ChangeType.None:
                     {
-                        MessageBox.Show("ничего");
+                        //MessageBox.Show("ничего");
                     }
                     break;
                     case ChangeType.Delete:
                     {
-                        MessageBox.Show("Могу удалить из интерфейса, так как из базы удалено");
+                        //MessageBox.Show("Могу удалить из интерфейса, так как из базы удалено");
                     }
                     break;
                     case ChangeType.Insert:
                     {
-                        MessageBox.Show("Могу вставить в интерфейс, так как в базу вставлена запись");
+                        //MessageBox.Show("Могу вставить в интерфейс, так как в базу вставлена запись");
                     }
                     break;
                     case ChangeType.Update:
@@ -128,22 +128,22 @@ namespace Vacation_Portal.Services.Providers
                 {
                     case ChangeType.None:
                     {
-                        MessageBox.Show("ничего");
+                        //MessageBox.Show("ничего");
                     }
                     break;
                     case ChangeType.Delete:
                     {
-                        MessageBox.Show("Могу удалить отпуск из интерфейса, так как из базы удален");
+                        //MessageBox.Show("Могу удалить отпуск из интерфейса, так как из базы удален");
                     }
                     break;
                     case ChangeType.Insert:
                     {
-                        MessageBox.Show("Могу вставить отпуск в интерфейс, так как в базу вставлена запись");
+                        //MessageBox.Show("Могу вставить отпуск в интерфейс, так как в базу вставлена запись");
                     }
                     break;
                     case ChangeType.Update:
                     {
-                        MessageBox.Show("Могу обновить отпуск в интерфейсе, так как в базе обновлен");
+                        //MessageBox.Show("Могу обновить отпуск в интерфейсе, так как в базе обновлен");
                     }
                     break;
                 };
@@ -193,22 +193,22 @@ namespace Vacation_Portal.Services.Providers
                 {
                     case ChangeType.None:
                     {
-                        MessageBox.Show("ничего");
+                        //MessageBox.Show("ничего");
                     }
                     break;
                     case ChangeType.Delete:
                     {
-                        MessageBox.Show("Могу удалить пользователя из интерфейса, так как из базы удален");
+                        //MessageBox.Show("Могу удалить пользователя из интерфейса, так как из базы удален");
                     }
                     break;
                     case ChangeType.Insert:
                     {
-                        MessageBox.Show("Могу вставить пользователя в интерфейс, так как в базу вставлена запись");
+                        //MessageBox.Show("Могу вставить пользователя в интерфейс, так как в базу вставлена запись");
                     }
                     break;
                     case ChangeType.Update:
                     {
-                        MessageBox.Show("Могу обновить пользователя в интерфейсе, так как в базе обновлен");
+                        //MessageBox.Show("Могу обновить пользователя в интерфейсе, так как в базе обновлен");
                     }
                     break;
                 };

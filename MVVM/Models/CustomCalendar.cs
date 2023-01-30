@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.Base;
 using Vacation_Portal.MVVM.ViewModels.Calendar;
@@ -45,7 +46,7 @@ namespace Vacation_Portal.MVVM.Models
         public async Task Render()
         {
             await Task.Delay(100);
-            App.Current.Dispatcher.Invoke((Action) async delegate
+            App.Current.Dispatcher.Invoke((Action) delegate
             {
                 FullYear.Clear();
                 Year.Clear();
@@ -129,7 +130,7 @@ namespace Vacation_Portal.MVVM.Models
             });
         }
 
-        public void UpdateColor()
+        public void UpdateColor(ObservableCollection<Vacation> VacationsToAproval)
         {
             App.Current.Dispatcher.Invoke((Action) delegate
             {
@@ -143,25 +144,16 @@ namespace Vacation_Portal.MVVM.Models
                         {
                             Button button = elem as Button;
                             button.Background = Brushes.Transparent;
-                            FillPlanedDays(button);
+                            FillPlanedDays(button, VacationsToAproval);
                         }
                     }
                 }
             });
         }
-        private void FillPlanedDays(Button button)
+        private void FillPlanedDays(Button button, ObservableCollection<Vacation> VacationsToAproval)
         {
             TextBlock textBlock = button.Content as TextBlock;
-            ObservableCollection<Vacation> VacationsToAproval = new ObservableCollection<Vacation>();
-            if(_viewModel.SelectedPerson == null)
-            {
-                VacationsToAproval = new ObservableCollection<Vacation>(
-                    _viewModel.VacationsToAprovalForPerson.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
-            } else
-            {
-                VacationsToAproval = new ObservableCollection<Vacation>(
-                    _viewModel.VacationsToAproval.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
-            }
+
             for(int i = 0; i < VacationsToAproval.Count; i++)
             {
                 Range<DateTime> range = ReturnRange(VacationsToAproval[i]);
@@ -289,11 +281,11 @@ namespace Vacation_Portal.MVVM.Models
                 }
             });
         }
-        public void ClearVacationData()
+        public void ClearVacationData(ObservableCollection<Vacation> VacationsToAproval)
         {
             _viewModel.PlannedVacationString = "";
             ClicksOnCalendar = 0;
-            UpdateColor();
+            UpdateColor(VacationsToAproval);
         }
         public void UcDays_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -303,16 +295,16 @@ namespace Vacation_Portal.MVVM.Models
                 {
                     ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
                     ObservableCollection<Vacation> VacationsToAproval = new ObservableCollection<Vacation>();
-                    if(_viewModel.SelectedPerson != null)
+                    if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
                     {
                         VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
-                            _viewModel.VacationAllowancesForSubordinate.Where(f => f.Vacation_Year == CurrentYear));
-                        VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.Where(f => f.Date_Start.Year == CurrentYear));
-                    } else
+                            _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances.Where(f => f.Vacation_Year == CurrentYear));
+                        VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.SelectedSubordinate.Subordinate_Vacations.Where(f => f.Date_Start.Year == CurrentYear));
+                    } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
                     {
                         VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
-                            _viewModel.VacationAllowancesForPerson.Where(f => f.Vacation_Year == CurrentYear));
-                        VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAprovalForPerson.Where(f => f.Date_Start.Year == CurrentYear));
+                            App.API.Person.User_Vacation_Allowances.Where(f => f.Vacation_Year == CurrentYear));
+                        VacationsToAproval = new ObservableCollection<Vacation>(App.API.Person.User_Vacations.Where(f => f.Date_Start.Year == CurrentYear));
                     }
                     for(int i = 0; i < VacationAllowances.Count; i++)
                     {
@@ -367,7 +359,7 @@ namespace Vacation_Portal.MVVM.Models
                             FirstSelectedDate = newDate;
                             SecondSelectedDate = newDate;
                             ClicksOnCalendar = 1;
-                            UpdateColor();
+                            UpdateColor(VacationsToAproval);
                         }
 
                         if(ClicksOnCalendar == 1)
@@ -380,7 +372,7 @@ namespace Vacation_Portal.MVVM.Models
                                 {
                                     DayAddition = GetDayAddition(CountSelectedDays);
                                     _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.yyyy");
-                                    _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Новый");
+                                    _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "New", Environment.UserName);
                                 } else
                                 {
                                     _viewModel.ShowAlert("Этот день является праздичным, начните планирование отпуска с другого дня");
@@ -414,7 +406,7 @@ namespace Vacation_Portal.MVVM.Models
                                     {
                                         DayAddition = GetDayAddition(CountSelectedDays);
                                         _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
-                                        _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, "Новый");
+                                        _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, "New", Environment.UserName);
                                     } else
                                     {
                                         _viewModel.ShowAlert("Этот день является праздичным, закончите планирование отпуска другим днём");
@@ -434,7 +426,7 @@ namespace Vacation_Portal.MVVM.Models
 
                                         DayAddition = GetDayAddition(CountSelectedDays);
                                         _viewModel.PlannedVacationString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
-                                        _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate, "Новый");
+                                        _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate, "New", Environment.UserName);
                                     } else
                                     {
                                         _viewModel.ShowAlert("Этот день является праздичным, закончите планирование отпуска с другим днём");
@@ -487,7 +479,7 @@ namespace Vacation_Portal.MVVM.Models
                                     ClicksOnCalendar = 0;
                                     CountSelectedDays = 0;
                                     _viewModel.PlannedVacationString = "";
-                                    UpdateColor();
+                                    UpdateColor(VacationsToAproval);
                                 }
                             }
                         } else
@@ -500,7 +492,7 @@ namespace Vacation_Portal.MVVM.Models
                             ClicksOnCalendar = 0;
                             CountSelectedDays = 0;
                             _viewModel.PlannedVacationString = "";
-                            UpdateColor();
+                            UpdateColor(VacationsToAproval);
                             //PlannedItem = null;
                         }
                     }

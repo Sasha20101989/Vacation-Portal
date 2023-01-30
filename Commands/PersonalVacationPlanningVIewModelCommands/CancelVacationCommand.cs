@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Vacation_Portal.Commands.BaseCommands;
+using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
@@ -18,46 +19,58 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
         public override async void Execute(object parameter)
         {
-            Vacation deletedItem = (Vacation) parameter;
+            Vacation deletedVacation = (Vacation) parameter;
             ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
-            if(_viewModel.SelectedPerson == null)
+            if(_viewModel.SelectedSubordinate == null)
             {
                 VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
-                    _viewModel.VacationAllowancesForPerson.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
+                    App.API.Person.User_Vacation_Allowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
             } else
             {
                 VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
-                    _viewModel.VacationAllowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
+                    _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
             }
-            if(deletedItem != null)
+            if(deletedVacation != null)
             {
                 int index = 0;
                 for(int i = 0; i < VacationAllowances.Count; i++)
                 {
-                    if(VacationAllowances[i].Vacation_Name == deletedItem.Name)
+                    if(VacationAllowances[i].Vacation_Name == deletedVacation.Name)
                     {
                         index = i;
                         break;
                     }
                 }
 
-                await _viewModel.DeleteVacation(deletedItem);
+                await _viewModel.DeleteVacation(deletedVacation);
 
-                if(_viewModel.SelectedPerson == null)
+                if(_viewModel.SelectedSubordinate == null)
                 {
-                    _viewModel.VacationAllowancesForPerson[index].Vacation_Days_Quantity += deletedItem.Count;
-                    await _viewModel.UpdateVacationAllowance(deletedItem.User_Id_SAP, deletedItem.Vacation_Id, deletedItem.Date_Start.Year, _viewModel.VacationAllowancesForPerson[index].Vacation_Days_Quantity);
-                    _viewModel.VacationsToAprovalForPerson.Remove(deletedItem);
+                    App.API.Person.User_Vacation_Allowances[index].Vacation_Days_Quantity += deletedVacation.Count;
+                    await _viewModel.UpdateVacationAllowance(deletedVacation.User_Id_SAP, deletedVacation.Vacation_Id, deletedVacation.Date_Start.Year, App.API.Person.User_Vacation_Allowances[index].Vacation_Days_Quantity);
+                    App.API.Person.User_Vacations.Remove(deletedVacation);
                 } else
                 {
-                    _viewModel.VacationAllowances[index].Vacation_Days_Quantity += deletedItem.Count;
-                    await _viewModel.UpdateVacationAllowance(deletedItem.User_Id_SAP, deletedItem.Vacation_Id, deletedItem.Date_Start.Year, _viewModel.VacationAllowances[index].Vacation_Days_Quantity);
-                    _viewModel.VacationsToAproval.Remove(deletedItem);
+                    _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances[index].Vacation_Days_Quantity += deletedVacation.Count;
+                    await _viewModel.UpdateVacationAllowance(deletedVacation.User_Id_SAP, deletedVacation.Vacation_Id, deletedVacation.Date_Start.Year, _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances[index].Vacation_Days_Quantity);
+                    _viewModel.SelectedSubordinate.Subordinate_Vacations.Remove(deletedVacation);
+                    foreach(Subordinate subordinate in App.API.Person.Subordinates)
+                    {
+                        if(subordinate.Id_SAP == deletedVacation.User_Id_SAP)
+                        {
+                            subordinate.Subordinate_Vacations.Remove(deletedVacation);
+                        }
+                    }
                 }
-                
-                //_viewModel.VacationsToAprovalFromDataBase.Remove(deletedItem);
+
                 _viewModel.PlannedIndex = 0;
-                _viewModel.Calendar.UpdateColor();
+                if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
+                {
+                    _viewModel.Calendar.UpdateColor(_viewModel.SelectedSubordinate.Subordinate_Vacations);
+                } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
+                {
+                    _viewModel.Calendar.UpdateColor(App.API.Person.User_Vacations);
+                }
             }
         }
     }

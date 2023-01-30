@@ -213,7 +213,7 @@
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBox Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Person.FullName,UpdateSourceTrigger=PropertyChanged}" 
+                        <TextBox Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding PersonName,UpdateSourceTrigger=PropertyChanged}" 
                                  IsReadOnly="True"
                                  HorizontalAlignment="Stretch"
                                  TextAlignment="Center" 
@@ -310,7 +310,7 @@
                                     <GridViewColumn Width="95" DisplayMemberBinding="{Binding Count}" Header="Дней"></GridViewColumn>
                                     <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
                                     <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_end,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
-                                    <GridViewColumn Width="115" DisplayMemberBinding="{Binding Status}" Header="Статус"></GridViewColumn>
+                                    <GridViewColumn Width="115" DisplayMemberBinding="{Binding Vacation_Status_Name}" Header="Статус"></GridViewColumn>
                                     <GridViewColumn Width="40" Header="">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>

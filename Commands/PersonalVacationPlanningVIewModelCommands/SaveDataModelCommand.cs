@@ -34,13 +34,13 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
             {
                 isSupervisorView = true;
-                VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderByDescending(i => i.Count));
-                VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(_viewModel.VacationAllowancesForSubordinate);
+                VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.SelectedSubordinate.Subordinate_Vacations.OrderByDescending(i => i.Count));
+                VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(_viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances);
             } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
             {
                 isPersonalView = true;
-                VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAprovalForPerson.OrderByDescending(i => i.Count));
-                VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(_viewModel.VacationAllowancesForPerson);
+                VacationsToAproval = new ObservableCollection<Vacation>(App.API.Person.User_Vacations.OrderByDescending(i => i.Count));
+                VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(App.API.Person.User_Vacation_Allowances);
             }
             _viewModel.IsEnabled = false;
             _ = new DispatcherTimer(
@@ -73,13 +73,13 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 }), Dispatcher.CurrentDispatcher);
             foreach(Vacation item in VacationsToAproval)
             {
-                item.Status = "Согласован";
+                item.Vacation_Status_Name = "On Approval";
                 if(isSupervisorView)
                 {
-                    item.Status = "На согласовании";
+                    item.Vacation_Status_Name = "Approved";
                 }
                 int countConflicts = 0;
-                Vacation plannedVacation = new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Status);
+                Vacation plannedVacation = new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Name, item.Creator_Id);
                 IEnumerable<VacationDTO> conflictingVacations = await App.API.GetConflictingVacationAsync(plannedVacation);
 
                 foreach(VacationDTO vacationDTO in conflictingVacations)
@@ -88,22 +88,16 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 }
                 if(countConflicts == 0)
                 {
+                    VacationAllowanceViewModel vacationAllowance = GetVacationAllowance(item.Name);
+                    await _viewModel.UpdateVacationAllowance(item.User_Id_SAP, item.Vacation_Id, item.Date_Start.Year, vacationAllowance.Vacation_Days_Quantity);
                     await App.API.AddVacationAsync(plannedVacation);
                     if(isPersonalView)
                     {
-                        _viewModel.VacationsToAprovalFromDataBase.Add(plannedVacation);
+                        _viewModel.UpdateDataForPerson();
                     }else if(isSupervisorView)
                     {
-                        foreach(Subordinate subordinate in _viewModel.Subordinates)
-                        {
-                            if(subordinate.Id_SAP == item.User_Id_SAP)
-                            {
-                                subordinate.Subordinate_Vacations.Add(new VacationViewModel(item.Name,item.User_Id_SAP,item.Vacation_Id,item.Color,item.Date_Start,item.Date_end, item.Status, Environment.UserName));
-                            }
-                        }
+                        _viewModel.UpdateDataForSubordinate();
                     }
-                    VacationAllowanceViewModel vacation = GetVacationAllowance(item.Name);
-                    await _viewModel.UpdateVacationAllowance(item.User_Id_SAP, item.Vacation_Id, item.Date_Start.Year, vacation.Vacation_Days_Quantity);
                 } else
                 {
                     _viewModel.ShowAlert("Такой отпуск уже существует");

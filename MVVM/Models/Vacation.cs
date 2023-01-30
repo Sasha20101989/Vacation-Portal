@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MiscUtil.Collections;
+using MiscUtil.Collections.Extensions;
+using System;
 using System.Windows.Media;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
@@ -23,7 +25,8 @@ namespace Vacation_Portal.MVVM.Models
         public Brush Color { get; set; }
         public DateTime Date_Start { get; set; }
         public DateTime Date_end { get; set; }
-        public string Status { get; set; }
+        public string Vacation_Status_Name { get; set; }
+        public string Creator_Id { get; set; }
 
         public override string ToString()
         {
@@ -40,7 +43,7 @@ namespace Vacation_Portal.MVVM.Models
             return HashCode.Combine(Date_Start, Date_end);
         }
 
-        public Vacation(string name, int user_Id_SAP, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, string status)
+        public Vacation(string name, int user_Id_SAP, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, string statusName, string creator_Id)
         {
             Name = name;
             User_Id_SAP = user_Id_SAP;
@@ -49,7 +52,8 @@ namespace Vacation_Portal.MVVM.Models
             Color = color;
             Date_Start = date_Start;
             Date_end = date_end;
-            Status = status;
+            Vacation_Status_Name = statusName;
+            Creator_Id = creator_Id;
         }
     }
 }
