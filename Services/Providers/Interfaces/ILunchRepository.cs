@@ -39,7 +39,7 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         Task UpdateVacationAllowanceAsync(int userIdSAP, int vacation_Id, int year, int count);
         Task AddVacationAsync(Vacation vacation);
         Task DeleteVacationAsync(Vacation vacation);
-        Task<IEnumerable<VacationViewModel>> LoadVacationAsync(int UserIdSAP);
+        Task<IEnumerable<Vacation>> LoadVacationAsync(int UserIdSAP);
         Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation);
     }
 }

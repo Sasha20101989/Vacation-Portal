@@ -89,7 +89,7 @@ namespace Vacation_Portal.Services.Providers
                 OnPropertyChanged(nameof(HolidayTypes));
             }
         }
-        private readonly ObservableCollection<VacationViewModel> Vacations = new ObservableCollection<VacationViewModel>();
+        private readonly ObservableCollection<Vacation> Vacations = new ObservableCollection<Vacation>();
         private readonly ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
         public Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
         public Action<Access> OnAccessChanged { get; set; }
@@ -100,16 +100,16 @@ namespace Vacation_Portal.Services.Providers
         #endregion
 
         #region Person
-        public async IAsyncEnumerable<VacationViewModel> FetchVacationsAsync(int sapId)
+        public async IAsyncEnumerable<Vacation> FetchVacationsAsync(int sapId)
         {
             App.Current.Dispatcher.Invoke((Action) delegate
             {
                 App.SplashScreen.status.Text = "Загружаю ваши отпуска...";
                 App.SplashScreen.status.Foreground = Brushes.Black;
             });
-            IEnumerable<VacationViewModel> vacations = await LoadVacationAsync(sapId);
+            IEnumerable<Vacation> vacations = await LoadVacationAsync(sapId);
 
-            foreach(VacationViewModel item in vacations)
+            foreach(Vacation item in vacations)
             {
                 yield return item;
             }
@@ -137,7 +137,7 @@ namespace Vacation_Portal.Services.Providers
                 foreach(PersonDTO personDTO in fullPersonDTOs)
                 {
 
-                    await foreach(VacationViewModel vacation in FetchVacationsAsync(personDTO.User_Id_SAP))
+                    await foreach(Vacation vacation in FetchVacationsAsync(personDTO.User_Id_SAP))
                     {
                         Brush brushColor;
                         if(vacation.Color == null)
@@ -147,13 +147,10 @@ namespace Vacation_Portal.Services.Providers
                         {
                             brushColor = vacation.Color;
                         }
-                        VacationViewModel vacationViewModel = new VacationViewModel(vacation.Name,
-                                                            vacation.User_Id_SAP, vacation.Vacation_Id,
-                                                            brushColor, vacation.DateStart, vacation.DateEnd,
-                                                            vacation.Status, vacation.Creator_Id);
-                        if(!Vacations.Contains(vacationViewModel))
+
+                        if(!Vacations.Contains(vacation))
                         {
-                            Vacations.Add(vacationViewModel);
+                            Vacations.Add(vacation);
                         }
                     }
 
@@ -169,9 +166,9 @@ namespace Vacation_Portal.Services.Providers
                 //собираю общий список с персонами и их отпусками
                 foreach(PersonDTO item in fullPersonDTOs)
                 {
-                    ObservableCollection<VacationViewModel> VacationsForPerson = new ObservableCollection<VacationViewModel>();
+                    ObservableCollection<Vacation> VacationsForPerson = new ObservableCollection<Vacation>();
                     ObservableCollection<VacationAllowanceViewModel> VacationAllowancesForPerson = new ObservableCollection<VacationAllowanceViewModel>();
-                    foreach(VacationViewModel vacationForPerson in Vacations)
+                    foreach(Vacation vacationForPerson in Vacations)
                     {
                         if(vacationForPerson.User_Id_SAP == item.User_Id_SAP)
                         {
@@ -389,22 +386,22 @@ namespace Vacation_Portal.Services.Providers
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             int status = 0;
-            if(vacation.Status == "Новый")
+            if(vacation.Vacation_Status_Name == "New")
             {
                 status = 1;
-            } else if(vacation.Status == "На согласовании")
+            } else if(vacation.Vacation_Status_Name == "On Approval")
             {
                 status = 2;
-            } else if(vacation.Status == "Согласован")
+            } else if(vacation.Vacation_Status_Name == "Approved")
             {
                 status = 3;
-            } else if(vacation.Status == "Перешел в отдел кадров")
+            } else if(vacation.Vacation_Status_Name == "Passed to HR")
             {
                 status = 4;
-            } else if(vacation.Status == "Проведён")
+            } else if(vacation.Vacation_Status_Name == "Commited")
             {
                 status = 5;
-            } else if(vacation.Status == "Удалён")
+            } else if(vacation.Vacation_Status_Name == "Deleted")
             {
                 status = 6;
             }
@@ -430,22 +427,22 @@ namespace Vacation_Portal.Services.Providers
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             int status = 0;
-            if(vacation.Status == "Новый")
+            if(vacation.Vacation_Status_Name == "New")
             {
                 status = 1;
-            } else if(vacation.Status == "На согласовании")
+            } else if(vacation.Vacation_Status_Name == "On Approval")
             {
                 status = 2;
-            } else if(vacation.Status == "Согласован")
+            } else if(vacation.Vacation_Status_Name == "Approved")
             {
                 status = 3;
-            } else if(vacation.Status == "Перешел в отдел кадров")
+            } else if(vacation.Vacation_Status_Name == "Passed to HR")
             {
                 status = 4;
-            } else if(vacation.Status == "Проведён")
+            } else if(vacation.Vacation_Status_Name == "Commited")
             {
                 status = 5;
-            } else if(vacation.Status == "Удалён")
+            } else if(vacation.Vacation_Status_Name == "Deleted")
             {
                 status = 6;
             }
@@ -487,7 +484,7 @@ namespace Vacation_Portal.Services.Providers
                 MessageBox.Show(ex.Message);
             }
         }
-        public async Task<IEnumerable<VacationViewModel>> LoadVacationAsync(int UserIdSAP)
+        public async Task<IEnumerable<Vacation>> LoadVacationAsync(int UserIdSAP)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             object parameters = new
@@ -507,11 +504,11 @@ namespace Vacation_Portal.Services.Providers
         #endregion
 
         #region ToObj
-        private VacationViewModel ToVacation(VacationDTO dto)
+        private Vacation ToVacation(VacationDTO dto)
         {
             BrushConverter converter = new System.Windows.Media.BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
-            return new VacationViewModel(dto.Vacation_Name, dto.User_Id_SAP, dto.Vacation_Id, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status_Id, dto.Creator_Id);
+            return new Vacation(dto.Vacation_Name, dto.User_Id_SAP, dto.Vacation_Id, dto.Count, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status_Name, dto.Creator_Id);
         }
         private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto)
         {

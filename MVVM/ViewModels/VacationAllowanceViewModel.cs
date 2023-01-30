@@ -4,7 +4,7 @@ using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.ViewModels
 {
-    public class VacationAllowanceViewModel : ViewModelBase
+    public class VacationAllowanceViewModel : ViewModelBase, ICloneable
     {
         public int User_Id_SAP { get; set; }
         public int Vacation_Id { get; set; }
@@ -53,6 +53,11 @@ namespace Vacation_Portal.MVVM.ViewModels
         public override int GetHashCode()
         {
             return HashCode.Combine(User_Id_SAP, Vacation_Id, Vacation_Year);
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }

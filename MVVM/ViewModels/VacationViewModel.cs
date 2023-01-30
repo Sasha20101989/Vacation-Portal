@@ -13,11 +13,11 @@ namespace Vacation_Portal.MVVM.ViewModels
         public Brush Color { get; set; }
         public DateTime DateStart { get; set; }
         public DateTime DateEnd { get; set; }
-        public string Status { get; set; }
+        public string Vacation_Status_Name { get; set; }
         public string Creator_Id { get; set; }
         public int Count => GetCount();
 
-        public VacationViewModel(string name, int user_Id_SAP, int vacation_Id, Brush color, DateTime dateStart, DateTime dateEnd, string status, string creator_Id)
+        public VacationViewModel(string name, int user_Id_SAP, int vacation_Id, Brush color, DateTime dateStart, DateTime dateEnd, string statusName, string creator_Id)
         {
             Name = name;
             User_Id_SAP = user_Id_SAP;
@@ -25,7 +25,7 @@ namespace Vacation_Portal.MVVM.ViewModels
             Color = color;
             DateStart = dateStart;
             DateEnd = dateEnd;
-            Status = status;
+            Vacation_Status_Name = statusName;
             Creator_Id = creator_Id;
         }
 

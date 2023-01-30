@@ -36,11 +36,11 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
             {
                 isSupervisorView = true;
-                VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAproval.OrderByDescending(i => i.Count));
+                VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.SelectedSubordinate.Subordinate_Vacations.OrderByDescending(i => i.Count));
             } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
             {
                 isPersonalView = true;
-                VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.VacationsToAprovalForPerson.OrderByDescending(i => i.Count));
+                VacationsToAproval = new ObservableCollection<Vacation>(App.API.Person.User_Vacations.OrderByDescending(i => i.Count));
             }
 
             Task<object> openCheck = DialogHost.Show(_checkVacationView, "RootDialog", _viewModel.ExtendedClosingEventHandler);

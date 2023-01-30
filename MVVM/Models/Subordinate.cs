@@ -11,7 +11,7 @@ namespace Vacation_Portal.MVVM.Models
         public string Surname { get; set; }
         public string Patronymic { get; set; }
         public string Position { get; set; }
-        public ObservableCollection<VacationViewModel> Subordinate_Vacations { get; set; } = new ObservableCollection<VacationViewModel>();
+        public ObservableCollection<Vacation> Subordinate_Vacations { get; set; } = new ObservableCollection<Vacation>();
         public ObservableCollection<VacationAllowanceViewModel> Subordinate_Vacation_Allowances { get; set; } = new ObservableCollection<VacationAllowanceViewModel> ();
         public string FullName => ToString();
 
@@ -19,7 +19,7 @@ namespace Vacation_Portal.MVVM.Models
         {
             return $"{Surname} {Name} {Patronymic}";
         }
-        public Subordinate(int idSAP, string name, string surname, string patronymic, string position, ObservableCollection<VacationViewModel> subordinateVacations, ObservableCollection<VacationAllowanceViewModel> subordinateVacationAllowances)
+        public Subordinate(int idSAP, string name, string surname, string patronymic, string position, ObservableCollection<Vacation> subordinateVacations, ObservableCollection<VacationAllowanceViewModel> subordinateVacationAllowances)
         {
             Id_SAP = idSAP;
             Name = name;

@@ -218,8 +218,7 @@
                               Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
                               ItemsSource="{Binding PositionNames}"
                               SelectedValue="{Binding SelectedPositionName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                              Margin="10" 
-                              HorizontalContentAlignment="Center">
+                              Margin="10">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -234,7 +233,7 @@
                                     <TextBlock HorizontalAlignment="left" Grid.Row="0" Grid.Column="0" Text="{Binding}" FontSize="13"/>
                                     <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Orientation="Horizontal">
                                         <TextBlock Text="{Binding Id_SAP}" FontSize="11" Style="{StaticResource MaterialDesignCharacterCounterTextBlock}" HorizontalAlignment="Right"/>
-                                        <TextBlock Text="{Binding Position}" FontSize="11" Style="{StaticResource MaterialDesignCharacterCounterTextBlock}"/>
+                                        <TextBlock Text="{Binding Position}" FontSize="11" Style="{StaticResource MaterialDesignCharacterCounterTextBlock}" TextTrimming="WordEllipsis"/>
                                     </WrapPanel>
 
                                 </Grid>
@@ -250,9 +249,8 @@
                               Grid.Column="1" 
                               Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
                               ItemsSource="{Binding FilteredSubordinates}"
-                              SelectedValue="{Binding SelectedPerson, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                              Margin="10" 
-                              HorizontalContentAlignment="Center">
+                              SelectedValue="{Binding SelectedSubordinate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                              Margin="10">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -284,7 +282,7 @@
                             <ListBox Grid.Row="0" Margin="6" 
                                      SelectedIndex="{Binding SelectedIndexAllowance, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                      SelectedItem="{Binding SelectedItemAllowance, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
-                                     ItemsSource="{Binding VacationAllowances,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     ItemsSource="{Binding VacationAllowancesForSubordinate,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource MaterialDesignChoiceChipAccentOutlineListBox}">
                                 <ListBox.Resources>
                                     <DataTemplate DataType="{x:Type vModels:VacationAllowanceViewModel}">
@@ -342,7 +340,7 @@
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
                         <ListView Grid.Row="0" Margin="3" Name="ListView" SelectionMode="Single" MaxWidth="700"
-                                      ItemsSource="{Binding VacationsToAproval, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
+                                      ItemsSource="{Binding VacationsToAprovalForSubordinate, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
                                       SelectedIndex="{Binding PlannedIndex, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                       SelectedItem="{Binding PlannedItem, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                       ScrollViewer.VerticalScrollBarVisibility="Auto" FontSize="12"
@@ -364,7 +362,7 @@
                                     <GridViewColumn Width="95" DisplayMemberBinding="{Binding Count}" Header="Дней"></GridViewColumn>
                                     <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
                                     <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_end,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
-                                    <GridViewColumn Width="115" DisplayMemberBinding="{Binding Status}" Header="Статус"></GridViewColumn>
+                                    <GridViewColumn Width="115" DisplayMemberBinding="{Binding Vacation_Status_Name}" Header="Статус"></GridViewColumn>
                                     <GridViewColumn Width="40" Header="">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>

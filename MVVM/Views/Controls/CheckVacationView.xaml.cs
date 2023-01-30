@@ -62,7 +62,7 @@ namespace Vacation_Portal.MVVM.Views.Controls
         {
             isCheck14.Visibility = Visibility.Visible;
             isExclamation7.Visibility = Visibility.Visible;
-            isExclamation7.ToolTip = "Не запланированно 7 дней основного отпуска, но вы можете согласовать текущее состояние.";
+            isExclamation7.ToolTip = "Не запланированно 7 дней непрерывного основного отпуска, но вы можете согласовать текущее состояние.";
             if(isSupervisor)
             {
                 ButtonSubmit.Text = "Согласовать";

@@ -63,19 +63,19 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
             {
                 VacationsToAproval = new ObservableCollection<Vacation>(
-                    _viewModel.VacationsToAproval.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
-                _viewModel.VacationsToAproval.Add(_viewModel.PlannedItem);
-                VacationsToAproval = _viewModel.VacationsToAproval;
+                    _viewModel.SelectedSubordinate.Subordinate_Vacations.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
+                _viewModel.SelectedSubordinate.Subordinate_Vacations.Add(_viewModel.PlannedItem);
+                VacationsToAproval = _viewModel.SelectedSubordinate.Subordinate_Vacations;
                 VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
-                    _viewModel.VacationAllowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
+                    _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
             } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
             {
                 VacationsToAproval = new ObservableCollection<Vacation>(
-                    _viewModel.VacationsToAprovalForPerson.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
-                _viewModel.VacationsToAprovalForPerson.Add(_viewModel.PlannedItem);
-                VacationsToAproval = _viewModel.VacationsToAprovalForPerson;
+                    App.API.Person.User_Vacations.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
+                App.API.Person.User_Vacations.Add(_viewModel.PlannedItem);
+                VacationsToAproval = App.API.Person.User_Vacations;
                 VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
-                    _viewModel.VacationAllowancesForPerson.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
+                    App.API.Person.User_Vacation_Allowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
             }
             
             //_viewModel.VacationsToAprovalFromDataBase.Add(_viewModel.PlannedItem);
@@ -133,30 +133,34 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             }
             if(_viewModel.Calendar.WorkingDays.Contains(true))
             {
-                if(_viewModel.SelectedPerson != null)
+                if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
                 {
-                    _viewModel.VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
-                } else
+                    _viewModel.SelectedSubordinate.Subordinate_Vacations = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
+                    _viewModel.UpdateDataForSubordinate();
+                } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
                 {
-                    _viewModel.VacationsToAprovalForPerson = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
+                    App.API.Person.User_Vacations = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
+                    _viewModel.UpdateDataForPerson();
                 }
                 
-                //_viewModel.VacationsToAprovalFromDataBase = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
                 _viewModel.PlannedIndex = 0;
 
             } else
             {
                 _viewModel.ShowAlert("В выбранном периоде, отсутствуют рабочие дни выбранного типа отпуска.");
                 _viewModel.SelectedItemAllowance.Vacation_Days_Quantity += _viewModel.Calendar.CountSelectedDays;
-                if(_viewModel.SelectedPerson != null)
+                if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
                 {
-                    _viewModel.VacationsToAproval.Remove(_viewModel.PlannedItem);
-                } else
+                    _viewModel.SelectedSubordinate.Subordinate_Vacations.Remove(_viewModel.PlannedItem);
+                    _viewModel.Calendar.ClearVacationData(_viewModel.SelectedSubordinate.Subordinate_Vacations);
+                    _viewModel.UpdateDataForSubordinate();
+                } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
                 {
-                    _viewModel.VacationsToAprovalForPerson.Remove(_viewModel.PlannedItem);
+                    App.API.Person.User_Vacations.Remove(_viewModel.PlannedItem);
+                    _viewModel.Calendar.ClearVacationData(App.API.Person.User_Vacations);
+                    _viewModel.UpdateDataForPerson();
                 }
-                //_viewModel.VacationsToAprovalFromDataBase.Remove(_viewModel.PlannedItem);
-                _viewModel.Calendar.ClearVacationData();
+                
             }
         }
 
