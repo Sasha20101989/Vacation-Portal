@@ -41,5 +41,6 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         Task DeleteVacationAsync(Vacation vacation);
         Task<IEnumerable<Vacation>> LoadVacationAsync(int UserIdSAP);
         Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation);
+        Task UpdateVacationStatusAsync(Vacation vacation);
     }
 }
