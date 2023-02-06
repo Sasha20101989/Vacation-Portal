@@ -382,6 +382,47 @@ namespace Vacation_Portal.Services.Providers
                 MessageBox.Show(ex.Message);
             }
         }
+
+        public async Task UpdateVacationStatusAsync(Vacation vacation)
+        {
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            int status = 0;
+            if(vacation.Vacation_Status_Name == "New")
+            {
+                status = 1;
+            } else if(vacation.Vacation_Status_Name == "On Approval")
+            {
+                status = 2;
+            } else if(vacation.Vacation_Status_Name == "Approved")
+            {
+                status = 3;
+            } else if(vacation.Vacation_Status_Name == "Passed to HR")
+            {
+                status = 4;
+            } else if(vacation.Vacation_Status_Name == "Commited")
+            {
+                status = 5;
+            } else if(vacation.Vacation_Status_Name == "Deleted")
+            {
+                status = 6;
+            }
+            object parameters = new
+            {
+                User_Id_SAP = vacation.User_Id_SAP,
+                Vacation_Id = vacation.Vacation_Id,
+                Vacation_Year = vacation.Date_Start.Year,
+                Vacation_Start_Date = vacation.Date_Start,
+                Vacation_End_Date = vacation.Date_end,
+                Vacation_Status_Id = status
+            };
+            try
+            {
+                await database.QueryAsync("usp_Update_Vacation_Status", parameters, commandType: CommandType.StoredProcedure);
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
         public async Task AddVacationAsync(Vacation vacation)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();

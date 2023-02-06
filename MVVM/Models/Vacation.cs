@@ -6,7 +6,7 @@ using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.Models
 {
-    public class Vacation : ViewModelBase
+    public class Vacation : ViewModelBase, ICloneable
     {
         public string Name { get; set; }
         public int User_Id_SAP { get; set; }
@@ -25,6 +25,7 @@ namespace Vacation_Portal.MVVM.Models
         public Brush Color { get; set; }
         public DateTime Date_Start { get; set; }
         public DateTime Date_end { get; set; }
+        public Range<DateTime> DateRange { get; set; }
         public string Vacation_Status_Name { get; set; }
         public string Creator_Id { get; set; }
 
@@ -54,6 +55,17 @@ namespace Vacation_Portal.MVVM.Models
             Date_end = date_end;
             Vacation_Status_Name = statusName;
             Creator_Id = creator_Id;
+            DateRange = Date_end > Date_Start ? Date_Start.To(Date_end) : Date_end.To(Date_Start);
+        }
+
+        public bool IsInRange(DateTime date)
+        {
+            return date >= Date_Start && date <= Date_end;
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }

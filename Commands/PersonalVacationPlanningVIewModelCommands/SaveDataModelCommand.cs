@@ -73,11 +73,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 }), Dispatcher.CurrentDispatcher);
             foreach(Vacation item in VacationsToAproval)
             {
-                item.Vacation_Status_Name = "On Approval";
-                if(isSupervisorView)
-                {
-                    item.Vacation_Status_Name = "Approved";
-                }
                 int countConflicts = 0;
                 Vacation plannedVacation = new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Name, item.Creator_Id);
                 IEnumerable<VacationDTO> conflictingVacations = await App.API.GetConflictingVacationAsync(plannedVacation);
@@ -100,7 +95,13 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     }
                 } else
                 {
-                    _viewModel.ShowAlert("Такой отпуск уже существует");
+                    item.Vacation_Status_Name = "On Approval";
+                    if(isSupervisorView)
+                    {
+                        item.Vacation_Status_Name = "Approved";
+                    }
+                    await App.API.UpdateVacationStatusAsync(item);
+                    VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAproval.OrderBy(i => i.Date_Start));
                 }
             }
         }
