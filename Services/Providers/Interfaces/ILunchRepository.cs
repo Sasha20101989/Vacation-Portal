@@ -15,7 +15,9 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         DateTime DateUnblockNextCalendar { get; set; }
         DateTime DateUnblockPlanning { get; set; }
         bool IsCalendarUnblocked { get; set; }
-        bool IsCalendarPlannedOpen { get; set; }
+        bool CheckDateUnblockedCalendarAsync();
+        bool IsCalendarPlannedOpen { get;}
+        bool CheckNextCalendarPlanningUnlock();
         ICommand LoadHolidays { get; }
         ICommand LoadHolidayTypes { get; }
         ICommand Login { get; }
@@ -26,12 +28,9 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         Action<ObservableCollection<Holiday>> OnHolidayTypesChanged { get; set; }
         Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
         Action<Person> OnLoginSuccess { get; set; }
-        Action<Access> OnAccessChanged { get; set; }
         //Task<IEnumerable<SubordinateDTO>> GetSubordinateAsync(int Id_SAP);
         Task<Person> LoginAsync(string account);
         Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(int yearCurrent, int yearNext);
-        Task<IEnumerable<Settings>> GetSettingsAsync(string account);
-        Task<IEnumerable<Access>> GetAccessAsync(string account);
         Task<IEnumerable<Holiday>> GetHolidayTypesAsync();
         Task AddHolidayAsync(HolidayViewModel holiday);
         Task DeleteHolidayAsync(HolidayViewModel holiday);
@@ -39,8 +38,11 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         Task UpdateVacationAllowanceAsync(int userIdSAP, int vacation_Id, int year, int count);
         Task AddVacationAsync(Vacation vacation);
         Task DeleteVacationAsync(Vacation vacation);
-        Task<IEnumerable<Vacation>> LoadVacationAsync(int UserIdSAP);
+        Task<IEnumerable<Vacation>> LoadVacationsAsync(int UserIdSAP);
+        Task<IEnumerable<Vacation>> LoadAllVacationsAsync();
         Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation);
         Task UpdateVacationStatusAsync(Vacation vacation);
+        IEnumerable<CalendarSettings> GetSettingsForCalendar();
+        
     }
 }

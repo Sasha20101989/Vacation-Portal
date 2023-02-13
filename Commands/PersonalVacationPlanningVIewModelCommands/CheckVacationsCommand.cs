@@ -33,7 +33,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             bool isSupervisorView = false;
             bool isPersonalView = false;
             ObservableCollection<Vacation> VacationsToAproval = new ObservableCollection<Vacation>();
-            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
+            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
             {
                 isSupervisorView = true;
                 VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.SelectedSubordinate.Subordinate_Vacations.OrderByDescending(i => i.Count));
@@ -93,22 +93,14 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                                 if(countSecondPeriod >= 7)
                                 {
                                     isSecondCheckDaysPlaned = true;
+                                    _checkVacationView.VisibilityButtonSecondCheck(isSupervisorView);
+                                    _viewModel.IsEnabled = true;
+                                    return;
                                 }
                             }
-                            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
-                            {
-                                _checkVacationView.VisibilityExclamationButtonSecondCheck(isSupervisorView);
-                                break;
-                            }
-                            if(isSecondCheckDaysPlaned)
-                            {
-                                _checkVacationView.VisibilityButtonSecondCheck(isSupervisorView);
-                                break;
-                            }
-                            
                         }
                     }
-                    if(isSupervisorView)
+                    if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
                     {
                         _checkVacationView.VisibilityExclamationButtonSecondCheck(isSupervisorView);
                     }

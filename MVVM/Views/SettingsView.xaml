@@ -6,7 +6,6 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:Vacation_Portal.MVVM.Views"
              xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages" 
-             d:DataContext="{d:DesignInstance vm:SettingsViewModel}"
              mc:Ignorable="d">
 
         <DockPanel Margin="16" Grid.Column="0">

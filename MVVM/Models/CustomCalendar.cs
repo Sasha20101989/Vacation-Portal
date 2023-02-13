@@ -295,11 +295,17 @@ namespace Vacation_Portal.MVVM.Models
                 {
                     ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
                     ObservableCollection<Vacation> VacationsToAproval = new ObservableCollection<Vacation>();
-                    if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
+                    if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
                     {
-                        VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
+                        if(_viewModel.SelectedSubordinate != null)
+                        {
+                            VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                             _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances.Where(f => f.Vacation_Year == CurrentYear));
-                        VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.SelectedSubordinate.Subordinate_Vacations.Where(f => f.Date_Start.Year == CurrentYear));
+                            VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.SelectedSubordinate.Subordinate_Vacations.Where(f => f.Date_Start.Year == CurrentYear));
+                        } else
+                        {
+                            _viewModel.ShowAlert("Сначала выберете подчинённого!");
+                        }
                     } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
                     {
                         VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
@@ -343,9 +349,6 @@ namespace Vacation_Portal.MVVM.Models
                             SelectedMonth = Convert.ToInt32(obj.Tag.ToString().Split(".")[0]);
                             SelectedYear = Convert.ToInt32(obj.Tag.ToString().Split(".")[1]);
                             SelectedNameDay = obj.ToolTip.ToString();
-                        } else if(e.OriginalSource is Button)
-                        {
-
                         }
 
                         ClicksOnCalendar++;
@@ -372,7 +375,7 @@ namespace Vacation_Portal.MVVM.Models
                                 {
                                     DayAddition = GetDayAddition(CountSelectedDays);
                                     _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.yyyy");
-                                    _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "New", Environment.UserName);
+                                    _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Planned", Environment.UserName);
                                 } else
                                 {
                                     _viewModel.ShowAlert("Этот день является праздичным, начните планирование отпуска с другого дня");
@@ -406,7 +409,7 @@ namespace Vacation_Portal.MVVM.Models
                                     {
                                         DayAddition = GetDayAddition(CountSelectedDays);
                                         _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
-                                        _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, "New", Environment.UserName);
+                                        _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, "Planned", Environment.UserName);
                                     } else
                                     {
                                         _viewModel.ShowAlert("Этот день является праздичным, закончите планирование отпуска другим днём");
@@ -426,7 +429,7 @@ namespace Vacation_Portal.MVVM.Models
 
                                         DayAddition = GetDayAddition(CountSelectedDays);
                                         _viewModel.PlannedVacationString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
-                                        _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate, "New", Environment.UserName);
+                                        _viewModel.PlannedItem = new Vacation(_viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate, "Planned", Environment.UserName);
                                     } else
                                     {
                                         _viewModel.ShowAlert("Этот день является праздичным, закончите планирование отпуска с другим днём");
@@ -493,7 +496,6 @@ namespace Vacation_Portal.MVVM.Models
                             CountSelectedDays = 0;
                             _viewModel.PlannedVacationString = "";
                             UpdateColor(VacationsToAproval);
-                            //PlannedItem = null;
                         }
                     }
                 } else

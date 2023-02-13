@@ -31,7 +31,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             bool isSupervisorView = false;
             bool isPersonalView = false;
             
-            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
+            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
             {
                 isSupervisorView = true;
                 VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.SelectedSubordinate.Subordinate_Vacations.OrderByDescending(i => i.Count));
@@ -101,9 +101,16 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                         item.Vacation_Status_Name = "Approved";
                     }
                     await App.API.UpdateVacationStatusAsync(item);
-                    VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAproval.OrderBy(i => i.Date_Start));
                 }
             }
+            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
+            {
+                _viewModel.UpdateDataForSubordinate();
+            } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
+            {
+                _viewModel.UpdateDataForPerson();
+            }
+            
         }
 
         private VacationAllowanceViewModel GetVacationAllowance(string name)

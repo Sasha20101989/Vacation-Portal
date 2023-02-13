@@ -30,10 +30,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         }
         public AdminPageHrViewModel()
         {
-            _dateUnblockNextCalendar = DateTime.Parse("2022-12-14");
-            _dateUnblockPlanningCalendar = DateTime.Parse("2022-12-14");
-            App.API.DateUnblockNextCalendar = DateUnblockNextCalendar;
-            App.API.DateUnblockPlanning = DateUnblockPlanningCalendar;
+            DateUnblockNextCalendar = App.API.DateUnblockNextCalendar;
+            DateUnblockPlanningCalendar = App.API.DateUnblockPlanning;
         }
     }
 }

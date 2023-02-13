@@ -28,16 +28,14 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
 		<PackageReference Include="Dapper" Version="2.0.123" />
 		<PackageReference Include="Enums.NET" Version="4.0.1" />
-		<PackageReference Include="iTextSharp" Version="5.5.13.3" />
 		<PackageReference Include="JonSkeet.MiscUtil" Version="0.2.0" />
-		<PackageReference Include="MaterialDesignColors" Version="2.0.9" />
-		<PackageReference Include="MaterialDesignThemes" Version="4.6.1" />
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+		<PackageReference Include="MaterialDesignColors" Version="2.1.1" />
+		<PackageReference Include="MaterialDesignThemes" Version="4.7.1" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls" Version="7.1.3" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
-		<PackageReference Include="NEST" Version="7.17.5" />
 		<PackageReference Include="PropertyWithPropChangeMethodSnippet" Version="2.0.0" />
 		<PackageReference Include="SqlTableDependency" Version="8.5.8" />
 		<PackageReference Include="System.Linq" Version="4.3.0" />

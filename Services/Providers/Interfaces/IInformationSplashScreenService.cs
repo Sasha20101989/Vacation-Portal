@@ -2,6 +2,6 @@
 {
     public interface IInformationSplashScreenService
     {
-        void AccessSetting(string userRole);
+        void AccessSetting(string userRole, string Name);
     }
 }

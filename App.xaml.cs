@@ -39,7 +39,7 @@ namespace Vacation_Portal
             DependencyDetector.StopDependencyPlannedHoliday();
             DependencyDetector.StopDependencyPlannedVacation();
         }
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             _host.Start();
 
@@ -58,8 +58,8 @@ namespace Vacation_Portal
 
             SplashScreen.Show();
 
-            API.Login.Execute(new object());
-
+            
+            
             base.OnStartup(e);
         }
     }
