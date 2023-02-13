@@ -8,12 +8,7 @@ namespace Vacation_Portal.Commands
     {
         public override async Task ExecuteAsync(object parameter)
         {
-            App.Current.Dispatcher.Invoke((Action) delegate
-            {
-                App.SplashScreen.status.Text = "Ищу вас в базе данных...";
-            });
             _ = await App.API.LoginAsync(Environment.UserName);
-            //_ = await App.API.LoginAsync(Environment.UserName);
         }
     }
 }

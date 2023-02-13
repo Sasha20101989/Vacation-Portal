@@ -8,6 +8,7 @@ using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 using Vacation_Portal.MVVM.ViewModels.ForPages;
 using Vacation_Portal.MVVM.Views;
+using Vacation_Portal.MVVM.Views.Controls;
 
 namespace Vacation_Portal.MVVM.Models
 {
@@ -17,9 +18,9 @@ namespace Vacation_Portal.MVVM.Models
         private static readonly string _settingsPage = "Настройки приложения";
         private static readonly string _holidaysPage = "Настройки выходных и праздников";
         private static readonly string _supervisorPage = "Страница руководителя";
-        private static readonly string _hrPage = "Страница HR сотрудника";
+        private static readonly string _hrGodPage = "Страница HR бога";
         private static readonly string _hrAdminPage = "Настройки календаря";
-        //private static readonly string Табельщик = "Страница HR сотрудника";
+        private static readonly string _accounting = "Страница табельщика";
         private static readonly string _personalVacationPlanning = "Страница персонального планирования отпуска";
         #endregion
         public int Id_SAP { get; set; }
@@ -28,17 +29,20 @@ namespace Vacation_Portal.MVVM.Models
         public string Surname { get; set; }
         public string Patronymic { get; set; }
         public int User_Department_Id { get; set; }
+        public string Department_Name { get; set; }
         public int User_Sub_Department_Id { get; set; }
         public int User_Virtual_Department_Id { get; set; }
+        public string Virtual_Department_Name { get; set; }
         public int User_Supervisor_Id_SAP { get; set; }
         public string User_Role { get; set; }
         public bool Is_HR { get; set; }
+        public bool Is_HR_GOD { get; set; }
         public bool Is_Accounting { get; set; }
         public bool Is_Supervisor { get; set; }
         public string User_App_Color { get; set; }
         public string Position { get; set; }
 
-        public string FullName { get; set; }
+        public string FullName => ToString();
         public ObservableCollection<Vacation> User_Vacations { get; set; } = new ObservableCollection<Vacation>();
         public ObservableCollection<VacationAllowanceViewModel> User_Vacation_Allowances { get; set; } = new ObservableCollection<VacationAllowanceViewModel>();
         public override string ToString()
@@ -50,7 +54,7 @@ namespace Vacation_Portal.MVVM.Models
 
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
-        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, int virtualDepartmentId, int subDepartmentId, string roleName, string appColor, int userSupervisorIdSAP,string position, ObservableCollection<Vacation> userVacations, ObservableCollection<VacationAllowanceViewModel> userVacationAllowances)
+        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, string departmentName, int virtualDepartmentId, string virtualDepartmentName, int subDepartmentId, string roleName, string appColor, int userSupervisorIdSAP,string position, ObservableCollection<Vacation> userVacations, ObservableCollection<VacationAllowanceViewModel> userVacationAllowances)
         {
             Id_SAP = id_SAP;
             Id_Account = id_Account;
@@ -66,57 +70,16 @@ namespace Vacation_Portal.MVVM.Models
             Position = position;
             User_Vacations = userVacations;
             User_Vacation_Allowances = userVacationAllowances;
+            Department_Name = departmentName;
+            Virtual_Department_Name = virtualDepartmentName;
         }
-        //public async IAsyncEnumerable<Access> FetchSubordinatesAsync()
-        //{
-        //    App.Current.Dispatcher.Invoke((Action) delegate
-        //    {
-        //        App.SplashScreen.status.Text = "Загружаю список подчинённых...";
-        //        App.SplashScreen.status.Foreground = Brushes.Black;
-        //    });
-        //    IEnumerable<Subordinate> subordinates = await App.API.GetSubordinateAsync(Id_SAP);
-
-        //    foreach(var item in subordinates)
-        //    {
-        //        yield return item;
-        //    }
-        //}
-        //public async IAsyncEnumerable<Access> FetchAccessAsync()
-        //{
-        //    App.Current.Dispatcher.Invoke((Action) delegate
-        //    {
-        //        App.SplashScreen.status.Text = "Проверяю разрешения вашего аккаунта...";
-        //        App.SplashScreen.status.Foreground = Brushes.Black;
-        //    });
-        //    IEnumerable<Access> access = await App.API.GetAccessAsync(Environment.UserName);
-
-        //    foreach(Access item in access)
-        //    {
-        //        yield return item;
-        //    }
-        //}
-        //public async IAsyncEnumerable<Settings> FetchSettingsAsync()
-        //{
-        //    App.Current.Dispatcher.Invoke((Action) delegate
-        //    {
-        //        App.SplashScreen.status.Text = "Ищу настройки вашего аккаунта...";
-        //        App.SplashScreen.status.Foreground = Brushes.Black;
-        //    });
-
-        //    IEnumerable<Settings> settings = await App.API.GetSettingsAsync(Environment.UserName);
-
-        //    foreach(Settings item in settings)
-        //    {
-        //        yield return item;
-        //    }
-        //}
 
         public void AddPages(MainWindowViewModel _viewModel)
         {
             App.Current.Dispatcher.Invoke((Action) delegate
              {
-                 App.SplashScreen.status.Text = "Добавляю доступные вам страницы...";
-                 App.SplashScreen.status.Foreground = Brushes.Black;
+                 //App.SplashScreen.status.Text = "Добавляю доступные вам страницы...";
+                 //App.SplashScreen.status.Foreground = Brushes.Black;
                  foreach(MenuItem menuItem in GenerateMenuItems(_viewModel))
                  {
                      if(!_viewModel.MenuItems.Contains(menuItem))
@@ -134,11 +97,18 @@ namespace Vacation_Portal.MVVM.Models
                      _viewModel.AdminString = "Аккаунт руководителя";
                      MenuItem supervisorItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _supervisorPage);
                      _viewModel.MainMenuItems = CreateMainMenuItems(supervisorItem, _viewModel);
-                 } else if(Is_HR)
+                 } else if(Is_HR_GOD)
                  {
                      _viewModel.AdminString = "Аккаунт HR сотрудника";
-                     MenuItem hRItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _holidaysPage);
+                     MenuItem hRItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _hrGodPage);
+                     MenuItem hRItem_1 = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _holidaysPage);
                      _viewModel.MainMenuItems = CreateMainMenuItems(hRItem, _viewModel);
+                     _viewModel.MainMenuItems = CreateMainMenuItems(hRItem_1, _viewModel);
+                 } else if(Is_Accounting)
+                 {
+                     _viewModel.AdminString = "Аккаунт табельщика";
+                     MenuItem accountingItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _accounting);
+                     _viewModel.MainMenuItems = CreateMainMenuItems(accountingItem, _viewModel);
                  }
                  OnMenuItemsChanged(_viewModel.MenuItems);
              });
@@ -171,7 +141,7 @@ namespace Vacation_Portal.MVVM.Models
                 new PersonalVacationPlanningViewModel());
             }
 
-            if(Is_HR)
+            if(Is_HR_GOD)
             {
                 yield return new MenuItem(
                 _holidaysPage,
@@ -181,11 +151,28 @@ namespace Vacation_Portal.MVVM.Models
                 new HolidaysViewModel());
 
                 yield return new MenuItem(
+                _hrGodPage,
+                typeof(VacationPlanningForHRView),
+                selectedIcon: PackIconKind.AccountSearch,
+                unselectedIcon: PackIconKind.AccountSearchOutline,
+                new PersonalVacationPlanningViewModel());
+
+                yield return new MenuItem(
                 _hrAdminPage,
                 typeof(AdminPageHrView),
                 selectedIcon: PackIconKind.BoxCog,
                 unselectedIcon: PackIconKind.BoxCogOutline,
                 new AdminPageHrViewModel());
+            }
+
+            if(Is_Accounting)
+            {
+                yield return new MenuItem(
+                _accounting,
+                typeof(VacationPlanningForAccountingView),
+                selectedIcon: PackIconKind.AccountTieWoman,
+                unselectedIcon: PackIconKind.AccountTieWoman,
+                new PersonalVacationPlanningViewModel());
             }
 
             yield return new MenuItem(

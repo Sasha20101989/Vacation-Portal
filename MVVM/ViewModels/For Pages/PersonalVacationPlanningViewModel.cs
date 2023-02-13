@@ -66,10 +66,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        
-
-        
-
         private List<Subordinate> _filteredSubordinates = new List<Subordinate>();
         public List<Subordinate> FilteredSubordinates
         {
@@ -78,6 +74,37 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 _filteredSubordinates = value;
                 OnPropertyChanged(nameof(FilteredSubordinates));
+            }
+        }
+        private ObservableCollection<string> _filteredPositionNames = new ObservableCollection<string>();
+        public ObservableCollection<string> FilteredPositionNames
+        {
+            get => _filteredPositionNames;
+            set
+            {
+                _filteredPositionNames = value;
+                OnPropertyChanged(nameof(FilteredPositionNames));
+            }
+        }
+        private ObservableCollection<string> _departments = new ObservableCollection<string>();
+        public ObservableCollection<string> Departments
+        {
+            get => _departments;
+            set
+            {
+                _departments = value;
+                OnPropertyChanged(nameof(Departments));
+            }
+        }
+
+        private ObservableCollection<string> _virtualDepartments = new ObservableCollection<string>();
+        public ObservableCollection<string> VirtualDepartments
+        {
+            get => _virtualDepartments;
+            set
+            {
+                _virtualDepartments = value;
+                OnPropertyChanged(nameof(VirtualDepartments));
             }
         }
 
@@ -92,6 +119,54 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
+        private string _selectedDepartmentName;
+        public string SelectedDepartmentName
+        {
+            get => _selectedDepartmentName;
+            set
+            {
+                _selectedDepartmentName = value;
+                OnPropertyChanged(nameof(SelectedDepartmentName));
+
+                SelectedPositionName = null;
+                SelectedSubordinate = null;
+
+                if(SelectedDepartmentName == null)
+                {
+                    FilteredSubordinates = App.API.Person.Subordinates;
+                    FilteredPositionNames = PositionNames;
+                } else
+                {
+                    FilteredSubordinates = App.API.Person.Subordinates.FindAll(x => x.Department_Name == SelectedDepartmentName);
+                    UpdatePositionNames();
+                }
+            }
+        }
+
+        private string _selectedVirtualDepartmentName;
+        public string SelectedVirtualDepartmentName
+        {
+            get => _selectedVirtualDepartmentName;
+            set
+            {
+                _selectedVirtualDepartmentName = value;
+                OnPropertyChanged(nameof(SelectedVirtualDepartmentName));
+
+                SelectedPositionName = null;
+                SelectedSubordinate = null;
+
+                if(SelectedVirtualDepartmentName == null)
+                {
+                    FilteredSubordinates = App.API.Person.Subordinates;
+                    FilteredPositionNames = PositionNames;
+                } else
+                {
+                    FilteredSubordinates = App.API.Person.Subordinates.FindAll(x => x.Virtual_Department_Name == SelectedVirtualDepartmentName);
+                    UpdatePositionNames();
+                }
+            }
+        }
+
         private string _selectedPositionName;
         public string SelectedPositionName
         {
@@ -100,19 +175,26 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 _selectedPositionName = value;
                 OnPropertyChanged(nameof(SelectedPositionName));
-                
+
                 if(SelectedPositionName == null)
                 {
                     FilteredSubordinates = App.API.Person.Subordinates;
                 } else
                 {
-                    FilteredSubordinates = App.API.Person.Subordinates.FindAll(x => x.Position == SelectedPositionName);
+                    if(SelectedDepartmentName != null)
+                    {
+                        FilteredSubordinates = App.API.Person.Subordinates.FindAll(x => x.Position == SelectedPositionName && x.Department_Name == SelectedDepartmentName);
+                    } else if(SelectedVirtualDepartmentName != null)
+                    {
+                        FilteredSubordinates = App.API.Person.Subordinates.FindAll(x => x.Position == SelectedPositionName && x.Virtual_Department_Name == SelectedVirtualDepartmentName);
+
+                    } else
+                    {
+                        FilteredSubordinates = App.API.Person.Subordinates.FindAll(x => x.Position == SelectedPositionName);
+                    }
                 }
-                
             }
         }
-
-        
 
         private DateTime _currentDate = DateTime.Now;
         public DateTime CurrentDate
@@ -309,7 +391,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 {
                     Calendar.CalendarClickable = SelectedItemAllowance.Vacation_Days_Quantity > 0;
                 }
-                if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
+                if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
                 {
                     Calendar.ClearVacationData(VacationsToAprovalForSubordinate);
                 } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
@@ -512,40 +594,61 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             MovePrevYearCommand = new AnotherCommandImplementation(
                _ =>
                {
-                   IsLoadingCalendarPage = true;
-                   IsPreviousYearEnabled = false;
-                   IsNextYearEnabled = true;
-                   Calendar = Calendars[0];
-                   CurrentYear = Calendars[0].CurrentYear;
-                   if(SelectedSubordinate != null)
+                   if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
                    {
-                       UpdateDataForSubordinate();
-                   } else
+                       if(SelectedSubordinate != null)
+                       {
+                           IsLoadingCalendarPage = true;
+                           IsPreviousYearEnabled = false;
+                           IsNextYearEnabled = true;
+                           Calendar = Calendars[0];
+                           CurrentYear = Calendars[0].CurrentYear;
+                           UpdateDataForSubordinate();
+                           IsLoadingCalendarPage = false;
+                       } else
+                       {
+                           ShowAlert("Сначала выберете сотрудника");
+                       }
+                   } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
                    {
+                       IsLoadingCalendarPage = true;
+                       IsPreviousYearEnabled = false;
+                       IsNextYearEnabled = true;
+                       Calendar = Calendars[0];
+                       CurrentYear = Calendars[0].CurrentYear;
                        UpdateDataForPerson();
+                       IsLoadingCalendarPage = false;
                    }
-
-                   IsLoadingCalendarPage = false;
                });
 
             MoveNextYearCommand = new AnotherCommandImplementation(
                _ =>
                {
-                   IsLoadingCalendarPage = true;
-                   IsPreviousYearEnabled = true;
-                   IsNextYearEnabled = false;
-                   Calendar = Calendars[1];
-                   CurrentYear = Calendars[1].CurrentYear;
-
-                   if(SelectedSubordinate != null)
+                   if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
                    {
-                       UpdateDataForSubordinate();
-                   } else
+                       if(SelectedSubordinate != null)
+                       {
+                           IsLoadingCalendarPage = true;
+                           IsPreviousYearEnabled = true;
+                           IsNextYearEnabled = false;
+                           Calendar = Calendars[1];
+                           CurrentYear = Calendars[1].CurrentYear;
+                           UpdateDataForSubordinate();
+                           IsLoadingCalendarPage = false;
+                       } else
+                       {
+                           ShowAlert("Сначала выберете сотрудника");
+                       }
+                   } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
                    {
+                       IsLoadingCalendarPage = true;
+                       IsPreviousYearEnabled = true;
+                       IsNextYearEnabled = false;
+                       Calendar = Calendars[1];
+                       CurrentYear = Calendars[1].CurrentYear;
                        UpdateDataForPerson();
+                       IsLoadingCalendarPage = false;
                    }
-
-                   IsLoadingCalendarPage = false;
                });
 
             _initializeLazy = new Lazy<Task>(async () => await Initialize());
@@ -556,8 +659,15 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #region Task Lazy
         private async Task Initialize()
         {
-            IsNextCalendarUnblocked = App.API.IsCalendarUnblocked;
-            IsNextCalendarPlannedOpen = App.API.IsCalendarPlannedOpen;
+            IsNextCalendarUnblocked = App.API.CheckDateUnblockedCalendarAsync();
+            IsNextCalendarPlannedOpen = App.API.CheckNextCalendarPlanningUnlock();
+            if(App.API.Person.Is_HR_GOD)
+            {
+                PrepareDepartments();
+            } else if(App.API.Person.Is_Accounting)
+            {
+                PrepareVirtualDepartments();
+            }
 
             PreparePositionsAndSubordinateNames();
             await prepareCalendar();
@@ -588,6 +698,42 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             VacationsToAprovalForPerson = new ObservableCollection<Vacation>(
                                                     App.API.Person.User_Vacations.Where(f => f.Date_Start.Year == CurrentYear));
         }
+        private void UpdatePositionNames()
+        {
+            FilteredPositionNames.Clear();
+            foreach(Subordinate subordinate in FilteredSubordinates)
+            {
+                if(!FilteredPositionNames.Contains(subordinate.Position))
+                {
+                    FilteredPositionNames.Add(subordinate.Position);
+                }
+            }
+            FilteredPositionNames = new ObservableCollection<string>(FilteredPositionNames.OrderBy(i => i));
+        }
+        public void PrepareVirtualDepartments()
+        {
+            VirtualDepartments.Clear();
+            foreach(Subordinate subordinate in App.API.Person.Subordinates)
+            {
+                if(!VirtualDepartments.Contains(subordinate.Virtual_Department_Name))
+                {
+                    VirtualDepartments.Add(subordinate.Virtual_Department_Name);
+                }
+            }
+            VirtualDepartments = new ObservableCollection<string>(VirtualDepartments.OrderBy(i => i));
+        }
+        public void PrepareDepartments()
+        {
+            Departments.Clear();
+            foreach(Subordinate subordinate in App.API.Person.Subordinates)
+            {
+                if(!Departments.Contains(subordinate.Department_Name))
+                {
+                    Departments.Add(subordinate.Department_Name);
+                }
+            }
+            Departments = new ObservableCollection<string>(Departments.OrderBy(i => i));
+        }
         public void PreparePositionsAndSubordinateNames()
         {
             PositionNames.Clear();
@@ -599,6 +745,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     PositionNames.Add(subordinate.Position);
                 }
             }
+            PositionNames = new ObservableCollection<string>(PositionNames.OrderBy(i => i));
+            FilteredPositionNames = Clone(PositionNames);
             FilteredSubordinates = App.API.Person.Subordinates;
 
             List<string> VacationNames = new List<string> { "Основной", "Вредность", "Ненормированность", "Стаж" };
@@ -655,6 +803,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #endregion OnStartup
 
         #region Utils
+
         public void ShowAlert(string alert)
         {
             _sampleError.ErrorName.Text = alert;

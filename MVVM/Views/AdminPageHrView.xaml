@@ -11,8 +11,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <local:ResponsePanel/>
-        <WrapPanel>
+        <WrapPanel Width="800" HorizontalAlignment="Left">
             <TextBlock Text="Отображение календаря на следующий год с " Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
             <DatePicker Margin="10 0 0 0" MinWidth="120"
                                         SelectedDate="{Binding DateUnblockNextCalendar,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"            
@@ -22,6 +21,6 @@
                                         SelectedDate="{Binding DateUnblockPlanningCalendar,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"            
                                         Style="{StaticResource MaterialDesignDatePicker}"/>
         </WrapPanel>
-        
+        <local:ResponsePanel/>
     </Grid>
 </UserControl>

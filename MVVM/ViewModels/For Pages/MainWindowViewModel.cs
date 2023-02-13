@@ -20,10 +20,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         #region Pages
         private static readonly string _homePage = "Главная страница";
         private static readonly string _settingsPage = "Настройки";
-        //private static readonly string SupervisorPage = "Страница руководителя";
-        //private static readonly string HRPage = "Страница HR сотрудника";
-        //private static readonly string Табельщик = "Страница HR сотрудника";
-        //private static readonly string PersonalVacationPlanning = "Страница персонального планирования отпуска";
         #endregion
 
         #region Addons
@@ -267,7 +263,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         {
             if(person != null)
             {
-                App.SplashScreenService.AccessSetting(person.User_Role);
+                App.SplashScreenService.AccessSetting(person.User_Role, person.Name);
                 person.MenuItemsChanged += OnPerson_MenuItemsChanged;
                 person.AddPages(_viewModel);
                 if(person.User_App_Color != null)

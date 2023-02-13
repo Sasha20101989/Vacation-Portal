@@ -65,7 +65,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             }
             ObservableCollection<Vacation> VacationsToAproval = new ObservableCollection<Vacation>();
             ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
-            if(SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
+            if(SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
             {
                 VacationsToAproval = new ObservableCollection<Vacation>(
                     _viewModel.SelectedSubordinate.Subordinate_Vacations.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
@@ -104,6 +104,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
                 if(lastVacation != null &&
                     lastVacation.Name == vacation.Name &&
+                    lastVacation.Vacation_Status_Name != "On Approval" &&
                     lastVacation.Date_end.AddDays(1) == vacation.Date_Start)
                 {
                     _viewModel.Calendar.WorkingDays.Add(true);
@@ -123,7 +124,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     await App.API.DeleteVacationAsync(lastVacation);
                     await App.API.DeleteVacationAsync(vacation);
                     lastVacation.Date_end = vacation.Date_end;
-                    lastVacation.Vacation_Status_Name = "New";
+                    lastVacation.Vacation_Status_Name = "Planned";
                     _viewModel.ShowAlert("Несколько периодов объединены в один.");
                 } else
                 {
@@ -146,14 +147,15 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                         conflictFreeVacations.Add(item);
                     }
                 }
-
+                
                 foreach(Vacation conflictFreeVacation in conflictFreeVacations)
                 {
-                    await _viewModel.UpdateVacationAllowance(conflictFreeVacation.User_Id_SAP, conflictFreeVacation.Vacation_Id, conflictFreeVacation.Date_Start.Year, _viewModel.SelectedItemAllowance.Vacation_Days_Quantity);
+                    var updatedAllowance = VacationAllowances.FirstOrDefault(a => a.Vacation_Name == conflictFreeVacation.Name);
+                    await _viewModel.UpdateVacationAllowance(conflictFreeVacation.User_Id_SAP, conflictFreeVacation.Vacation_Id, conflictFreeVacation.Date_Start.Year, updatedAllowance.Vacation_Days_Quantity);
                     await App.API.AddVacationAsync(conflictFreeVacation);
                 }
 
-                if(SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
+                if(SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
                 {
                     _viewModel.SelectedSubordinate.Subordinate_Vacations = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
                     _viewModel.UpdateDataForSubordinate();
@@ -169,7 +171,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             {
                 _viewModel.ShowAlert("В выбранном периоде, отсутствуют рабочие дни выбранного типа отпуска.");
                 _viewModel.SelectedItemAllowance.Vacation_Days_Quantity += _viewModel.Calendar.CountSelectedDays;
-                if(SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate))
+                if(SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
                 {
                     _viewModel.SelectedSubordinate.Subordinate_Vacations.Remove(_viewModel.PlannedItem);
                     _viewModel.Calendar.ClearVacationData(_viewModel.SelectedSubordinate.Subordinate_Vacations);

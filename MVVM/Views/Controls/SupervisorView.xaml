@@ -216,7 +216,7 @@
                               Text="Должность" 
                               Grid.Column="0" 
                               Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
-                              ItemsSource="{Binding PositionNames}"
+                              ItemsSource="{Binding PositionNames,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               SelectedValue="{Binding SelectedPositionName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                               Margin="10">
                         <ComboBox.ItemTemplate>
@@ -232,8 +232,8 @@
                                     </Grid.RowDefinitions>
                                     <TextBlock HorizontalAlignment="left" Grid.Row="0" Grid.Column="0" Text="{Binding}" FontSize="13"/>
                                     <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Id_SAP}" FontSize="11" Style="{StaticResource MaterialDesignCharacterCounterTextBlock}" HorizontalAlignment="Right"/>
-                                        <TextBlock Text="{Binding Position}" FontSize="11" Style="{StaticResource MaterialDesignCharacterCounterTextBlock}" TextTrimming="WordEllipsis"/>
+                                        <TextBlock Text="{Binding Id_SAP}" FontSize="11" Style="{StaticResource MaterialDesignCharacterCounterTextBlock}"/>
+                                        <TextBlock Text="{Binding Position}" FontSize="11" Style="{StaticResource MaterialDesignCharacterCounterTextBlock}"/>
                                     </WrapPanel>
 
                                 </Grid>
@@ -248,7 +248,7 @@
                               Text="Сотрудник" 
                               Grid.Column="1" 
                               Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
-                              ItemsSource="{Binding FilteredSubordinates}"
+                              ItemsSource="{Binding FilteredSubordinates,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               SelectedValue="{Binding SelectedSubordinate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                               Margin="10">
                         <ComboBox.ItemTemplate>
@@ -263,7 +263,7 @@
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
                                     <TextBlock HorizontalAlignment="left" Grid.Row="0" Grid.Column="0" Text="{Binding FullName}" FontSize="13"/>
-                                    <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Orientation="Horizontal">
+                                    <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" Orientation="Horizontal">
                                         <TextBlock Text="{Binding Id_SAP}" FontSize="11" Style="{StaticResource MaterialDesignCharacterCounterTextBlock}" HorizontalAlignment="Right"/>
                                         <TextBlock Text="{Binding Position}" FontSize="11" Style="{StaticResource MaterialDesignCharacterCounterTextBlock}"/>
                                     </WrapPanel>
