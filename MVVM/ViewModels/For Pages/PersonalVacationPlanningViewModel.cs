@@ -624,7 +624,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             MoveNextYearCommand = new AnotherCommandImplementation(
                _ =>
                {
-                   if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
+                   if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) ||
+                      App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD) ||
+                      App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.ACCOUNTING))
                    {
                        if(SelectedSubordinate != null)
                        {

@@ -1,0 +1,88 @@
+﻿<UserControl x:Class="Vacation_Portal.MVVM.Views.VacationsApprovalView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages" 
+             xmlns:local="clr-namespace:Vacation_Portal.MVVM.Views.Controls"
+             xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
+             xmlns:ext="clr-namespace:Vacation_Portal.Extensions"
+             d:DataContext="{d:DesignInstance vm:PersonalVacationPlanningViewModel}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ext:InitialsConverter x:Key="InitialsConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Margin="0,0,0,8"
+                                       Style="{StaticResource MaterialDesignHeadline1TextBlock}"
+                                       Text="Ожидают подтверждения" Foreground="IndianRed" FontWeight="Bold" FontSize="13"/>
+
+        <ListView  Grid.Row="1" ItemsSource="{Binding VacationsToAprovalForPerson}" Height="130" VerticalAlignment="Top" Margin="0 5 0 0">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <Grid>
+                            <Ellipse Width="95" Height="95" Fill="Gray" />
+                            <Image Source="{Binding ImageSource}" Width="90" Height="90" />
+                            <TextBlock Text="{Binding User_Id_SAP, Converter={StaticResource InitialsConverter}}"
+                                       FontSize="36" FontWeight="Bold" Foreground="White"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </Grid>
+                        <TextBlock Margin="0 5 0 0" Text="Александр Фелюгин" FontSize="11"/>
+                    </StackPanel>
+                    
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Border Grid.Row="2" Grid.ColumnSpan="2" Background="#10000000" CornerRadius="5" Padding="8" HorizontalAlignment="Stretch"  Margin="0 15 0 0">
+            <local:ResponsePanel Grid.Row="2"/>
+        </Border>
+
+        <ListView Grid.Row="3" ItemsSource="{Binding VacationsToAprovalForPerson}" Height="130" VerticalAlignment="Bottom" Margin="0 5 0 0">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    
+                        <StackPanel>
+                        <Grid>
+                            <Ellipse Width="95" Height="95" Fill="Gray" />
+                            <md:Badged BadgePlacementMode="BottomRight">
+                                <md:Badged.Badge>
+                                    <md:PackIcon Kind="CheckBold" Width="20" Height="20" Foreground="DarkSeaGreen"/>
+                                </md:Badged.Badge>
+                                <Image Source="{Binding ImageSource}" Width="90" Height="90" />
+                            </md:Badged>
+                            <TextBlock Text="{Binding User_Id_SAP, Converter={StaticResource InitialsConverter}}"
+                                       FontSize="36" FontWeight="Bold" Foreground="White"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            </Grid>
+                            <TextBlock Margin="0 5 0 0" Text="Александр Фелюгин" FontSize="11"/>
+                        </StackPanel>
+                    
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</UserControl>

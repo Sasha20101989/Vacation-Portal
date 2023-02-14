@@ -18,6 +18,7 @@ namespace Vacation_Portal.MVVM.Models
         private static readonly string _settingsPage = "Настройки приложения";
         private static readonly string _holidaysPage = "Настройки выходных и праздников";
         private static readonly string _supervisorPage = "Страница руководителя";
+        private static readonly string _approvalPage = "Страница подтверждения отпусков";
         private static readonly string _hrGodPage = "Страница HR бога";
         private static readonly string _hrAdminPage = "Настройки календаря";
         private static readonly string _accounting = "Страница табельщика";
@@ -93,22 +94,28 @@ namespace Vacation_Portal.MVVM.Models
 
                  if(Is_Supervisor)
                  {
-                     // _viewModel.MenuItems.Add(new MenuItem(_supervisorPage, typeof(VacationPlanningForSubordinatesView), selectedIcon: PackIconKind.AccountTie, unselectedIcon: PackIconKind.AccountTieOutline, new PersonalVacationPlanningViewModel()));
                      _viewModel.AdminString = "Аккаунт руководителя";
                      MenuItem supervisorItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _supervisorPage);
+                     MenuItem supervisorItem_1 = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _approvalPage);
                      _viewModel.MainMenuItems = CreateMainMenuItems(supervisorItem, _viewModel);
-                 } else if(Is_HR_GOD)
+                 } 
+                 if(Is_HR_GOD)
                  {
                      _viewModel.AdminString = "Аккаунт HR сотрудника";
                      MenuItem hRItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _hrGodPage);
                      MenuItem hRItem_1 = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _holidaysPage);
                      _viewModel.MainMenuItems = CreateMainMenuItems(hRItem, _viewModel);
                      _viewModel.MainMenuItems = CreateMainMenuItems(hRItem_1, _viewModel);
-                 } else if(Is_Accounting)
+                 } 
+                 if(Is_Accounting)
                  {
                      _viewModel.AdminString = "Аккаунт табельщика";
                      MenuItem accountingItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _accounting);
                      _viewModel.MainMenuItems = CreateMainMenuItems(accountingItem, _viewModel);
+                 }
+                 if(Is_Supervisor && Department_Name == "Отдел персонала и общих вопросов")
+                 {
+
                  }
                  OnMenuItemsChanged(_viewModel.MenuItems);
              });
@@ -136,6 +143,13 @@ namespace Vacation_Portal.MVVM.Models
                 yield return new MenuItem(
                 _supervisorPage,
                 typeof(VacationPlanningForSubordinatesView),
+                selectedIcon: PackIconKind.AccountTie,
+                unselectedIcon: PackIconKind.AccountTieOutline,
+                new PersonalVacationPlanningViewModel());
+
+                yield return new MenuItem(
+                _approvalPage,
+                typeof(VacationsApprovalView),
                 selectedIcon: PackIconKind.AccountTie,
                 unselectedIcon: PackIconKind.AccountTieOutline,
                 new PersonalVacationPlanningViewModel());
