@@ -8,7 +8,25 @@
              xmlns:md="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="120"
-             d:DesignWidth="800" >
+             d:DesignWidth="800" 
+             xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages" 
+             d:DataContext="{d:DesignInstance vm:PersonalVacationPlanningViewModel}">
+    <VisualStateManager.VisualStateGroups>
+        <VisualStateGroup x:Name="CommonStates">
+            <VisualState x:Name="Accepted">
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="DeclineBorder" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.3"/>
+                    <DoubleAnimation Storyboard.TargetName="DeclineRoot" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.3"/>
+                </Storyboard>
+            </VisualState>
+            <VisualState x:Name="Declined">
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="DeclineBorder" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.3"/>
+                    <DoubleAnimation Storyboard.TargetName="DeclineRoot" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.3"/>
+                </Storyboard>
+            </VisualState>
+        </VisualStateGroup>
+    </VisualStateManager.VisualStateGroups>
     <Grid Height="90">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
@@ -18,56 +36,57 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" Grid.Column="0" x:Name="AcceptBorder" Background="White" BorderBrush="Green" BorderThickness="1" CornerRadius="22" Height="42" Width="200">
-            <Grid x:Name="AcceptRoot" VerticalAlignment="Stretch" RenderTransformOrigin="0.5,1">
+        <Border Grid.Row="{Binding AcceptRow}" Grid.Column="0" x:Name="AcceptBorder" Opacity="{Binding AcceptBorderOpacity}" Background="{Binding AcceptBorderColor}" BorderBrush="DarkSeaGreen" BorderThickness="1" CornerRadius="22" Height="42" Width="200">
+            <Grid x:Name="AcceptRoot" RenderTransform="{Binding AcceptRenderTransform}" Opacity="{Binding AcceptRootOpacity}" VerticalAlignment="Stretch" RenderTransformOrigin="0.5,1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="48"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Click="AcceptButton_Click" HorizontalAlignment="Left"
+                <Button  Command="{Binding AcceptCommand}" IsEnabled="{Binding IsAcceptedButtonEnabled}" HorizontalAlignment="Left"
                         Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" md:ElevationAssist.Elevation="Dp0">
                     <Button.Background>
-                        <SolidColorBrush Color="Green" />
+                        <SolidColorBrush Color="DarkSeaGreen" />
                     </Button.Background>
                     <Button.BorderBrush>
-                        <SolidColorBrush Color="Green" />
+                        <SolidColorBrush Color="DarkSeaGreen" />
                     </Button.BorderBrush>
                     <Button.Content>
-                        <md:PackIcon Kind="CheckBold" />
+                        <md:PackIcon Kind="CheckBold" Visibility="{Binding IsAcceptedButtonEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     </Button.Content>
                 </Button>
 
-                <TextBlock x:Name="AcceptText" Text="Accept"  
+                <TextBlock x:Name="AcceptText" Text="{Binding AcceptText}"  
                                Grid.Column="1" 
                                VerticalAlignment="Center"
                                Margin="12,0,0,0"/>
             </Grid>
         </Border>
-        <Border VerticalAlignment="Center" Grid.Row="1" Grid.Column="0" x:Name="DeclineBorder" Background="White" BorderBrush="Red" BorderThickness="1,1,1,1" CornerRadius="22" Height="42" Width="200">
-            <Grid x:Name="DeclineRoot" VerticalAlignment="Stretch">
+        <Border VerticalAlignment="Center" Grid.Row="{Binding DeclineRow}" Grid.Column="0" x:Name="DeclineBorder" Opacity="{Binding DeclineBorderOpacity}" Background="{Binding DeclineBorderColor}" BorderBrush="IndianRed" BorderThickness="1,1,1,1" CornerRadius="22" Height="42" Width="200">
+            <Grid x:Name="DeclineRoot" Opacity="{Binding DeclineRootOpacity}" VerticalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="48"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="28*"/>
+                    <ColumnDefinition Width="47*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Click="DeclineButton_Click" HorizontalAlignment="Left"
+                <Button Command="{Binding DeclineCommand}" IsEnabled="{Binding IsDeclinedButtonEnabled}" HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" md:ElevationAssist.Elevation="Dp0">
                     <Button.Background>
-                        <SolidColorBrush Color="Red" />
+                        <SolidColorBrush Color="IndianRed" />
                     </Button.Background>
                     <Button.BorderBrush>
-                        <SolidColorBrush Color="Red" />
+                        <SolidColorBrush Color="IndianRed" />
                     </Button.BorderBrush>
                     <Button.Content>
-                        <md:PackIcon Kind="CancelBold" />
+                        <md:PackIcon Kind="CancelBold" Visibility="{Binding IsDeclinedButtonEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     </Button.Content>
                 </Button>
 
-                <TextBlock x:Name="DeclineText" Text="Decline"  
+                <TextBlock x:Name="DeclineText" Text="{Binding DeclineText}"  
                                Grid.Column="1" 
                                VerticalAlignment="Center"
-                               Margin="12,0,0,0"/>
+                               Margin="12,0,0,0" Grid.ColumnSpan="2"/>
             </Grid>
         </Border>
         <Grid HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Margin="44,0,20,0" Width="124">
@@ -107,5 +126,5 @@
             </Viewbox>
         </Grid>
     </Grid>
-    
+
 </UserControl>

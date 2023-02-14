@@ -245,7 +245,7 @@
                                                     <RowDefinition Height="auto"/>
                                                 </Grid.RowDefinitions>
                                                 <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Vacation_Name}"
-                                                           Width="180"
+                                                           Width="190"
                                                            TextAlignment="Center"
                                                            FontSize="16"/>
                                                 <Rectangle Margin="8 0 0 0" Grid.Column="0" Grid.Row="1" Width="9" Height="9" Fill="{Binding Vacation_Color}" RadiusX="10" RadiusY="10"/>
@@ -326,7 +326,36 @@
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
-                                    </GridView>
+                                    <GridViewColumn Width="40" Header="">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <ContentControl>
+                                                    <ContentControl.Style>
+                                                        <Style TargetType="ContentControl">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Vacation_Status_Name}" Value="Approved">
+                                                                    <Setter Property="Content">
+                                                                        <Setter.Value>
+                                                                            <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="ForestGreen" Width="20" Height="20"
+                                                                                    Command="{Binding RelativeSource={
+                                                                                    RelativeSource AncestorType=ListView},
+                                                                                    Path=DataContext.CancelVacation}"
+                                                                                    CommandParameter="{Binding RelativeSource={
+                                                                                    RelativeSource AncestorType=ListView},
+                                                                                    Path=SelectedItem}">
+                                                                                <md:PackIcon Kind="FileExcel"  Width="20" Height="20"></md:PackIcon>
+                                                                            </Button>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ContentControl.Style>
+                                                </ContentControl>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
                                 </ListView.View>
                             </ListView>
                         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
