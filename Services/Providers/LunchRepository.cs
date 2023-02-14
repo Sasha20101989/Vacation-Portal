@@ -47,7 +47,7 @@ namespace Vacation_Portal.Services.Providers
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
-
+        
         public LunchRepository(SqlDbConnectionFactory sqlDbConnectionFactory)
         {
             _sqlDbConnectionFactory = sqlDbConnectionFactory;
