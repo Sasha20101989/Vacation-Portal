@@ -23,12 +23,10 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         ICommand Login { get; }
         ObservableCollection<HolidayViewModel> Holidays { get; set; }
         ObservableCollection<Holiday> HolidayTypes { get; set; }
-        //List<VacationViewModel> Vacations { get; set; }
         Action<ObservableCollection<HolidayViewModel>> OnHolidaysChanged { get; set; }
         Action<ObservableCollection<Holiday>> OnHolidayTypesChanged { get; set; }
         Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
         Action<Person> OnLoginSuccess { get; set; }
-        //Task<IEnumerable<SubordinateDTO>> GetSubordinateAsync(int Id_SAP);
         Task<Person> LoginAsync(string account);
         Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(int yearCurrent, int yearNext);
         Task<IEnumerable<Holiday>> GetHolidayTypesAsync();
