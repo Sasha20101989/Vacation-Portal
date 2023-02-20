@@ -339,7 +339,7 @@
                                                                             <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="ForestGreen" Width="20" Height="20"
                                                                                     Command="{Binding RelativeSource={
                                                                                     RelativeSource AncestorType=ListView},
-                                                                                    Path=DataContext.CancelVacation}"
+                                                                                    Path=DataContext.CompensateVacation}"
                                                                                     CommandParameter="{Binding RelativeSource={
                                                                                     RelativeSource AncestorType=ListView},
                                                                                     Path=SelectedItem}">
@@ -365,6 +365,7 @@
                                     Command="{Binding CheckVacations}" Content="Проверить и отправить"
                                     IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
                             </Button>
+                            <Button Command="{Binding ShiftVacations}"/>
                         </StackPanel>
                         <md:Snackbar  Grid.Row="2" MessageQueue="{Binding MessageQueuePLanedVacations,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" ActionButtonPlacement="SeparateLine"/>
                         </Grid>

@@ -1,0 +1,591 @@
+﻿<Window x:Class="Vacation_Portal.MVVM.Views.PrintPreView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:md="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        xmlns:viewmodels="clr-namespace:Vacation_Portal.MVVM.ViewModels" 
+        xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models" 
+        xmlns:extensions="clr-namespace:Vacation_Portal.Extensions" 
+        xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+        d:DataContext="{d:DesignInstance Type=viewmodels:PrintPreViewModel}"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Width="800"
+        Height="800"
+        Title="Print PreView">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Button Grid.Column="0" 
+                Content="{md:PackIcon Kind=PrinterOutline}"
+                Foreground="{StaticResource MaterialDesignDarkForeground}"/>
+        <FlowDocumentPageViewer Grid.Column="1" 
+                                HorizontalAlignment="Stretch"
+                                Margin="10"
+                                BorderBrush="Black"
+                                BorderThickness="1">
+            <FlowDocumentPageViewer.Document>
+                
+                <FlowDocument ColumnWidth="700"
+                              FontFamily="Verdana">
+                    <Paragraph TextAlignment="Right">
+                        <TextBlock Foreground="Red"
+                                   FontSize="10"
+                                   Text="Приложение 6 к процедуре 13СР07 Редакция от 01.03.2012"/>
+                    </Paragraph>
+
+                    <BlockUIContainer>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Column="1"
+                                       Grid.Row="0"
+                                       Margin="2 10"
+                                       FontSize="12"
+                                       Text="В Отдел персонала и общих вопросов"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="1"
+                                     Margin="2 10"
+                                     TextAlignment="Center"
+                                     TextWrapping="Wrap"
+                                     FontSize="12"
+                                     FontWeight="Bold"
+                                     IsReadOnly="True"
+                                     md:HintAssist.HelperText="(Ф.И.О. полностью)"
+                                     md:TextFieldAssist.PrefixText="от:"
+                                     Text="{Binding FullName, Mode=OneWay, FallbackValue=fio}"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="2"
+                                     FontSize="12"
+                                     Margin="2 10"
+                                     TextAlignment="Center"
+                                     TextWrapping="Wrap"
+                                     FontWeight="Bold"
+                                     IsReadOnly="True"
+                                     md:HintAssist.HelperText="(должность)"
+                                     Text="{Binding Position, Mode=OneWay, FallbackValue=position}"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="3"
+                                     FontSize="12"
+                                     Margin="2 10"
+                                     TextAlignment="Center"
+                                     TextWrapping="Wrap"
+                                     FontWeight="Bold"
+                                     IsReadOnly="True"
+                                     md:HintAssist.HelperText="(наименование подразделения)"
+                                     Text="{Binding VirtualDepartment, Mode=OneWay, FallbackValue=virtual_department}"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="4"
+                                     FontSize="12"
+                                     Margin="2 10"
+                                     TextAlignment="Center"
+                                     FontWeight="Bold"
+                                     IsReadOnly="True"
+                                     md:HintAssist.HelperText="(таб.№)"
+                                     Text="{Binding SapId, Mode=OneWay, FallbackValue=sap_id}"/>
+                        </Grid>
+                    </BlockUIContainer>
+
+                    <Table CellSpacing="5">
+                        <Table.Columns>
+                            <TableColumn/>
+                            <TableColumn/>
+                        </Table.Columns>
+                        <TableRowGroup>
+                            <TableRow>
+
+                                <TableCell BorderBrush="Black"
+                                           BorderThickness="1"
+                                           Padding="5">
+                                    <Paragraph FontSize="11">
+                                        <TextBlock>
+                                            <Bold>запланированный/оформленный на:</Bold>
+                                            <LineBreak/>
+                                            <Span>from:</Span>
+                                        </TextBlock>
+                                    </Paragraph>
+
+                                    <Table CellSpacing="0"
+                                           BorderBrush="Black"
+                                           BorderThickness="1"
+                                           FontSize="11"
+                                           TextAlignment="Center">
+                                        <Table.Columns>
+                                            <TableColumn Width="Auto"/>
+                                            <TableColumn Width="Auto"/>
+                                            <TableColumn Width="Auto"/>
+                                        </Table.Columns>
+                                        <TableRowGroup>
+                                            <TableRow Background="AliceBlue">
+                                                <TableCell>
+                                                    <Paragraph>
+                                                        <TextBlock>
+                                                            <Bold>с</Bold>
+                                                            <LineBreak/>
+                                                            <Span>from</Span>
+                                                        </TextBlock>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="1 0">
+                                                    <Paragraph>
+                                                        <TextBlock>
+                                                            <Bold>по</Bold>
+                                                            <LineBreak/>
+                                                            <Span>to</Span>
+                                                        </TextBlock>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Paragraph>
+                                                        <TextBlock TextWrapping="Wrap">
+                                                            <Bold>Количество дней</Bold>
+                                                            <LineBreak/>
+                                                            <Span>Days</Span>
+                                                        </TextBlock>
+                                                    </Paragraph>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableRowGroup>
+                                        <TableRowGroup>
+                                            <TableRow>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <BlockUIContainer>
+                                                        <md:PopupBox Height="25" 
+                                                                     Width="25" 
+                                                                     Margin="-10 -3 0 -16" 
+                                                                     Padding="0" 
+                                                                     PlacementMode="RightAndAlignBottomEdges" 
+                                                                     StaysOpen="False" 
+                                                                     PopupMode="Click">
+                                                            <ItemsControl ItemsSource="{Binding AvailableToSelectVacations}">
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <Button Margin="2"
+                                                                 MinWidth="55"
+                                                                 MaxHeight="30"
+                                                                 Content="{Binding}"
+                                                                 CommandParameter="{Binding}"
+                                                                 Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.SelectVacationCommand}" />
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+                                                        </md:PopupBox>
+                                                        
+                                                    </BlockUIContainer>
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[0].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay,FallbackValue=23/23/2323}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="1 1 1 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[0].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[0].Count, Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="1 1 1 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].Count, Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="1 1 1 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].Count, Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="1 1 1 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].Count, Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="1 1 1 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].Count, Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableRowGroup>
+                                    </Table>
+
+                                </TableCell>
+
+                                <TableCell BorderBrush="Black"
+                                           BorderThickness="1"
+                                           Padding="5">
+                                    <Paragraph FontSize="11">
+                                        <TextBlock>
+                                            <Bold>новые даты отпуска:</Bold>
+                                            <LineBreak/>
+                                            <Span>to a new period:</Span>
+                                        </TextBlock>
+                                    </Paragraph>
+
+                                    <Table CellSpacing="0"
+                                           BorderBrush="Black"
+                                           BorderThickness="1"
+                                           FontSize="11"
+                                           TextAlignment="Center">
+                                        <Table.Resources>
+                                            <Style TargetType="DatePicker"
+                                                   BasedOn="{StaticResource MaterialDesignDatePicker}">
+                                                <Setter Property="Padding" Value="2"/>
+                                                <Setter Property="BorderBrush" Value="{x:Null}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType={x:Type TableRow}, Mode=FindAncestor}}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="DarkViolet" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Table.Resources>
+                                        <Table.Columns>
+                                            <TableColumn Width="Auto"/>
+                                            <TableColumn Width="Auto"/>
+                                            <TableColumn Width="Auto"/>
+                                        </Table.Columns>
+                                        <TableRowGroup>
+                                            <TableRow Background="AliceBlue">
+                                                <TableCell>
+                                                    <Paragraph>
+                                                        <TextBlock>
+                                                            <Bold>с</Bold>
+                                                            <LineBreak/>
+                                                            <Span>from</Span>
+                                                        </TextBlock>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="1 0">
+                                                    <Paragraph>
+                                                        <TextBlock>
+                                                            <Bold>по</Bold>
+                                                            <LineBreak/>
+                                                            <Span>to</Span>
+                                                        </TextBlock>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Paragraph>
+                                                        <TextBlock TextWrapping="Wrap">
+                                                            <Bold>Количество дней</Bold>
+                                                            <LineBreak/>
+                                                            <Span>Days</Span>
+                                                        </TextBlock>
+                                                    </Paragraph>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableRowGroup>
+                                        <TableRowGroup>
+                                            <TableRow>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <BlockUIContainer>
+                                                        <DatePicker SelectedDate="{Binding NewVacations[0].Date_Start}"/>
+                                                    </BlockUIContainer>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="1 1 1 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[0].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[0].Count, Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="1 1 1 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].Count, Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="1 1 1 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].Count, Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="1 1 1 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].Count, Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="1 1 1 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                                <TableCell BorderBrush="Black"
+                                                           BorderThickness="0 1 0 0">
+                                                    <Paragraph>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].Count, Mode=OneWay}"/>
+                                                    </Paragraph>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableRowGroup>
+                                    </Table>
+
+                                </TableCell>
+                            </TableRow>
+                        </TableRowGroup>
+                    </Table>
+
+                </FlowDocument>
+                
+                <!--<FlowDocument ColumnWidth="700"
+                              FontFamily="Arial">
+                    <Paragraph TextAlignment="Right">
+                        <TextBlock Foreground="Red"
+                                   FontSize="10"
+                                   Text="Приложение 6 к процедуре 13СР07 Редакция от 01.03.2012"/>
+                    </Paragraph>
+                    <Paragraph>
+                        <TextBlock FontSize="11">
+                            <Bold><Italic>Заявление на выплату компенсации<LineBreak/>дополнительного отпуска</Italic></Bold>
+                        </TextBlock>
+                    </Paragraph>
+                
+                    <BlockUIContainer>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Column="1"
+                                       Grid.Row="0"
+                                       Margin="2 10"
+                                       FontSize="12"
+                                       Text="В Отдел персонала и общих вопросов"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="1"
+                                     Margin="2 10"
+                                     TextAlignment="Center"
+                                     TextWrapping="Wrap"
+                                     FontSize="12"
+                                     FontWeight="Bold"
+                                     IsReadOnly="True"
+                                     md:HintAssist.HelperText="(Ф.И.О. полностью)"
+                                     md:TextFieldAssist.PrefixText="от:"
+                                     Text="{Binding FullName, Mode=OneWay, FallbackValue=fio}"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="2"
+                                     FontSize="12"
+                                     Margin="2 10"
+                                     TextAlignment="Center"
+                                     TextWrapping="Wrap"
+                                     FontWeight="Bold"
+                                     IsReadOnly="True"
+                                     md:HintAssist.HelperText="(должность)"
+                                     Text="{Binding Position, Mode=OneWay, FallbackValue=position}"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="3"
+                                     FontSize="12"
+                                     Margin="2 10"
+                                     TextAlignment="Center"
+                                     TextWrapping="Wrap"
+                                     FontWeight="Bold"
+                                     IsReadOnly="True"
+                                     md:HintAssist.HelperText="(наименование подразделения)"
+                                     Text="{Binding VirtualDepartment, Mode=OneWay, FallbackValue=virtual_department}"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="4"
+                                     FontSize="12"
+                                     Margin="2 10"
+                                     TextAlignment="Center"
+                                     FontWeight="Bold"
+                                     IsReadOnly="True"
+                                     md:HintAssist.HelperText="(таб.№)"
+                                     Text="{Binding SapId, Mode=OneWay, FallbackValue=sap_id}"/>
+                        </Grid>
+                    </BlockUIContainer>
+
+                    <Paragraph TextAlignment="Center"
+                               Margin="2 100">
+                        <TextBlock FontSize="14">
+                            <Bold>ЗАЯВЛЕНИЕ</Bold>
+                        </TextBlock>
+                    </Paragraph>
+
+                    <Paragraph TextAlignment="Left">
+                        <TextBlock FontSize="11"
+                                   TextWrapping="Wrap">
+                            <Run Text="    "/> На основании ст.126 ТК РФ прошу заменить мне дополнительный отпуск за 
+                            <Run Text="{Binding VacationToCompensate.Name, Mode=OneWay, FallbackValue=vacation_type}"/>, запланированный с 
+                            <Run Text="{Binding VacationToCompensate.Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay, FallbackValue=date_from}"/> по 
+                            <Run Text="{Binding VacationToCompensate.Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay, FallbackValue=date_to}"/> в количестве 
+                            <Run Text="{Binding VacationToCompensate.Count, Mode=OneWay, FallbackValue=days}"/> дней, денежной компенсацией.
+                        </TextBlock>
+                    </Paragraph>
+
+                    <BlockUIContainer Margin="30 100">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox Grid.Column="0"
+                                     Margin="20 10"
+                                     TextAlignment="Center"
+                                     HorizontalAlignment="Left"
+                                     Width="150"
+                                     IsReadOnly="True"
+                                     md:HintAssist.HelperText="(подпись)"/>
+                            <TextBox Grid.Column="1"
+                                     FontSize="12"
+                                     Margin="20 10"
+                                     TextAlignment="Center"
+                                     HorizontalAlignment="Right"
+                                     Width="150"
+                                     FontWeight="Bold"
+                                     IsReadOnly="True"
+                                     md:HintAssist.HelperText="(дата)"
+                                     Text="{Binding Source={x:Static sys:DateTime.Today}, StringFormat='{}{0:dd.MM.yyyy}',Mode=OneWay}"/>
+                        </Grid>
+                    </BlockUIContainer>
+
+                </FlowDocument>-->
+                
+            </FlowDocumentPageViewer.Document>
+        </FlowDocumentPageViewer>
+    </Grid>
+</Window>

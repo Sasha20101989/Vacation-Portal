@@ -6,6 +6,7 @@ namespace Vacation_Portal.DTOs
 {
     public class VacationDTO
     {
+        public int Id { get; set; }
         public string Vacation_Name { get; set; }
         public int User_Id_SAP { get; set; }
         public int Vacation_Id { get; set; }
