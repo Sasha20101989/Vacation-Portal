@@ -53,7 +53,8 @@
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <ListView Grid.Column="0" SelectionMode="Single" x:Name="VacationItemListView"
+            <ListView Grid.Column="0" Margin="0 0 10 0"
+                      SelectionMode="Single" x:Name="VacationItemListView"
                       Visibility="{Binding VisibilityListVacations, Converter={StaticResource BooleanToVisibilityConverter}}" 
                       ItemsSource="{Binding VacationsOnApproval, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
                       SelectedIndex="{Binding VacationIndex, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
@@ -82,6 +83,7 @@
                         VerticalAlignment="Top" 
                         HorizontalAlignment="Stretch"  
                         Margin="0 15 0 0">
+                
                 <StackPanel>
                     <Grid Height="90">
                         <Grid.ColumnDefinitions>
@@ -209,61 +211,64 @@
                                 </StackPanel>
                             </Viewbox>
                         </Grid>
-                        <ListView Grid.Column="2" Grid.RowSpan="2" HorizontalAlignment="Left"
+                        <Viewbox  Grid.Column="2" Grid.RowSpan="2" HorizontalAlignment="Left">
+                            <ListView
                                   ItemsSource="{Binding IntersectingVacations,UpdateSourceTrigger=PropertyChanged}"
                                   SelectedIndex="{Binding ProcessedVacationIndex, UpdateSourceTrigger=PropertyChanged}"
                                   SelectedItem="{Binding ProcessedVacationItem, UpdateSourceTrigger=PropertyChanged}"
                                   Height="95">
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
-                                    <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
-                                    <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="IsSelected" Value="True"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <StackPanel>
-                                            <TextBlock Margin="0 0 0 5" Text="Пересечение" FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Center" Foreground="IndianRed"/>
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                                        <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="IsSelected" Value="True"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <StackPanel>
+                                                <TextBlock Margin="0 0 0 5" Text="Пересечение" FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Center" Foreground="IndianRed"/>
 
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition />
-                                                </Grid.RowDefinitions>
-                                                <Ellipse Width="44" Height="44" Fill="Gray" />
-                                                <Image Width="44" Height="44" />
-                                                <TextBlock Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InitialsConverter}}"
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition />
+                                                    </Grid.RowDefinitions>
+                                                    <Ellipse Width="44" Height="44" Fill="Gray" />
+                                                    <Image Width="44" Height="44" />
+                                                    <TextBlock Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InitialsConverter}}"
                                        FontSize="23" Foreground="White"
                                        VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                            </Grid>
-                                            <TextBlock Margin="0 5 0 0" Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" FontSize="10"/>
+                                                </Grid>
+                                                <TextBlock Margin="0 5 0 0" Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" FontSize="10"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="5 0 0 0">
+                                                <TextBlock Margin="0 5 0 0" Text="{Binding Vacation_Status_Name, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
+                                                <TextBlock Margin="0 5 0 0" Text="{Binding Date_Start, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
+                                                <TextBlock Margin="0 5 0 0" Text="{Binding Date_end, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
+                                            </StackPanel>
                                         </StackPanel>
-                                        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="5 0 0 0">
-                                            <TextBlock Margin="0 5 0 0" Text="{Binding Vacation_Status_Name, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
-                                            <TextBlock Margin="0 5 0 0" Text="{Binding Date_Start, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
-                                            <TextBlock Margin="0 5 0 0" Text="{Binding Date_end, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
-                                        </StackPanel>
-                                    </StackPanel>
 
 
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                        </Viewbox>
 
                     </Grid>
                     <Separator Margin="10" Visibility="{Binding IntersectingVacations.Count, Converter={StaticResource IntToVisibilityConverter}}"/>
@@ -321,7 +326,7 @@
                         </ItemsControl>
                     </Border>
                 </StackPanel>
-
+                
             </Border>
         </Grid>
         
