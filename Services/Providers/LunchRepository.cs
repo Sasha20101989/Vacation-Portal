@@ -52,6 +52,46 @@ namespace Vacation_Portal.Services.Providers
         {
             _sqlDbConnectionFactory = sqlDbConnectionFactory;
         }
+        private ObservableCollection<Subordinate> _personsWithVacationsOnApproval = new ObservableCollection<Subordinate>();
+        public ObservableCollection<Subordinate> PersonsWithVacationsOnApproval
+        {
+            get
+            {
+                return _personsWithVacationsOnApproval;
+            }
+            set
+            {
+                _personsWithVacationsOnApproval = value;
+                OnPropertyChanged(nameof(PersonsWithVacationsOnApproval));
+            }
+        }
+        private ObservableCollection<Vacation> _processedVacations = new ObservableCollection<Vacation>();
+        public ObservableCollection<Vacation> ProcessedVacations
+        {
+            get
+            {
+                return _processedVacations;
+            }
+            set
+            {
+                _processedVacations = value;
+                OnPropertyChanged(nameof(ProcessedVacations));
+            }
+        }
+
+        private ObservableCollection<Vacation> _vacationsOnApproval = new ObservableCollection<Vacation>();
+        public ObservableCollection<Vacation> VacationsOnApproval
+        {
+            get
+            {
+                return _vacationsOnApproval;
+            }
+            set
+            {
+                _vacationsOnApproval = value;
+                OnPropertyChanged(nameof(VacationsOnApproval));
+            }
+        }
 
         #region Props
         public Person Person { get; set; }
@@ -181,6 +221,8 @@ namespace Vacation_Portal.Services.Providers
 
                         if(!Vacations.Contains(vacation))
                         {
+                            vacation.User_Name = personDTO.User_Name;
+                            vacation.User_Surname = personDTO.User_Surname;
                             Vacations.Add(vacation);
                         }
                     }
@@ -281,7 +323,7 @@ namespace Vacation_Portal.Services.Providers
                             FullPersons[i].User_Vacation_Allowances));
                     }
                 }
-
+                GetPersonsWithVacationsOnApproval();
                 OnLoginSuccess?.Invoke(Person);
                 return Person;
             } catch(Exception ex)
@@ -295,7 +337,24 @@ namespace Vacation_Portal.Services.Providers
                 return null;
             }
         }
-
+        private void GetPersonsWithVacationsOnApproval()
+        {
+            PersonsWithVacationsOnApproval.Clear();
+            foreach(Subordinate subordinate in App.API.Person.Subordinates)
+            {
+                foreach(Vacation vacation in subordinate.Subordinate_Vacations)
+                {
+                    if(vacation.Vacation_Status_Name == "On Approval")
+                    {
+                        
+                        if(!PersonsWithVacationsOnApproval.Contains(subordinate))
+                        {
+                            PersonsWithVacationsOnApproval.Add(subordinate);
+                        }
+                    }
+                }
+            }
+        }
         public IEnumerable<CalendarSettings> GetSettingsForCalendar()
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
@@ -578,12 +637,36 @@ namespace Vacation_Portal.Services.Providers
         }
         #endregion
 
+        private string ReturnUserName(int sapId)
+        {
+            foreach(Person person in FullPersons)
+            {
+                if(person.Id_SAP == sapId)
+                {
+                    return person.Name;
+                }
+            }
+            return null;
+        }
+
+        private string ReturnUserSurname(int sapId)
+        {
+            foreach(Person person in FullPersons)
+            {
+                if(person.Id_SAP == sapId)
+                {
+                    return person.Surname;
+                }
+            }
+            return null;
+        }
+
         #region ToObj
         private Vacation ToVacation(VacationDTO dto)
         {
             BrushConverter converter = new System.Windows.Media.BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
-            return new Vacation(dto.Vacation_Name, dto.User_Id_SAP, dto.Vacation_Id, dto.Count, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status_Name, dto.Creator_Id);
+            return new Vacation(dto.Vacation_Name, dto.User_Id_SAP, ReturnUserName(dto.User_Id_SAP), ReturnUserSurname(dto.User_Id_SAP), dto.Vacation_Id, dto.Count, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status_Name, dto.Creator_Id);
         }
         private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto)
         {

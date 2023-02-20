@@ -8,28 +8,25 @@
              xmlns:local="clr-namespace:Vacation_Portal.MVVM.Views.Controls"
              xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
              xmlns:ext="clr-namespace:Vacation_Portal.Extensions"
-             d:DataContext="{d:DesignInstance vm:PersonalVacationPlanningViewModel}"
+             d:DataContext="{d:DesignInstance vm:ResponsePanelViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <ext:InitialsConverter x:Key="InitialsConverter" />
-    </UserControl.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Margin="0,0,0,8"
-                                       Style="{StaticResource MaterialDesignHeadline1TextBlock}"
-                                       Text="Ожидают подтверждения" Foreground="IndianRed" FontWeight="Bold" FontSize="13"/>
 
-        <ListView  Grid.Row="1" ItemsSource="{Binding VacationsToAprovalForPerson}" Height="130" VerticalAlignment="Top" Margin="0 5 0 0">
+    <UserControl.Resources>
+        <vm:ResponsePanelViewModel x:Key="ViewModel"/>
+        <ext:InitialsConverter x:Key="InitialsConverter"/>
+        <ext:IsInVacationConverter x:Key="IsInVacationConverter"/>
+        <ext:IsHolidayToColorConverter x:Key="IsHolidayToColorConverter" />
+        <ext:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
+        <ext:DateConverter x:Key="DateConverter" />
+    </UserControl.Resources>
+    <StackPanel>
+        <ListView ItemsSource="{Binding PersonsWithVacationsOnApproval, UpdateSourceTrigger=PropertyChanged}" 
+                  SelectedIndex="{Binding SelectedIndexPersonWithVacationsOnApproval, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedPersonWithVacationsOnApproval, UpdateSourceTrigger=PropertyChanged}"
+                  Height="130" 
+                  VerticalAlignment="Top" 
+                  Margin="0 5 0 0">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" />
@@ -40,49 +37,453 @@
                     <StackPanel>
                         <Grid>
                             <Ellipse Width="95" Height="95" Fill="Gray" />
-                            <Image Source="{Binding ImageSource}" Width="90" Height="90" />
-                            <TextBlock Text="{Binding User_Id_SAP, Converter={StaticResource InitialsConverter}}"
-                                       FontSize="36" FontWeight="Bold" Foreground="White"
+                            <Image Width="90" Height="90" />
+                            <TextBlock Text="{Binding FullName, Converter={StaticResource InitialsConverter}}"
+                                       FontSize="39" Foreground="White"
                                        VerticalAlignment="Center" HorizontalAlignment="Center" />
                         </Grid>
-                        <TextBlock Margin="0 5 0 0" Text="Александр Фелюгин" FontSize="11"/>
+                        <TextBlock Margin="0 5 0 0" Text="{Binding FullName}" FontSize="11"/>
                     </StackPanel>
-                    
+
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <ListView Grid.Column="0" SelectionMode="Single" x:Name="VacationItemListView"
+                      Visibility="{Binding VisibilityListVacations, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                      ItemsSource="{Binding VacationsOnApproval, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
+                      SelectedIndex="{Binding VacationIndex, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                      SelectedItem="{Binding VacationItem, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                      FontSize="12" Style="{StaticResource MaterialDesignListView}">
+                    <ListView.View>
+                        <GridView>
+                           <!--<GridViewColumn Width="140" DisplayMemberBinding="{Binding User_Name}" Header="Имя"></GridViewColumn>-->
+                           <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
+                           <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_end,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
+                           <GridViewColumn Width="115" DisplayMemberBinding="{Binding Vacation_Status_Name}" Header="Статус"></GridViewColumn>
+                           <GridViewColumn Width="40" Header="">
+                               <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <md:PackIcon Visibility="{Binding IsIntersectingVacation, Converter={StaticResource BooleanToVisibilityConverter}}" Kind="ExclamationThick" Foreground="Orange"  Width="20" Height="20"></md:PackIcon>
+                                </DataTemplate>
+                               </GridViewColumn.CellTemplate>
+                           </GridViewColumn>
+                    </GridView>
+                    </ListView.View>
+                </ListView>
+                <Border Grid.Column="1"
+                        Visibility="{Binding VisibilityInfoBar, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                        Background="#10000000" 
+                        CornerRadius="5" Padding="8" 
+                        VerticalAlignment="Top" 
+                        HorizontalAlignment="Stretch"  
+                        Margin="0 15 0 0">
+                <StackPanel>
+                    <Grid Height="90">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="{Binding AcceptRow}" 
+                                Grid.Column="0" 
+                                x:Name="AcceptBorder" 
+                                Opacity="{Binding AcceptBorderOpacity}" 
+                                Background="{Binding AcceptBorderColor}" 
+                                BorderBrush="DarkSeaGreen" 
+                                BorderThickness="1" 
+                                CornerRadius="22" 
+                                Height="42" 
+                                Width="180">
+                            <Grid x:Name="AcceptRoot" 
+                                  RenderTransform="{Binding AcceptRenderTransform}" 
+                                  Opacity="{Binding AcceptRootOpacity}" 
+                                  VerticalAlignment="Stretch" 
+                                  RenderTransformOrigin="0.5,1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="48"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="2" Grid.ColumnSpan="2" Background="#10000000" CornerRadius="5" Padding="8" HorizontalAlignment="Stretch"  Margin="0 15 0 0">
-            <local:ResponsePanel Grid.Row="2"/>
-        </Border>
+                                <Button Command="{Binding AcceptCommand}" 
+                                        IsEnabled="{Binding IsAcceptedButtonEnabled}" 
+                                        HorizontalAlignment="Left"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" 
+                                        md:ElevationAssist.Elevation="Dp0">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="DarkSeaGreen" />
+                                    </Button.Background>
+                                    <Button.BorderBrush>
+                                        <SolidColorBrush Color="DarkSeaGreen" />
+                                    </Button.BorderBrush>
+                                    <Button.Content>
+                                        <md:PackIcon Kind="CheckBold" 
+                                                     Visibility="{Binding IsAcceptedButtonEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                    </Button.Content>
+                                </Button>
 
-        <ListView Grid.Row="3" ItemsSource="{Binding VacationsToAprovalForPerson}" Height="130" VerticalAlignment="Bottom" Margin="0 5 0 0">
+                                <TextBlock x:Name="AcceptText" Text="{Binding AcceptText}"  
+                                           Grid.Column="1" 
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left"
+                                           FontSize="14"/>
+                            </Grid>
+                        </Border>
+                        <Border VerticalAlignment="Center" 
+                                Grid.Row="{Binding DeclineRow}" 
+                                Grid.Column="0" 
+                                x:Name="DeclineBorder" 
+                                Opacity="{Binding DeclineBorderOpacity}" 
+                                Background="{Binding DeclineBorderColor}" 
+                                BorderBrush="IndianRed" 
+                                BorderThickness="1,1,1,1" 
+                                CornerRadius="22" 
+                                Height="42" 
+                                Width="180">
+                            <Grid x:Name="DeclineRoot" Opacity="{Binding DeclineRootOpacity}" VerticalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="138"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="DeclineText" Text="{Binding DeclineText}"  
+                                   Grid.Column="0" 
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Grid.ColumnSpan="2"
+                                   FontSize="14"/>
+                                <Button Grid.Column="1" 
+                                        Command="{Binding DeclineCommand}" 
+                                        IsEnabled="{Binding IsDeclinedButtonEnabled}" 
+                                        HorizontalAlignment="Right"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" md:ElevationAssist.Elevation="Dp0">
+                                    <Button.Background>
+                                        <SolidColorBrush Color="IndianRed" />
+                                    </Button.Background>
+                                    <Button.BorderBrush>
+                                        <SolidColorBrush Color="IndianRed" />
+                                    </Button.BorderBrush>
+                                    <Button.Content>
+                                        <md:PackIcon Kind="CancelBold" Visibility="{Binding IsDeclinedButtonEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                    </Button.Content>
+                                </Button>
+                            </Grid>
+                        </Border>
+                        <Grid HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Margin="44,0,20,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <!--<Viewbox Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Person" Width="20" Height="20"/>
+                                    <TextBlock Text="{Binding VacationItem.User_Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="15" Margin="5 0 0 0"/>
+                                    <TextBlock Text="{Binding VacationItem.User_Surname, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="15" Margin="5 0 0 0"/>
+                                </StackPanel>
+                            </Viewbox>-->
+                            <Viewbox Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Calendar" Width="20" Height="20"/>
+                                    <TextBlock Text="с" FontSize="15" Margin="5 0 0 0"/>
+                                    <TextBlock Text="{Binding VacationItem.Date_Start, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="15" Margin="10 0 0 0"/>
+                                </StackPanel>
+                            </Viewbox>
+                            <Viewbox Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Calendar" Width="20" Height="20"/>
+                                    <TextBlock Text="по" FontSize="15" Margin="5 0 0 0"/>
+                                    <TextBlock Text="{Binding VacationItem.Date_end, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="15" Margin="10 0 0 0"/>
+                                </StackPanel>
+                            </Viewbox>
+                        </Grid>
+                        <ListView Grid.Column="2" Grid.RowSpan="2" HorizontalAlignment="Left"
+                                  ItemsSource="{Binding IntersectingVacations,UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedIndex="{Binding ProcessedVacationIndex, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedItem="{Binding ProcessedVacationItem, UpdateSourceTrigger=PropertyChanged}"
+                                  Height="95">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="IsSelected" Value="True"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <StackPanel>
+                                            <TextBlock Margin="0 0 0 5" Text="Пересечение" FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Center" Foreground="IndianRed"/>
+
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition />
+                                                </Grid.RowDefinitions>
+                                                <Ellipse Width="44" Height="44" Fill="Gray" />
+                                                <Image Width="44" Height="44" />
+                                                <TextBlock Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InitialsConverter}}"
+                                       FontSize="23" Foreground="White"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                            </Grid>
+                                            <TextBlock Margin="0 5 0 0" Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" FontSize="10"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="5 0 0 0">
+                                            <TextBlock Margin="0 5 0 0" Text="{Binding Vacation_Status_Name, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
+                                            <TextBlock Margin="0 5 0 0" Text="{Binding Date_Start, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
+                                            <TextBlock Margin="0 5 0 0" Text="{Binding Date_end, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                    </Grid>
+                    <Separator Margin="10" Visibility="{Binding IntersectingVacations.Count, Converter={StaticResource IntToVisibilityConverter}}"/>
+                    <Border Grid.Row="2" 
+                            Grid.ColumnSpan="2" 
+                            VerticalAlignment="Top"  
+                            Visibility="{Binding IntersectingVacations.Count, Converter={StaticResource IntToVisibilityConverter}}">
+
+                        <ItemsControl ItemsSource="{Binding Months, UpdateSourceTrigger=PropertyChanged}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="{Binding Months.Count}" HorizontalAlignment="Center"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Text="{Binding Name}" FontWeight="Bold" FontSize="20" Margin="0,10,0,5"/>
+                                        <ItemsControl Grid.Row="1" ItemsSource="{Binding Days}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Margin="5" Width="30" Height="30" CornerRadius="15">
+                                                        <Border.ToolTip>
+                                                            <ToolTip Visibility="{Binding ToolTipVisibility, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                                <StackPanel>
+                                                                    <TextBlock Text="{Binding ToolTipText}"/>
+                                                                </StackPanel>
+                                                            </ToolTip>
+                                                        </Border.ToolTip>
+                                                        <Border.Background>
+                                                            <MultiBinding Converter="{StaticResource IsInVacationConverter}" UpdateSourceTrigger="PropertyChanged">
+                                                                <Binding Path="IntersectingVacations" Source="{StaticResource ViewModel}" />
+                                                                <Binding />
+                                                                <Binding Path="Date" />
+                                                                <Binding ElementName="VacationItemListView" Path="SelectedItem" />
+                                                            </MultiBinding>
+                                                        </Border.Background>
+                                                        <TextBlock Text="{Binding Date.Day}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{Binding IsHoliday, Converter={StaticResource IsHolidayToColorConverter}}"/>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <UniformGrid Columns="7"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+                </StackPanel>
+
+            </Border>
+        </Grid>
+        
+
+        <!--<ItemsControl Grid.Row="3" Grid.ColumnSpan="2" VerticalAlignment="Top" ItemsSource="{Binding Months}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="7"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="5" Width="30" Height="30" CornerRadius="15">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsInVacationStartWeek}" Value="True"/>
+                                            <Condition Binding="{Binding IsInVacationEndWeek}" Value="True"/>
+                                            <Condition Binding="{Binding IsInVacationMiddleWeek}" Value="True"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="Red"/>
+                                    </MultiDataTrigger>
+                                    <DataTrigger Binding="{Binding IsInVacationStartWeek}" Value="True">
+                                        <Setter Property="Background" Value="LightPink"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsInVacationEndWeek}" Value="True">
+                                        <Setter Property="Background" Value="LightPink"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsInVacationMiddleWeek}" Value="True">
+                                        <Setter Property="Background" Value="Pink"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>-->
+        <!--<ScrollViewer Grid.Row="3" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Auto" VerticalAlignment="Top">
+            <ScrollViewer.Resources>
+                <Style TargetType="ScrollViewer">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IntersectingVacations.Count}" Value="0">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IntersectingVacations.Count}" Value="1">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ScrollViewer.Resources>
+            <ItemsControl ItemsSource="{Binding Months, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="{Binding Name}" FontWeight="Bold" FontSize="20" Margin="0,10,0,5"/>
+                            <ItemsControl Grid.Row="1" ItemsSource="{Binding Days}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="5" Width="30" Height="30" CornerRadius="15">
+                                            <Border.ToolTip>
+                                                <ToolTip Visibility="{Binding ToolTipVisibility, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding ToolTipText}"/>
+                                                    </StackPanel>
+                                                </ToolTip>
+                                            </Border.ToolTip>
+                                            <Border.Background>
+                                                <MultiBinding Converter="{StaticResource IsInVacationConverter}" UpdateSourceTrigger="PropertyChanged">
+                                                    <Binding Path="IntersectingVacations" Source="{StaticResource ViewModel}" />
+                                                    <Binding />
+                                                    <Binding Path="Date" />
+                                                </MultiBinding>
+                                            </Border.Background>
+                                            <TextBlock Text="{Binding Date.Day}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>-->
+
+        <ListView ItemsSource="{Binding ProcessedVacations,UpdateSourceTrigger=PropertyChanged}"
+                  SelectedIndex="{Binding ProcessedVacationIndex, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding ProcessedVacationItem, UpdateSourceTrigger=PropertyChanged}"
+                  Height="95" 
+                  VerticalAlignment="Bottom" 
+                  Margin="0 5 0 0">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                    <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                    <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="IsSelected" Value="True"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    
-                        <StackPanel>
+                    <StackPanel>
                         <Grid>
-                            <Ellipse Width="95" Height="95" Fill="Gray" />
-                            <md:Badged BadgePlacementMode="BottomRight">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Ellipse Width="60" Height="60" Fill="Gray" />
+                            <md:Badged BadgePlacementMode="BottomRight" BadgeBackground="{Binding BadgeBackground}">
                                 <md:Badged.Badge>
-                                    <md:PackIcon Kind="CheckBold" Width="20" Height="20" Foreground="DarkSeaGreen"/>
+                                    <md:PackIcon Kind="{Binding VacationStatusKind}" Width="15" Height="15" Foreground="Black"/>
                                 </md:Badged.Badge>
-                                <Image Source="{Binding ImageSource}" Width="90" Height="90" />
+                                <Image Width="55" Height="55" />
                             </md:Badged>
-                            <TextBlock Text="{Binding User_Id_SAP, Converter={StaticResource InitialsConverter}}"
-                                       FontSize="36" FontWeight="Bold" Foreground="White"
+                            <TextBlock Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InitialsConverter}}"
+                                       FontSize="26" Foreground="White"
                                        VerticalAlignment="Center" HorizontalAlignment="Center" />
-                            </Grid>
-                            <TextBlock Margin="0 5 0 0" Text="Александр Фелюгин" FontSize="11"/>
-                        </StackPanel>
-                    
+                            <Button Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource MaterialDesignFloatingActionButton}" 
+                                    Command="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=DataContext.ReturnCommand}"
+                                                            CommandParameter="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=SelectedItem}">
+                                <md:PackIcon Kind="ArrowUp" Width="15" Height="15" Foreground="White" />
+                            </Button>
+                        </Grid>
+                        <TextBlock Margin="0 5 0 0" Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" FontSize="10"/>
+                    </StackPanel>
+
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-    </Grid>
+    </StackPanel>
 </UserControl>

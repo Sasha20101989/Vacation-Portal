@@ -12,6 +12,7 @@ namespace Vacation_Portal.Services.Providers.Interfaces
     public interface ILunchRepository
     {
         Person Person { get; set; }
+        ObservableCollection<Subordinate> PersonsWithVacationsOnApproval { get; set; }
         DateTime DateUnblockNextCalendar { get; set; }
         DateTime DateUnblockPlanning { get; set; }
         bool IsCalendarUnblocked { get; set; }
@@ -21,6 +22,11 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         ICommand LoadHolidays { get; }
         ICommand LoadHolidayTypes { get; }
         ICommand Login { get; }
+
+        ObservableCollection<Vacation> ProcessedVacations {get; set;}
+
+        ObservableCollection<Vacation> VacationsOnApproval { get; set; }
+
         ObservableCollection<HolidayViewModel> Holidays { get; set; }
         ObservableCollection<Holiday> HolidayTypes { get; set; }
         Action<ObservableCollection<HolidayViewModel>> OnHolidaysChanged { get; set; }

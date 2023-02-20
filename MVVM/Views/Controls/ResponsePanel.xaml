@@ -10,23 +10,7 @@
              d:DesignHeight="120"
              d:DesignWidth="800" 
              xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages" 
-             d:DataContext="{d:DesignInstance vm:PersonalVacationPlanningViewModel}">
-    <VisualStateManager.VisualStateGroups>
-        <VisualStateGroup x:Name="CommonStates">
-            <VisualState x:Name="Accepted">
-                <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="DeclineBorder" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.3"/>
-                    <DoubleAnimation Storyboard.TargetName="DeclineRoot" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.3"/>
-                </Storyboard>
-            </VisualState>
-            <VisualState x:Name="Declined">
-                <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="DeclineBorder" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.3"/>
-                    <DoubleAnimation Storyboard.TargetName="DeclineRoot" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.3"/>
-                </Storyboard>
-            </VisualState>
-        </VisualStateGroup>
-    </VisualStateManager.VisualStateGroups>
+             d:DataContext="{d:DesignInstance vm:ResponsePanelViewModel}">
     <Grid Height="90">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
@@ -91,20 +75,24 @@
         </Border>
         <Grid HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Margin="44,0,20,0" Width="124">
             <Grid.RowDefinitions>
-                <RowDefinition Height="16"/>
-                <RowDefinition Height="12"/>
-                <RowDefinition Height="16"/>
-                <RowDefinition Height="12"/>
-                <RowDefinition Height="16"/>
-                <RowDefinition Height="12"/>
-                <RowDefinition Height="16"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="15"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="24"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Viewbox Grid.Row="0">
-                <md:PackIcon Kind="Person"/>
+            <Viewbox Grid.Row="0" Grid.ColumnSpan="2"  HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="Person"/>
+                    <TextBlock Text="{Binding VacationItem.FullName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                </StackPanel>
+                
             </Viewbox>
             <Viewbox Grid.Row="1">
                 <md:PackIcon Kind="Calendar"/>
@@ -120,9 +108,6 @@
             </Viewbox>
             <Viewbox Grid.Row="5">
                 <md:PackIcon Kind="Person"/>
-            </Viewbox>
-            <Viewbox Grid.Row="6">
-                <md:PackIcon Kind="Calendar"/>
             </Viewbox>
         </Grid>
     </Grid>

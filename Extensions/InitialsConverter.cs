@@ -13,8 +13,13 @@ namespace Vacation_Portal.Extensions
         {
             if(value is string displayName)
             {
-                var initials = string.Concat(displayName.Split(' ').Select(s => s[0])).ToUpper();
-                return initials;
+                var nameParts = displayName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if(nameParts.Length >= 2)
+                {
+                    var firstNameInitial = nameParts[0][0];
+                    var lastNameInitial = nameParts[1][0];
+                    return string.Concat(firstNameInitial, lastNameInitial).ToString().ToUpper();
+                }
             }
             return null;
         }

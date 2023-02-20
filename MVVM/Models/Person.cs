@@ -152,7 +152,7 @@ namespace Vacation_Portal.MVVM.Models
                 typeof(VacationsApprovalView),
                 selectedIcon: PackIconKind.AccountTie,
                 unselectedIcon: PackIconKind.AccountTieOutline,
-                new PersonalVacationPlanningViewModel());
+                new ResponsePanelViewModel());
             }
 
             if(Is_HR_GOD)

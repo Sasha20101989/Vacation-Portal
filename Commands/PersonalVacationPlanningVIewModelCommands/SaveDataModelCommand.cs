@@ -74,7 +74,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             foreach(Vacation item in VacationsToAproval)
             {
                 int countConflicts = 0;
-                Vacation plannedVacation = new Vacation(item.Name, item.User_Id_SAP, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Name, item.Creator_Id);
+                Vacation plannedVacation = new Vacation(item.Name, item.User_Id_SAP, item.User_Name, item.User_Surname, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Name, item.Creator_Id);
                 IEnumerable<VacationDTO> conflictingVacations = await App.API.GetConflictingVacationAsync(plannedVacation);
 
                 foreach(VacationDTO vacationDTO in conflictingVacations)
