@@ -55,7 +55,7 @@ namespace Vacation_Portal.MVVM.Models
             return HashCode.Combine(Date_Start, Date_end);
         }
 
-        public Vacation(int Id, string name, int user_Id_SAP, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, string statusName, string creator_Id)
+        public Vacation(int Id, string name, int user_Id_SAP, string userName, string userSurname, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, string statusName, string creator_Id)
 
         {
             _Id = Id;
