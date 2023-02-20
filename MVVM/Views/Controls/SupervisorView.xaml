@@ -391,7 +391,7 @@
                                                                             <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="ForestGreen" Width="20" Height="20"
                                                                                     Command="{Binding RelativeSource={
                                                                                     RelativeSource AncestorType=ListView},
-                                                                                    Path=DataContext.CancelVacation}"
+                                                                                    Path=DataContext.CompensateVacation}"
                                                                                     CommandParameter="{Binding RelativeSource={
                                                                                     RelativeSource AncestorType=ListView},
                                                                                     Path=SelectedItem}">

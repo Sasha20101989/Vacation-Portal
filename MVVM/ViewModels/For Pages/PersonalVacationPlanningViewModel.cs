@@ -570,6 +570,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public ICommand StartLearning { get; }
         public ICommand AddToApprovalList { get; }
         public ICommand CancelVacation { get; }
+        public ICommand CompensateVacation { get; }
+        public ICommand ShiftVacations { get; }
         public ICommand CheckVacations { get; }
         public AnotherCommandImplementation MovePrevYearCommand { get; }
         public AnotherCommandImplementation MoveNextYearCommand { get; }
@@ -589,6 +591,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             StartLearning = new StartLearningCommand(this);
             AddToApprovalList = new AddToApprovalListCommand(this);
             CancelVacation = new CancelVacationCommand(this);
+            CompensateVacation = new CompensateVacationCommand(this);
+            ShiftVacations = new ShiftVacationsCommand(this);
 
             PersonName = App.API.Person.ToString();
             MovePrevYearCommand = new AnotherCommandImplementation(
@@ -607,7 +611,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                            IsLoadingCalendarPage = false;
                        } else
                        {
-                           ShowAlert("Сначала выберете сотрудника");
+                           ShowAlert("Сначала выберите сотрудника");
                        }
                    } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
                    {
