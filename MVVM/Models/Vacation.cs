@@ -12,6 +12,7 @@ namespace Vacation_Portal.MVVM.Models
 {
     public class Vacation : ViewModelBase, ICloneable
     {
+        public int _Id;
         public string Name { get; set; }
         public string User_Name { get; set; }
         public string User_Surname { get; set; }
@@ -54,8 +55,10 @@ namespace Vacation_Portal.MVVM.Models
             return HashCode.Combine(Date_Start, Date_end);
         }
 
-        public Vacation(string name, int user_Id_SAP,string userName, string userSurname, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, string statusName, string creator_Id)
+        public Vacation(int Id, string name, int user_Id_SAP, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, string statusName, string creator_Id)
+
         {
+            _Id = Id;
             Name = name;
             User_Id_SAP = user_Id_SAP;
             Vacation_Id = vacation_Id;
