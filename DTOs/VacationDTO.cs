@@ -1,6 +1,5 @@
-﻿using MiscUtil.Collections;
-using MiscUtil.Collections.Extensions;
-using System;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Vacation_Portal.DTOs
 {
@@ -18,17 +17,19 @@ namespace Vacation_Portal.DTOs
         public string Creator_Id { get; set; }
         public int Count => GetCount();
 
-        public Range<DateTime> ReturnVacationRange()
+        public IEnumerable<DateTime> GetDateRange(DateTime start, DateTime end)
         {
-            Range<DateTime> range = Vacation_End_Date > Vacation_Start_Date ? Vacation_Start_Date.To(Vacation_End_Date) : Vacation_End_Date.To(Vacation_Start_Date);
-            return range;
+            for(DateTime date = start.Date; date <= end.Date; date = date.AddDays(1))
+            {
+                yield return date;
+            }
         }
 
         private int GetCount()
         {
             int count = 0;
-            Range<DateTime> range = ReturnVacationRange();
-            foreach(DateTime date in range.Step(x => x.AddDays(1)))
+            IEnumerable<DateTime> dateRange = GetDateRange(Vacation_Start_Date, Vacation_End_Date);
+            foreach(DateTime date in dateRange)
             {
                 count++;
             }

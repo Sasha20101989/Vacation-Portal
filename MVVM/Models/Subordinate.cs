@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using Vacation_Portal.MVVM.ViewModels;
 
 namespace Vacation_Portal.MVVM.Models
@@ -15,7 +14,7 @@ namespace Vacation_Portal.MVVM.Models
         public string Virtual_Department_Name { get; set; }
 
         public ObservableCollection<Vacation> Subordinate_Vacations { get; set; } = new ObservableCollection<Vacation>();
-        public ObservableCollection<VacationAllowanceViewModel> Subordinate_Vacation_Allowances { get; set; } = new ObservableCollection<VacationAllowanceViewModel> ();
+        public ObservableCollection<VacationAllowanceViewModel> Subordinate_Vacation_Allowances { get; set; } = new ObservableCollection<VacationAllowanceViewModel>();
         public string FullName => ToString();
 
         public override string ToString()

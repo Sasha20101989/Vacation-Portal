@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 using Vacation_Portal.MVVM.ViewModels;
 
 namespace Vacation_Portal.MVVM.Models

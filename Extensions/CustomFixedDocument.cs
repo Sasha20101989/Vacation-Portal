@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Documents;
 using System.Windows.Markup;
 
@@ -14,17 +11,17 @@ namespace Vacation_Portal.Extensions
 
         public CustomFixedDocument()
         {
-            this.Pages = new ObservableCollection<PageContent>();
+            Pages = new ObservableCollection<PageContent>();
         }
 
         public FixedDocument FixedDocument
         {
             get
             {
-                var document = new FixedDocument();
-                foreach (var p in Pages)
+                FixedDocument document = new FixedDocument();
+                foreach(PageContent p in Pages)
                 {
-                    var copy = XamlReader.Parse(XamlWriter.Save(p)) as PageContent;
+                    PageContent copy = XamlReader.Parse(XamlWriter.Save(p)) as PageContent;
                     document.Pages.Add(copy);
                 }
                 return document;
@@ -38,16 +35,16 @@ namespace Vacation_Portal.Extensions
             {
                 _pages = value;
 
-                foreach (var page in _pages)
+                foreach(PageContent page in _pages)
                 {
                     base.Pages.Add(page);
                 }
 
                 _pages.CollectionChanged += (o, e) =>
                 {
-                    if (e.NewItems != null)
+                    if(e.NewItems != null)
                     {
-                        foreach (PageContent page in e.NewItems)
+                        foreach(PageContent page in e.NewItems)
                         {
                             base.Pages.Add(page);
                         }

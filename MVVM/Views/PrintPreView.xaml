@@ -29,7 +29,7 @@
                                 BorderThickness="1">
             <FlowDocumentPageViewer.Document>
                 
-                <FlowDocument ColumnWidth="700"
+                <!--<FlowDocument ColumnWidth="700"
                               FontFamily="Verdana">
                     <Paragraph TextAlignment="Right">
                         <TextBlock Foreground="Red"
@@ -462,9 +462,9 @@
                         </TableRowGroup>
                     </Table>
 
-                </FlowDocument>
+                </FlowDocument>-->
                 
-                <!--<FlowDocument ColumnWidth="700"
+                <FlowDocument ColumnWidth="700"
                               FontFamily="Arial">
                     <Paragraph TextAlignment="Right">
                         <TextBlock Foreground="Red"
@@ -583,7 +583,7 @@
                         </Grid>
                     </BlockUIContainer>
 
-                </FlowDocument>-->
+                </FlowDocument>
                 
             </FlowDocumentPageViewer.Document>
         </FlowDocumentPageViewer>

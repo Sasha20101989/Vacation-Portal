@@ -26,7 +26,7 @@ namespace Vacation_Portal.MVVM.ViewModels
             AllAvailableToShiftVacations = new ObservableCollection<Vacation>(allAvailableToShiftVacations);
             SelectedToShiftVacations = new ObservableCollection<Vacation>(allAvailableToShiftVacations.Take(2));
             AvailableToSelectVacations = new ObservableCollection<Vacation>(allAvailableToShiftVacations.TakeLast(2));
-            
+
         }
 
         public string FullName { get; private set; }

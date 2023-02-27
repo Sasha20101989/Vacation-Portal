@@ -23,18 +23,15 @@
 	  <None Remove="SplashIllustration.png" />
 	  <None Remove="нами.png" />
 	</ItemGroup>
-
+	
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
 		<PackageReference Include="Dapper" Version="2.0.123" />
 		<PackageReference Include="Enums.NET" Version="4.0.1" />
-		<PackageReference Include="JonSkeet.MiscUtil" Version="0.2.0" />
 		<PackageReference Include="MaterialDesignColors" Version="2.1.1" />
 		<PackageReference Include="MaterialDesignThemes" Version="4.7.1" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls" Version="7.1.3" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
 		<PackageReference Include="PropertyWithPropChangeMethodSnippet" Version="2.0.0" />
 		<PackageReference Include="SqlTableDependency" Version="8.5.8" />
@@ -50,11 +47,20 @@
 	  <Compile Update="MVVM\Views\VacationsApprovalView.xaml.cs">
 	    <SubType>Code</SubType>
 	  </Compile>
+	  <Compile Update="Properties\Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Properties\Settings.settings">
+		  <Generator>SettingsSingleFileGenerator</Generator>
+		  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
 	</ItemGroup>
 

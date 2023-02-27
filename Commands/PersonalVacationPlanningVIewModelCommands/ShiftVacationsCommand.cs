@@ -24,11 +24,11 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             PrintPreViewModel printPreViewModel = null;
             IEnumerable<Vacation> allAvailableToShiftVacations = null;
 
-            if (App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
+            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
             {
                 allAvailableToShiftVacations = App.API.Person.User_Vacations.Where(vac => vac.Date_end > System.DateTime.Today && vac.Vacation_Status_Name == "Approved").Take(5).ToList();
 
-                if (allAvailableToShiftVacations.Any())
+                if(allAvailableToShiftVacations.Any())
                 {
                     printPreViewModel = new PrintPreViewModel(App.API.Person.FullName,
                                                                 App.API.Person.Position,
@@ -37,12 +37,11 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                                                                 allAvailableToShiftVacations);
                 }
 
-            }
-            else if (App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
+            } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
             {
                 allAvailableToShiftVacations = _viewModel.SelectedSubordinate.Subordinate_Vacations.Where(vac => vac.Date_end > System.DateTime.Today && vac.Vacation_Status_Name == "Approved").Take(5).ToList();
 
-                if (allAvailableToShiftVacations.Any())
+                if(allAvailableToShiftVacations.Any())
                 {
                     printPreViewModel = new PrintPreViewModel(_viewModel.SelectedSubordinate.FullName,
                                                               _viewModel.SelectedSubordinate.Position,
@@ -54,7 +53,10 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             }
 
 
-            if (printPreViewModel == null) return;
+            if(printPreViewModel == null)
+            {
+                return;
+            }
 
             Viewer?.Close();
             Viewer = new PrintPreView { DataContext = printPreViewModel };

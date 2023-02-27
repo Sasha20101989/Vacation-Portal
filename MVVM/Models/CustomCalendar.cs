@@ -1,6 +1,4 @@
-﻿using MiscUtil.Collections;
-using MiscUtil.Collections.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -102,7 +100,6 @@ namespace Vacation_Portal.MVVM.Models
                                     WorkDaysCount = days - DayOffCount;
                                 } else if(holiday.TypeOfHoliday == "Внеплановый")
                                 {
-                                    // DayOffCount++;
                                     DayOffCount++;
                                     UnscheduledCount++;
                                     WorkDaysCount = days - DayOffCount;
@@ -156,37 +153,30 @@ namespace Vacation_Portal.MVVM.Models
 
             for(int i = 0; i < VacationsToAproval.Count; i++)
             {
-                Range<DateTime> range = ReturnRange(VacationsToAproval[i]);
-                foreach(DateTime date in range.Step(x => x.AddDays(1)))
+                foreach(DateTime date in VacationsToAproval[i].DateRange)
                 {
                     if(date.Day == Convert.ToInt32(textBlock.Text) &&
                         date.Month == Convert.ToInt32(textBlock.Tag.ToString().Split(".")[0]) &&
                         date.Year == Convert.ToInt32(textBlock.Tag.ToString().Split(".")[1]))
                     {
                         button.Background = VacationsToAproval[i].Color;
-                        //button.IsEnabled = false;
                     }
                 }
             }
         }
-        public Range<DateTime> ReturnRange(Vacation Item)
+        public static IEnumerable<DateTime> ReturnDateRange(DateTime start, DateTime end)
         {
-            Range<DateTime> range = Item.Date_end > Item.Date_Start ? Item.Date_Start.To(Item.Date_end) : Item.Date_end.To(Item.Date_Start);
-            //TODO: исправить
-            return range;
+            for(DateTime date = start.Date; date <= end.Date; date = date.AddDays(1))
+            {
+                yield return date;
+            }
         }
-        public Range<DateTime> ReturnDateRange(DateTime start, DateTime end)
-        {
-            Range<DateTime> range = end > start ? start.To(end) : end.To(start);
-            return range;
-        }
+
         public void BlockAndPaintButtons()
         {
             if(_viewModel.PlannedItem != null)
             {
-                Range<DateTime> range = ReturnRange(_viewModel.PlannedItem);
-
-                foreach(DateTime date in range.Step(x => x.AddDays(1)))
+                foreach(DateTime date in _viewModel.PlannedItem.DateRange)
                 {
                     foreach(ObservableCollection<DayControl> month in Year)
                     {
@@ -204,7 +194,6 @@ namespace Vacation_Portal.MVVM.Models
                                 string buttonNameOfDay = buttonTextBlock.ToolTip.ToString();
                                 if(date.Day == buttonDay && date.Month == buttonMonth && date.Year == buttonYear)
                                 {
-                                    //button.IsEnabled = false;
                                     if(buttonNameOfDay == "Праздник")
                                     {
                                         _viewModel.PlannedItem.Count--;
@@ -251,35 +240,33 @@ namespace Vacation_Portal.MVVM.Models
             await Task.Delay(100);
             App.Current.Dispatcher.Invoke((Action) delegate
            {
-                foreach(Vacation vacation in VacationsToAproval)
-                {
-                    Range<DateTime> range = ReturnRange(vacation);
-                    foreach(DateTime date in range.Step(x => x.AddDays(1)))
-                    {
-                        foreach(ObservableCollection<DayControl> month in Year)
-                        {
-                            foreach(DayControl itemContol in month)
-                            {
-                                Grid parentItem = itemContol.Content as Grid;
-                                UIElementCollection buttons = parentItem.Children as UIElementCollection;
-                                foreach(object elem in buttons)
-                                {
-                                    Button button = elem as Button;
-                                    TextBlock buttonTextBlock = button.Content as TextBlock;
-                                    int buttonDay = Convert.ToInt32(buttonTextBlock.Text);
-                                    int buttonMonth = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[0]);
-                                    int buttonYear = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[1]);
-                                    if(date.Day == buttonDay && date.Month == buttonMonth && date.Year == buttonYear)
-                                    {
-                                        //button.IsEnabled = false;
-                                        button.Background = vacation.Color;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+               foreach(Vacation vacation in VacationsToAproval)
+               {
+                   foreach(DateTime date in vacation.DateRange)
+                   {
+                       foreach(ObservableCollection<DayControl> month in Year)
+                       {
+                           foreach(DayControl itemContol in month)
+                           {
+                               Grid parentItem = itemContol.Content as Grid;
+                               UIElementCollection buttons = parentItem.Children as UIElementCollection;
+                               foreach(object elem in buttons)
+                               {
+                                   Button button = elem as Button;
+                                   TextBlock buttonTextBlock = button.Content as TextBlock;
+                                   int buttonDay = Convert.ToInt32(buttonTextBlock.Text);
+                                   int buttonMonth = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[0]);
+                                   int buttonYear = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[1]);
+                                   if(date.Day == buttonDay && date.Month == buttonMonth && date.Year == buttonYear)
+                                   {
+                                       button.Background = vacation.Color;
+                                   }
+                               }
+                           }
+                       }
+                   }
+               }
+           });
         }
         public void ClearVacationData(ObservableCollection<Vacation> VacationsToAproval)
         {
@@ -375,13 +362,12 @@ namespace Vacation_Portal.MVVM.Models
                                 {
                                     DayAddition = GetDayAddition(CountSelectedDays);
                                     _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.yyyy");
-                                    if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
+                                    if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
                                     {
-                                        _viewModel.PlannedItem = new Vacation(0,_viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Planned", Environment.UserName);
-                                    } 
-                                    else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
+                                        _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Being Planned", Environment.UserName);
+                                    } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
                                     {
-                                        _viewModel.PlannedItem = new Vacation(0,_viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Planned", Environment.UserName);
+                                        _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Being Planned", Environment.UserName);
                                     }
                                 } else
                                 {
@@ -394,9 +380,9 @@ namespace Vacation_Portal.MVVM.Models
                         } else
                         {
                             SecondSelectedDate = new DateTime(SelectedYear, SelectedMonth, SelectedDay);
-                            Range<DateTime> dateRange = ReturnDateRange(FirstSelectedDate, SecondSelectedDate);
+                            IEnumerable<DateTime> dateRange = ReturnDateRange(FirstSelectedDate, SecondSelectedDate);
 
-                            foreach(DateTime date in dateRange.Step(x => x.AddDays(1)))
+                            foreach(DateTime date in dateRange)
                             {
                                 for(int h = 0; h < App.API.Holidays.Count; h++)
                                 {
@@ -416,12 +402,12 @@ namespace Vacation_Portal.MVVM.Models
                                     {
                                         DayAddition = GetDayAddition(CountSelectedDays);
                                         _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
-                                        if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
+                                        if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
                                         {
-                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Planned", Environment.UserName);
-                                        } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
+                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, "Being Planned", Environment.UserName);
+                                        } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
                                         {
-                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Planned", Environment.UserName);
+                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, "Being Planned", Environment.UserName);
                                         }
                                     } else
                                     {
@@ -442,13 +428,7 @@ namespace Vacation_Portal.MVVM.Models
 
                                         DayAddition = GetDayAddition(CountSelectedDays);
                                         _viewModel.PlannedVacationString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
-                                        if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
-                                        {
-                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Planned", Environment.UserName);
-                                        } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
-                                        {
-                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Planned", Environment.UserName);
-                                        }
+                                        _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate, "Being Planned", Environment.UserName);
                                     } else
                                     {
                                         _viewModel.ShowAlert("Этот день является праздичным, закончите планирование отпуска с другим днём");
@@ -463,19 +443,15 @@ namespace Vacation_Portal.MVVM.Models
                         {
                             if(_viewModel.PlannedItem != null)
                             {
-
-                                Range<DateTime> range = ReturnRange(_viewModel.PlannedItem);
                                 List<bool> isGoToNext = new List<bool>();
 
-                                foreach(DateTime planedDate in range.Step(x => x.AddDays(1)))
+                                foreach(DateTime planedDate in _viewModel.PlannedItem.DateRange)
                                 {
                                     for(int i = 0; i < VacationsToAproval.Count; i++)
                                     {
                                         Vacation existingVacation = VacationsToAproval[i];
 
-                                        Range<DateTime> rangeExistingVacation = ReturnRange(existingVacation); ;
-
-                                        foreach(DateTime existingDate in rangeExistingVacation.Step(x => x.AddDays(1)))
+                                        foreach(DateTime existingDate in existingVacation.DateRange)
                                         {
                                             if(existingDate == planedDate)
                                             {

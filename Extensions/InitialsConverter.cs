@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Windows.Data;
 
 namespace Vacation_Portal.Extensions
@@ -13,11 +10,11 @@ namespace Vacation_Portal.Extensions
         {
             if(value is string displayName)
             {
-                var nameParts = displayName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] nameParts = displayName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 if(nameParts.Length >= 2)
                 {
-                    var firstNameInitial = nameParts[0][0];
-                    var lastNameInitial = nameParts[1][0];
+                    char firstNameInitial = nameParts[0][0];
+                    char lastNameInitial = nameParts[1][0];
                     return string.Concat(firstNameInitial, lastNameInitial).ToString().ToUpper();
                 }
             }

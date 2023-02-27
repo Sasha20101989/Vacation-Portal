@@ -10,7 +10,6 @@ namespace Vacation_Portal.MVVM.Models
         private readonly Type _contentType;
         private readonly object _dataContext;
         private object _content;
-        //public object Content => _content = CreateContent();
         public object Content => _content ??= CreateContent();
         public string Name { get; set; }
         private Thickness _marginRequirement = new Thickness(16);

@@ -1,5 +1,4 @@
-﻿using MiscUtil.Collections;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -30,10 +29,8 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
         {
             SelectedMode = App.SelectedMode;
 
-            Range<DateTime> range = _viewModel.Calendar.ReturnRange(_viewModel.PlannedItem);
-
             _viewModel.Calendar.WorkingDays.Clear();
-            foreach(DateTime date in range.Step(x => x.AddDays(1)))
+            foreach(DateTime date in _viewModel.PlannedItem.DateRange)
             {
                 foreach(ObservableCollection<DayControl> month in _viewModel.Calendar.Year)
                 {
@@ -82,7 +79,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                     App.API.Person.User_Vacation_Allowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
             }
-            
+
             _viewModel.SelectedItemAllowance.Vacation_Days_Quantity -= _viewModel.Calendar.CountSelectedDays;
 
             _viewModel.PlannedVacationString = "";
@@ -90,7 +87,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
             if(_viewModel.SelectedItemAllowance.Vacation_Days_Quantity == 0)
             {
-                var selectedAllowance = VacationAllowances.FirstOrDefault(a => a.Vacation_Days_Quantity > 0);
+                VacationAllowanceViewModel selectedAllowance = VacationAllowances.FirstOrDefault(a => a.Vacation_Days_Quantity > 0);
                 if(selectedAllowance != null)
                 {
                     _viewModel.SelectedItemAllowance = selectedAllowance;
@@ -98,9 +95,9 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             }
             List<Vacation> mergedVacations = new List<Vacation>();
 
-            foreach(var vacation in VacationsToAproval.OrderBy(v => v.Date_Start))
+            foreach(Vacation vacation in VacationsToAproval.OrderBy(v => v.Date_Start))
             {
-                var lastVacation = mergedVacations.LastOrDefault();
+                Vacation lastVacation = mergedVacations.LastOrDefault();
 
                 if(lastVacation != null &&
                     lastVacation.Name == vacation.Name &&
@@ -109,8 +106,8 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 {
                     _viewModel.Calendar.WorkingDays.Add(true);
                     int countHolidays = 0;
-                    Range<DateTime> rangePlannedDays = _viewModel.Calendar.ReturnRange(lastVacation);
-                    foreach(DateTime date in rangePlannedDays.Step(x => x.AddDays(1)))
+
+                    foreach(DateTime date in lastVacation.DateRange)
                     {
                         for(int h = 0; h < App.API.Holidays.Count; h++)
                         {
@@ -124,7 +121,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     await App.API.DeleteVacationAsync(lastVacation);
                     await App.API.DeleteVacationAsync(vacation);
                     lastVacation.Date_end = vacation.Date_end;
-                    lastVacation.Vacation_Status_Name = "Planned";
+                    lastVacation.Vacation_Status_Name = "Being Planned";
                     _viewModel.ShowAlert("Несколько периодов объединены в один.");
                 } else
                 {
@@ -134,23 +131,22 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
             VacationsToAprovalClone = new ObservableCollection<Vacation>(mergedVacations);
 
-            
             if(_viewModel.Calendar.WorkingDays.Contains(true))
             {
                 List<Vacation> conflictFreeVacations = new List<Vacation>();
                 foreach(Vacation item in VacationsToAprovalClone)
                 {
-                    Vacation plannedVacation = new Vacation(item._Id,item.Name, item.User_Id_SAP,item.User_Name,item.User_Surname, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Name, item.Creator_Id);
+                    Vacation plannedVacation = new Vacation(item._Id, item.Name, item.User_Id_SAP, item.User_Name, item.User_Surname, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Name, item.Creator_Id);
                     IEnumerable<VacationDTO> conflictingVacations = await App.API.GetConflictingVacationAsync(plannedVacation);
                     if(!conflictingVacations.Any())
                     {
                         conflictFreeVacations.Add(item);
                     }
                 }
-                
+
                 foreach(Vacation conflictFreeVacation in conflictFreeVacations)
                 {
-                    var updatedAllowance = VacationAllowances.FirstOrDefault(a => a.Vacation_Name == conflictFreeVacation.Name);
+                    VacationAllowanceViewModel updatedAllowance = VacationAllowances.FirstOrDefault(a => a.Vacation_Name == conflictFreeVacation.Name);
                     await _viewModel.UpdateVacationAllowance(conflictFreeVacation.User_Id_SAP, conflictFreeVacation.Vacation_Id, conflictFreeVacation.Date_Start.Year, updatedAllowance.Vacation_Days_Quantity);
                     await App.API.AddVacationAsync(conflictFreeVacation);
                 }
@@ -164,7 +160,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     App.API.Person.User_Vacations = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
                     _viewModel.UpdateDataForPerson();
                 }
-                
+
                 _viewModel.PlannedIndex = 0;
 
             } else
@@ -182,15 +178,13 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     _viewModel.Calendar.ClearVacationData(App.API.Person.User_Vacations);
                     _viewModel.UpdateDataForPerson();
                 }
-                
             }
         }
 
         private int GetCountDays(Vacation vacation)
         {
-            Range<DateTime> range = _viewModel.Calendar.ReturnRange(vacation);
             int count = 0;
-            foreach(DateTime date in range.Step(x => x.AddDays(1)))
+            foreach(DateTime date in vacation.DateRange)
             {
                 count++;
             }

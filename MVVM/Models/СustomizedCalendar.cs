@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.Models
@@ -11,7 +8,7 @@ namespace Vacation_Portal.MVVM.Models
         private ObservableCollection<CalendarDay> _days;
         public ObservableCollection<CalendarDay> Days
         {
-            get { return _days; }
+            get => _days;
             set
             {
                 _days = value;
@@ -22,7 +19,7 @@ namespace Vacation_Portal.MVVM.Models
         private Vacation _selectedVacation;
         public Vacation SelectedVacation
         {
-            get { return _selectedVacation; }
+            get => _selectedVacation;
             set
             {
                 _selectedVacation = value;

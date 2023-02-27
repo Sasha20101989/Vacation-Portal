@@ -60,9 +60,8 @@
                       SelectedItem="{Binding VacationItem, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                       FontSize="12" Style="{StaticResource MaterialDesignListView}">
                     <ListView.View>
-                        <GridView>
-                           <!--<GridViewColumn Width="140" DisplayMemberBinding="{Binding User_Name}" Header="Имя"></GridViewColumn>-->
-                           <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
+                    <GridView>
+                        <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
                            <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_end,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
                            <GridViewColumn Width="115" DisplayMemberBinding="{Binding Vacation_Status_Name}" Header="Статус"></GridViewColumn>
                            <GridViewColumn Width="40" Header="">
@@ -266,13 +265,65 @@
                         </ListView>
 
                     </Grid>
-                    <Separator Margin="10" Visibility="{Binding IntersectingVacations.Count, Converter={StaticResource IntToVisibilityConverter}}"/>
+                    <Separator Margin="10"/>
                     <Border Grid.Row="2" 
                             Grid.ColumnSpan="2" 
-                            VerticalAlignment="Top"  
-                            Visibility="{Binding IntersectingVacations.Count, Converter={StaticResource IntToVisibilityConverter}}">
-
-                        <ItemsControl ItemsSource="{Binding Months, UpdateSourceTrigger=PropertyChanged}">
+                            VerticalAlignment="Top" HorizontalAlignment="Center">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Пн" Width="40" HorizontalAlignment="Center" Margin="5 0 0 0"/>
+                                <TextBlock Text="Вт" Width="40" HorizontalAlignment="Center" Margin="5 0 0 0"/>
+                                <TextBlock Text="Ср" Width="40" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Чт" Width="40" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Пт" Width="40" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Сб" Width="40" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Вс" Width="40" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                            <ItemsControl ItemsSource="{Binding Weeks}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            
+                                            <ItemsControl ItemsSource="{Binding}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border Margin="5" Width="30" Height="30" CornerRadius="15">
+                                                            <Border.ToolTip>
+                                                                <ToolTip Visibility="{Binding ToolTipVisibility, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                                    <StackPanel>
+                                                                        <TextBlock Text="{Binding ToolTipText}"/>
+                                                                    </StackPanel>
+                                                                </ToolTip>
+                                                            </Border.ToolTip>
+                                                            <Border.Background>
+                                                                <MultiBinding Converter="{StaticResource IsInVacationConverter}" UpdateSourceTrigger="PropertyChanged">
+                                                                    <Binding Path="IntersectingVacations" Source="{StaticResource ViewModel}" />
+                                                                    <Binding />
+                                                                    <Binding Path="Date" />
+                                                                    <Binding ElementName="VacationItemListView" Path="SelectedItem" />
+                                                                </MultiBinding>
+                                                            </Border.Background>
+                                                            <TextBlock Text="{Binding Date.Day}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{Binding IsHoliday, Converter={StaticResource IsHolidayToColorConverter}}"/>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <UniformGrid Columns="7" Rows="1"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </StackPanel>
+                        <!--<ItemsControl ItemsSource="{Binding Months, UpdateSourceTrigger=PropertyChanged}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <UniformGrid Columns="{Binding Months.Count}" HorizontalAlignment="Center"/>
@@ -318,7 +369,7 @@
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                        </ItemsControl>-->
                     </Border>
                 </StackPanel>
 

@@ -2,12 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows.Media;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands;
@@ -841,7 +838,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             //    .ContinueWith((t, _) => eventArgs.Session.UpdateContent(new SampleError()), null,
             //        TaskScheduler.FromCurrentSynchronizationContext());
         }
-        static ObservableCollection<T> Clone<T>(ObservableCollection<T> listToClone) where T : ICloneable
+
+        private static ObservableCollection<T> Clone<T>(ObservableCollection<T> listToClone) where T : ICloneable
         {
             return new ObservableCollection<T>(listToClone.Select(item => (T) item.Clone()));
         }

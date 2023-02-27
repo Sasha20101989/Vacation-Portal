@@ -3,12 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Media;
 using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 using Vacation_Portal.MVVM.ViewModels.ForPages;
 using Vacation_Portal.MVVM.Views;
-using Vacation_Portal.MVVM.Views.Controls;
 
 namespace Vacation_Portal.MVVM.Models
 {
@@ -55,7 +53,7 @@ namespace Vacation_Portal.MVVM.Models
 
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
-        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, string departmentName, int virtualDepartmentId, string virtualDepartmentName, int subDepartmentId, string roleName, string appColor, int userSupervisorIdSAP,string position, ObservableCollection<Vacation> userVacations, ObservableCollection<VacationAllowanceViewModel> userVacationAllowances)
+        public Person(int id_SAP, string id_Account, string name, string surname, string patronymic, int departmentId, string departmentName, int virtualDepartmentId, string virtualDepartmentName, int subDepartmentId, string roleName, string appColor, int userSupervisorIdSAP, string position, ObservableCollection<Vacation> userVacations, ObservableCollection<VacationAllowanceViewModel> userVacationAllowances)
         {
             Id_SAP = id_SAP;
             Id_Account = id_Account;
@@ -98,7 +96,7 @@ namespace Vacation_Portal.MVVM.Models
                      MenuItem supervisorItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _supervisorPage);
                      MenuItem supervisorItem_1 = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _approvalPage);
                      _viewModel.MainMenuItems = CreateMainMenuItems(supervisorItem, _viewModel);
-                 } 
+                 }
                  if(Is_HR_GOD)
                  {
                      _viewModel.AdminString = "Аккаунт HR сотрудника";
@@ -106,7 +104,7 @@ namespace Vacation_Portal.MVVM.Models
                      MenuItem hRItem_1 = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _holidaysPage);
                      _viewModel.MainMenuItems = CreateMainMenuItems(hRItem, _viewModel);
                      _viewModel.MainMenuItems = CreateMainMenuItems(hRItem_1, _viewModel);
-                 } 
+                 }
                  if(Is_Accounting)
                  {
                      _viewModel.AdminString = "Аккаунт табельщика";

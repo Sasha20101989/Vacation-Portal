@@ -47,7 +47,7 @@ namespace Vacation_Portal.Services.Providers
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
-        
+
         public LunchRepository(SqlDbConnectionFactory sqlDbConnectionFactory)
         {
             _sqlDbConnectionFactory = sqlDbConnectionFactory;
@@ -55,10 +55,7 @@ namespace Vacation_Portal.Services.Providers
         private ObservableCollection<Subordinate> _personsWithVacationsOnApproval = new ObservableCollection<Subordinate>();
         public ObservableCollection<Subordinate> PersonsWithVacationsOnApproval
         {
-            get
-            {
-                return _personsWithVacationsOnApproval;
-            }
+            get => _personsWithVacationsOnApproval;
             set
             {
                 _personsWithVacationsOnApproval = value;
@@ -68,10 +65,7 @@ namespace Vacation_Portal.Services.Providers
         private ObservableCollection<Vacation> _processedVacations = new ObservableCollection<Vacation>();
         public ObservableCollection<Vacation> ProcessedVacations
         {
-            get
-            {
-                return _processedVacations;
-            }
+            get => _processedVacations;
             set
             {
                 _processedVacations = value;
@@ -82,10 +76,7 @@ namespace Vacation_Portal.Services.Providers
         private ObservableCollection<Vacation> _vacationsOnApproval = new ObservableCollection<Vacation>();
         public ObservableCollection<Vacation> VacationsOnApproval
         {
-            get
-            {
-                return _vacationsOnApproval;
-            }
+            get => _vacationsOnApproval;
             set
             {
                 _vacationsOnApproval = value;
@@ -346,7 +337,7 @@ namespace Vacation_Portal.Services.Providers
                 {
                     if(vacation.Vacation_Status_Name == "On Approval")
                     {
-                        
+
                         if(!PersonsWithVacationsOnApproval.Contains(subordinate))
                         {
                             PersonsWithVacationsOnApproval.Add(subordinate);
@@ -465,7 +456,7 @@ namespace Vacation_Portal.Services.Providers
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             int status = 0;
-            if(vacation.Vacation_Status_Name == "Planned")
+            if(vacation.Vacation_Status_Name == "Being Planned")
             {
                 status = 1;
             } else if(vacation.Vacation_Status_Name == "On Approval")
@@ -505,7 +496,7 @@ namespace Vacation_Portal.Services.Providers
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             int status = 0;
-            if(vacation.Vacation_Status_Name == "Planned")
+            if(vacation.Vacation_Status_Name == "Being Planned")
             {
                 status = 1;
             } else if(vacation.Vacation_Status_Name == "On Approval")
@@ -546,7 +537,7 @@ namespace Vacation_Portal.Services.Providers
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             int status = 0;
-            if(vacation.Vacation_Status_Name == "Planned")
+            if(vacation.Vacation_Status_Name == "Being Planned")
             {
                 status = 1;
             } else if(vacation.Vacation_Status_Name == "On Approval")
@@ -665,7 +656,7 @@ namespace Vacation_Portal.Services.Providers
         private Vacation ToVacation(VacationDTO dto)
         {
             BrushConverter converter = new System.Windows.Media.BrushConverter();
-            Brush brushColor = (Brush)converter.ConvertFromString(dto.Vacation_Color);
+            Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
             return new Vacation(dto.Id, dto.Vacation_Name, dto.User_Id_SAP, ReturnUserName(dto.User_Id_SAP), ReturnUserSurname(dto.User_Id_SAP), dto.Vacation_Id, dto.Count, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status_Name, dto.Creator_Id);
         }
         private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto)

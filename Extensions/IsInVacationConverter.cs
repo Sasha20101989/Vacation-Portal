@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using Vacation_Portal.MVVM.Models;
@@ -15,14 +10,13 @@ namespace Vacation_Portal.Extensions
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var vacation = values[3] as Vacation;
-            var dayModel = values[1] as Day;
+            Day dayModel = values[1] as Day;
 
-            var brush = dayModel.IsAlreadyScheduledVacation ? Brushes.LightSlateGray : Brushes.Transparent;
+            SolidColorBrush brush = dayModel.IsAlreadyScheduledVacation ? Brushes.Transparent : Brushes.Transparent;
 
-            if(vacation != null)
+            if(values[3] is Vacation vacation)
             {
-                foreach(var date in vacation.DateRange.Step(x => x.AddDays(1)))
+                foreach(DateTime date in vacation.DateRange)
                 {
                     if(date.Date == dayModel.Date && dayModel.IsAlreadyScheduledVacation)
                     {
@@ -30,6 +24,9 @@ namespace Vacation_Portal.Extensions
                                     ? Brushes.DarkSeaGreen
                                     : Brushes.IndianRed;
                     } else if(date.Date == dayModel.Date && !dayModel.IsAlreadyScheduledVacation)
+                    {
+                        brush = Brushes.DarkSeaGreen;
+                    } else if(dayModel.IsNotConflict)
                     {
                         brush = Brushes.DarkSeaGreen;
                     }
@@ -44,5 +41,4 @@ namespace Vacation_Portal.Extensions
             throw new NotSupportedException();
         }
     }
-
 }

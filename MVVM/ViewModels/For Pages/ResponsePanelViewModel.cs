@@ -1,16 +1,14 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using MaterialDesignThemes.Wpf;
-using MiscUtil.Collections;
+﻿using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.Commands.ResponsePanelCommands;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.Base;
@@ -22,10 +20,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
     {
         private bool _isAcceptButtonEnabled = true;
         private bool _isDeclineButtonEnabled = true;
-        private ICommand _acceptCommand;
-        private ICommand _declineCommand;
 
-       public ICommand ReturnCommand { get; set; }
+        public ICommand ReturnCommand { get; set; }
         public СustomizedCalendar Calendar { get; set; }
         public ResponsePanelViewModel()
         {
@@ -34,36 +30,151 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             DeclineText = "Отклонить";
             AcceptRow = 0;
             DeclineRow = 1;
-            _acceptCommand = new RelayCommand(async () => await SetAcceptedStateAsync(), () => _isAcceptButtonEnabled);
-            _declineCommand = new RelayCommand(async () => await SetDeclinedStateAsync(), () => _isDeclineButtonEnabled);
+            AcceptCommand = new RelayCommand(async (parameter) => await SetAcceptedStateAsync(), (parameter) => _isAcceptButtonEnabled);
+            DeclineCommand = new RelayCommand(async (parameter) => await SetDeclinedStateAsync(), (parameter) => _isDeclineButtonEnabled);
 
             ReturnCommand = new ReturnToApprovalListCommand(this);
             ProcessedVacations = App.API.ProcessedVacations;
             Calendar = new СustomizedCalendar();
             PersonsWithVacationsOnApproval = App.API.PersonsWithVacationsOnApproval;
         }
-        private void updateMonths()
+        private void UpdateMonths()
         {
-            List<Month> months = new List<Month>();
-            for(int i = 1; i <= 12; i++)
+            List<List<Day>> allWeeks = GetWeeksInYear(2023);
+
+            int weeksToShow = 5;
+            int vacationWeeks = ISOWeek.GetWeekOfYear(VacationItem.Date_end) - ISOWeek.GetWeekOfYear(VacationItem.Date_Start) + 1;
+
+            if(vacationWeeks >= weeksToShow)
             {
-                months.Add(new Month(i, CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i), DateTime.DaysInMonth(2023, i), IntersectingVacations, VacationsOnApproval));
+                weeksToShow = Math.Min(vacationWeeks, weeksToShow);
             }
-            months.RemoveAll(month => month.Days.Count == 0);
-            Months = months;
+
+            List<List<Day>> filteredWeeks = new List<List<Day>>();
+            int currentWeekIndex = 0;
+
+            while(currentWeekIndex < allWeeks.Count && filteredWeeks.Count < weeksToShow)
+            {
+                bool containsSelectedVacation = false;
+
+                foreach(Day day in allWeeks[currentWeekIndex])
+                {
+                    if(day.IsInSelectedVacation || day.IsAlreadyScheduledVacation)
+                    {
+                        containsSelectedVacation = true;
+                        break;
+                    }
+                }
+
+                if(containsSelectedVacation)
+                {
+                    if(currentWeekIndex + weeksToShow > allWeeks.Count)
+                    {
+                        filteredWeeks.AddRange(allWeeks.GetRange(currentWeekIndex, allWeeks.Count - currentWeekIndex));
+                        currentWeekIndex = allWeeks.Count;
+                    } else
+                    {
+                        int weeksToAdd = (weeksToShow - vacationWeeks) / 2;
+                        int vacationStartWeek = ISOWeek.GetWeekOfYear(VacationItem.Date_Start);
+                        int vacationEndWeek = ISOWeek.GetWeekOfYear(VacationItem.Date_end);
+                        int startIndex = Math.Max(vacationStartWeek - weeksToAdd, 1);
+                        int endIndex = Math.Min(vacationEndWeek + weeksToAdd, 53 - weeksToShow + 1);
+
+                        filteredWeeks.AddRange(allWeeks.GetRange(startIndex - 1, weeksToShow));
+                        currentWeekIndex = endIndex;
+                    }
+                } else
+                {
+                    currentWeekIndex++;
+                }
+            }
+
+            Weeks = filteredWeeks;
+
         }
+
+        public List<List<Day>> GetWeeksInYear(int year)
+        {
+            DateTime startDate = new DateTime(year, 1, 1);
+            while(startDate.DayOfWeek != DayOfWeek.Monday)
+            {
+                startDate = startDate.AddDays(1);
+            }
+
+            DateTime endDate = new DateTime(year, 12, 31);
+
+            List<List<Day>> weeks = new List<List<Day>>();
+            List<Day> currentWeek = new List<Day>();
+
+            for(DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+            {
+                Day day = new Day(date);
+
+                foreach(Vacation vacation in VacationsOnApproval)
+                {
+                    foreach(DateTime vacationDate in vacation.DateRange)
+                    {
+                        if(vacationDate == date)
+                        {
+                            day.IsInSelectedVacation = true;
+                            if(day.ToolTipText == null)
+                            {
+                                day.ToolTipText = vacation.User_Surname;
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                foreach(Vacation vacation in IntersectingVacations)
+                {
+                    if(vacation.Range.Contains(date))
+                    {
+                        day.IsAlreadyScheduledVacation = true;
+                        day.ToolTipText = vacation.User_Surname;
+                        break;
+                    }
+                }
+
+                if(date.Date.DayOfWeek == DayOfWeek.Saturday || date.Date.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    day.IsHoliday = true;
+                    if(day.ToolTipText == null)
+                    {
+                        day.ToolTipText = "Выходной";
+                    }
+                }
+
+                currentWeek.Add(day);
+
+                if(date.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    weeks.Add(currentWeek);
+                    currentWeek = new List<Day>();
+                }
+            }
+
+            if(currentWeek.Count > 0)
+            {
+                weeks.Add(currentWeek);
+            }
+
+            return weeks;
+        }
+
         private void GetIntersectingVacations()
         {
             ObservableCollection<Vacation> intersectingVacations = new ObservableCollection<Vacation>();
-            foreach(DateTime VacationItemDate in VacationItem.DateRange.Step(x => x.AddDays(1)))
+            foreach(DateTime VacationItemDate in VacationItem.DateRange)
             {
                 foreach(Subordinate subordinate in App.API.Person.Subordinates)
                 {
                     foreach(Vacation vacation in subordinate.Subordinate_Vacations)
                     {
-                        foreach(DateTime dateVacation in vacation.DateRange.Step(x => x.AddDays(1)))
+                        foreach(DateTime dateVacation in vacation.DateRange)
                         {
-                            if(VacationItemDate == dateVacation && vacation.User_Name != VacationItem.User_Name)
+                            if(VacationItemDate == dateVacation && vacation.User_Id_SAP != VacationItem.User_Id_SAP)
                             {
                                 if(!intersectingVacations.Contains(vacation))
                                 {
@@ -75,112 +186,59 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 }
             }
             IntersectingVacations.Clear();
-            IntersectingVacations = intersectingVacations;
-        }
+            IntersectingVacations = new ObservableCollection<Vacation>(intersectingVacations.OrderBy(x => x.Date_end));
 
+        }
         private void GetVacationsOnApproval()
         {
             VacationsOnApproval.Clear();
-                foreach(Vacation vacation in SelectedPersonWithVacationsOnApproval.Subordinate_Vacations)
+            foreach(Vacation vacation in SelectedPersonWithVacationsOnApproval.Subordinate_Vacations)
+            {
+                if(vacation.Vacation_Status_Name == "On Approval")
                 {
-                    if(vacation.Vacation_Status_Name == "On Approval")
+                    if(!VacationsOnApproval.Contains(vacation))
                     {
-                        if(!VacationsOnApproval.Contains(vacation))
-                        {
-                            VacationsOnApproval.Add(vacation);
-                        }
+                        VacationsOnApproval.Add(vacation);
                     }
                 }
-        }
-        private List<Month> _months = new List<Month>();
-        public List<Month> Months
-        {
-            get
-            {
-                return _months;
-            }
-            set
-            {
-                _months = value;
-                OnPropertyChanged(nameof(Months));
             }
         }
 
-        private ObservableCollection<Vacation> _processedVacations = new ObservableCollection<Vacation>();
-        public ObservableCollection<Vacation> ProcessedVacations
-        {
-            get
-            {
-                return _processedVacations;
-            }
-            set
-            {
-                _processedVacations = value;
-                OnPropertyChanged(nameof(ProcessedVacations));
-            }
-        }
-
-        private ObservableCollection<Vacation> _vacationsOnApproval = new ObservableCollection<Vacation>();
-        public ObservableCollection<Vacation> VacationsOnApproval
-        {
-            get
-            {
-                return _vacationsOnApproval;
-            }
-            set
-            {
-                _vacationsOnApproval = value;
-                OnPropertyChanged(nameof(VacationsOnApproval));
-            }
-        }
-
-        private ObservableCollection<Vacation> _intersectingVacations = new ObservableCollection<Vacation>();
-        public ObservableCollection<Vacation> IntersectingVacations
-        {
-            get
-            {
-                return _intersectingVacations;
-            }
-            set
-            {
-                _intersectingVacations = value;
-                OnPropertyChanged(nameof(IntersectingVacations));
-            }
-        }
-        public ICommand AcceptCommand => _acceptCommand;
-        public ICommand DeclineCommand => _declineCommand;
+        #region Button settings
+        public ICommand AcceptCommand { get; }
+        public ICommand DeclineCommand { get; }
 
         private double _declineBorderOpacity = 1.0;
         public double DeclineBorderOpacity
         {
-            get { return _declineBorderOpacity; }
+            get => _declineBorderOpacity;
             set { _declineBorderOpacity = value; OnPropertyChanged(nameof(DeclineBorderOpacity)); }
         }
 
         private double _declineRootOpacity = 1.0;
         public double DeclineRootOpacity
         {
-            get { return _declineRootOpacity; }
+            get => _declineRootOpacity;
             set { _declineRootOpacity = value; OnPropertyChanged(nameof(DeclineRootOpacity)); }
         }
 
         private double _acceptBorderOpacity = 1.0;
         public double AcceptBorderOpacity
         {
-            get { return _acceptBorderOpacity; }
+            get => _acceptBorderOpacity;
             set { _acceptBorderOpacity = value; OnPropertyChanged(nameof(AcceptBorderOpacity)); }
         }
 
         private double _accepRootOpacity = 1.0;
         public double AcceptRootOpacity
         {
-            get { return _accepRootOpacity; }
+            get => _accepRootOpacity;
             set { _accepRootOpacity = value; OnPropertyChanged(nameof(AcceptRootOpacity)); }
         }
 
         public bool IsAcceptedButtonEnabled
         {
-            get { return _isAcceptButtonEnabled; }
+            get => _isAcceptButtonEnabled;
             set
             {
                 if(_isAcceptButtonEnabled != value)
@@ -194,10 +252,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private Brush _acceptBorderColor;
         public Brush AcceptBorderColor
         {
-            get
-            {
-                return _acceptBorderColor;
-            }
+            get => _acceptBorderColor;
             set
             {
                 _acceptBorderColor = value;
@@ -208,10 +263,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private Brush _declineBorderColor;
         public Brush DeclineBorderColor
         {
-            get
-            {
-                return _declineBorderColor;
-            }
+            get => _declineBorderColor;
             set
             {
                 _declineBorderColor = value;
@@ -222,10 +274,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private ScaleTransform _acceptRenderTransform;
         public ScaleTransform AcceptRenderTransform
         {
-            get
-            {
-                return _acceptRenderTransform;
-            }
+            get => _acceptRenderTransform;
             set
             {
                 _acceptRenderTransform = value;
@@ -234,7 +283,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         }
         public bool IsDeclinedButtonEnabled
         {
-            get { return _isDeclineButtonEnabled; }
+            get => _isDeclineButtonEnabled;
             set
             {
                 if(_isDeclineButtonEnabled != value)
@@ -248,10 +297,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private string _acceptText;
         public string AcceptText
         {
-            get
-            {
-                return _acceptText;
-            }
+            get => _acceptText;
             set
             {
                 _acceptText = value;
@@ -262,10 +308,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private string _declineText;
         public string DeclineText
         {
-            get
-            {
-                return _declineText;
-            }
+            get => _declineText;
             set
             {
                 _declineText = value;
@@ -276,10 +319,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private int _acceptRow;
         public int AcceptRow
         {
-            get
-            {
-                return _acceptRow;
-            }
+            get => _acceptRow;
             set
             {
                 _acceptRow = value;
@@ -290,24 +330,96 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private int _declineRow;
         public int DeclineRow
         {
-            get
-            {
-                return _declineRow;
-            }
+            get => _declineRow;
             set
             {
                 _declineRow = value;
                 OnPropertyChanged(nameof(DeclineRow));
             }
         }
+        private Brush _badgeBackground;
+        public Brush BadgeBackground
+        {
+            get => _badgeBackground;
+            set
+            {
+                SetProperty(ref _badgeBackground, value);
+                OnPropertyChanged(nameof(BadgeBackground));
+            }
+        }
+        #endregion
 
+        #region Collections
+        private List<Month> _months = new List<Month>();
+        public List<Month> Months
+        {
+            get => _months;
+            set
+            {
+                _months = value;
+                OnPropertyChanged(nameof(Months));
+            }
+        }
+
+        private List<List<Day>> _weeks = new List<List<Day>>();
+        public List<List<Day>> Weeks
+        {
+            get => _weeks;
+            set
+            {
+                _weeks = value;
+                OnPropertyChanged(nameof(Weeks));
+            }
+        }
+        private ObservableCollection<Vacation> _processedVacations = new ObservableCollection<Vacation>();
+        public ObservableCollection<Vacation> ProcessedVacations
+        {
+            get => _processedVacations;
+            set
+            {
+                _processedVacations = value;
+                OnPropertyChanged(nameof(ProcessedVacations));
+            }
+        }
+
+        private ObservableCollection<Vacation> _vacationsOnApproval = new ObservableCollection<Vacation>();
+        public ObservableCollection<Vacation> VacationsOnApproval
+        {
+            get => _vacationsOnApproval;
+            set
+            {
+                _vacationsOnApproval = value;
+                OnPropertyChanged(nameof(VacationsOnApproval));
+            }
+        }
+
+        private ObservableCollection<Vacation> _intersectingVacations = new ObservableCollection<Vacation>();
+        public ObservableCollection<Vacation> IntersectingVacations
+        {
+            get => _intersectingVacations;
+            set
+            {
+                _intersectingVacations = value;
+                OnPropertyChanged(nameof(IntersectingVacations));
+            }
+        }
+        private ObservableCollection<Subordinate> _personsWithVacationsOnApproval = new ObservableCollection<Subordinate>();
+        public ObservableCollection<Subordinate> PersonsWithVacationsOnApproval
+        {
+            get => _personsWithVacationsOnApproval;
+            set
+            {
+                _personsWithVacationsOnApproval = value;
+                OnPropertyChanged(nameof(PersonsWithVacationsOnApproval));
+            }
+        }
+        #endregion
+
+        #region Visicility settings
         private bool _visibilityInfoBar;
         public bool VisibilityInfoBar
         {
-            get
-            {
-                return _visibilityInfoBar;
-            }
+            get => _visibilityInfoBar;
             set
             {
                 _visibilityInfoBar = value;
@@ -318,17 +430,16 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         private bool _visibilityListVacations;
         public bool VisibilityListVacations
         {
-            get
-            {
-                return _visibilityListVacations;
-            }
+            get => _visibilityListVacations;
             set
             {
                 _visibilityListVacations = value;
                 OnPropertyChanged(nameof(VisibilityListVacations));
             }
         }
+        #endregion
 
+        #region Selections
         private Vacation _vacationItem;
         public Vacation VacationItem
         {
@@ -337,27 +448,16 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 SetProperty(ref _vacationItem, value);
                 OnPropertyChanged(nameof(VacationItem));
-                
+
                 if(VacationItem == null)
                 {
                     VisibilityInfoBar = false;
                 } else
                 {
                     GetIntersectingVacations();
-                    updateMonths();
+                    UpdateMonths();
                     VisibilityInfoBar = true;
                 }
-            }
-        }
-
-        private Brush _badgeBackground;
-        public Brush BadgeBackground
-        {
-            get => _badgeBackground;
-            set
-            {
-                SetProperty(ref _badgeBackground, value);
-                OnPropertyChanged(nameof(BadgeBackground));
             }
         }
 
@@ -394,27 +494,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        private ObservableCollection<Subordinate> _personsWithVacationsOnApproval = new ObservableCollection<Subordinate>();
-        public ObservableCollection<Subordinate> PersonsWithVacationsOnApproval
-        {
-            get
-            {
-                return _personsWithVacationsOnApproval;
-            }
-            set
-            {
-                _personsWithVacationsOnApproval = value;
-                OnPropertyChanged(nameof(PersonsWithVacationsOnApproval));
-            }
-        }
-
         private Subordinate _selectedPersonWithVacationsOnApproval;
         public Subordinate SelectedPersonWithVacationsOnApproval
         {
-            get
-            {
-                return _selectedPersonWithVacationsOnApproval;
-            }
+            get => _selectedPersonWithVacationsOnApproval;
             set
             {
                 _selectedPersonWithVacationsOnApproval = value;
@@ -427,17 +510,13 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                     GetVacationsOnApproval();
                     VisibilityListVacations = true;
                 }
-                
             }
         }
 
         private int _selectedIndexPersonWithVacationsOnApproval;
         public int SelectedIndexPersonWithVacationsOnApproval
         {
-            get
-            {
-                return _selectedIndexPersonWithVacationsOnApproval;
-            }
+            get => _selectedIndexPersonWithVacationsOnApproval;
             set
             {
                 _selectedIndexPersonWithVacationsOnApproval = value;
@@ -445,6 +524,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
+        #endregion
+
+        #region Button tasks
         private async Task SetAcceptedStateAsync()
         {
             IsAcceptedButtonEnabled = false;
@@ -467,7 +549,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 VacationIndex = 0;
             }
         }
-        
+
         private async Task SetDeclinedStateAsync()
         {
             IsDeclinedButtonEnabled = false;
@@ -534,5 +616,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 await ReturnToDefaultDeclineButton();
             }
         }
+        #endregion
+
     }
 }

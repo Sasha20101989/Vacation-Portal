@@ -18,8 +18,8 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
     {
         private readonly PersonalVacationPlanningViewModel _viewModel;
         public ObservableCollection<Vacation> VacationsToAprovalClone { get; set; } = new ObservableCollection<Vacation>();
-        ObservableCollection<Vacation> VacationsToAproval { get; set; } = new ObservableCollection<Vacation>();
-        ObservableCollection<VacationAllowanceViewModel> VacationAllowances { get; set; } = new ObservableCollection<VacationAllowanceViewModel>();
+        private ObservableCollection<Vacation> VacationsToAproval { get; set; } = new ObservableCollection<Vacation>();
+        private ObservableCollection<VacationAllowanceViewModel> VacationAllowances { get; set; } = new ObservableCollection<VacationAllowanceViewModel>();
         public SaveDataModelCommand(PersonalVacationPlanningViewModel viewModel)
         {
             _viewModel = viewModel;
@@ -30,7 +30,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             _viewModel.IsSaving = true;
             bool isSupervisorView = false;
             bool isPersonalView = false;
-            
+
             if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
             {
                 isSupervisorView = true;
@@ -74,7 +74,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             foreach(Vacation item in VacationsToAproval)
             {
                 int countConflicts = 0;
-                Vacation plannedVacation = new Vacation(item._Id, item.Name, item.User_Id_SAP,item.User_Name,item.User_Surname, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Name, item.Creator_Id);
+                Vacation plannedVacation = new Vacation(item._Id, item.Name, item.User_Id_SAP, item.User_Name, item.User_Surname, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Name, item.Creator_Id);
                 IEnumerable<VacationDTO> conflictingVacations = await App.API.GetConflictingVacationAsync(plannedVacation);
 
                 foreach(VacationDTO vacationDTO in conflictingVacations)
@@ -89,7 +89,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                     if(isPersonalView)
                     {
                         _viewModel.UpdateDataForPerson();
-                    }else if(isSupervisorView)
+                    } else if(isSupervisorView)
                     {
                         _viewModel.UpdateDataForSubordinate();
                     }
@@ -110,7 +110,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             {
                 _viewModel.UpdateDataForPerson();
             }
-            
+
         }
 
         private VacationAllowanceViewModel GetVacationAllowance(string name)

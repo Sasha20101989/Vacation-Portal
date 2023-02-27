@@ -1,12 +1,8 @@
 ﻿using MaterialDesignThemes.Wpf;
-using MiscUtil.Collections;
-using MiscUtil.Collections.Extensions;
 using System;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
+using System.Collections.Generic;
 using System.Windows.Media;
 using Vacation_Portal.MVVM.ViewModels.Base;
-using Vacation_Portal.MVVM.ViewModels.For_Pages;
 
 namespace Vacation_Portal.MVVM.Models
 {
@@ -16,7 +12,7 @@ namespace Vacation_Portal.MVVM.Models
         public string Name { get; set; }
         public string User_Name { get; set; }
         public string User_Surname { get; set; }
-        public string FullName => User_Name +" "+ User_Surname;
+        public string FullName => User_Name + " " + User_Surname;
         public int User_Id_SAP { get; set; }
         public int Vacation_Id { get; set; }
 
@@ -33,14 +29,14 @@ namespace Vacation_Portal.MVVM.Models
         public Brush Color { get; set; }
         public DateTime Date_Start { get; set; }
         public DateTime Date_end { get; set; }
-        public Range<DateTime> DateRange { get; set; }
+        public IEnumerable<DateTime> DateRange => GetDateRange(Date_Start, Date_end);
         public string Vacation_Status_Name { get; set; }
         public string Creator_Id { get; set; }
         public PackIconKind VacationStatusKind { get; set; }
         public Brush BadgeBackground { get; set; }
         public bool IsIntersectingVacation { get; set; }
-
-    public override string ToString()
+        public IEnumerable<DateTime> Range => GetDateRange(Date_Start, Date_end);
+        public override string ToString()
         {
             return $"{Count}: {Date_Start:dd.MM.yyyy} - {Date_end:dd.MM.yyyy}";
         }
@@ -53,6 +49,14 @@ namespace Vacation_Portal.MVVM.Models
         public override int GetHashCode()
         {
             return HashCode.Combine(Date_Start, Date_end);
+        }
+
+        public IEnumerable<DateTime> GetDateRange(DateTime start, DateTime end)
+        {
+            for(DateTime date = start.Date; date <= end.Date; date = date.AddDays(1))
+            {
+                yield return date;
+            }
         }
 
         public Vacation(int Id, string name, int user_Id_SAP, string userName, string userSurname, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, string statusName, string creator_Id)
@@ -68,7 +72,6 @@ namespace Vacation_Portal.MVVM.Models
             Date_end = date_end;
             Vacation_Status_Name = statusName;
             Creator_Id = creator_Id;
-            DateRange = Date_end > Date_Start ? Date_Start.To(Date_end) : Date_end.To(Date_Start);
             User_Name = userName;
             User_Surname = userSurname;
         }
@@ -80,7 +83,7 @@ namespace Vacation_Portal.MVVM.Models
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            return MemberwiseClone();
         }
     }
 }

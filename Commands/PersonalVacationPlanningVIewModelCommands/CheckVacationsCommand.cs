@@ -1,6 +1,5 @@
 ﻿
 using MaterialDesignThemes.Wpf;
-using MiscUtil.Collections;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -31,7 +30,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             _checkVacationView.DataContext = _viewModel;
             _checkVacationView.ClearVisibility();
             bool isSupervisorView = false;
-            bool isPersonalView = false;
             ObservableCollection<Vacation> VacationsToAproval = new ObservableCollection<Vacation>();
             if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
             {
@@ -39,7 +37,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.SelectedSubordinate.Subordinate_Vacations.OrderByDescending(i => i.Count));
             } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
             {
-                isPersonalView = true;
                 VacationsToAproval = new ObservableCollection<Vacation>(App.API.Person.User_Vacations.OrderByDescending(i => i.Count));
             }
 
@@ -47,14 +44,13 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             _viewModel.IsEnabled = false;
             bool isFirstCheckDaysPlaned = false;
             bool isSecondCheckDaysPlaned = false;
-            
+
             for(int i = 0; i < VacationsToAproval.Count; i++)
             {
                 int countFirstPeriod = 0;
                 if(VacationsToAproval[i].Name == "Основной")
                 {
-                    Range<DateTime> range = _viewModel.Calendar.ReturnRange(VacationsToAproval[i]);
-                    foreach(DateTime planedDate in range.Step(x => x.AddDays(1)))
+                    foreach(DateTime planedDate in VacationsToAproval[i].DateRange)
                     {
                         countFirstPeriod++;
                         if(countFirstPeriod >= 14)
@@ -86,8 +82,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                         int countSecondPeriod = 0;
                         if(VacationsToAproval[i].Name == "Основной" && VacationsToAproval[i] != CheckedVacation)
                         {
-                            Range<DateTime> range = _viewModel.Calendar.ReturnRange(VacationsToAproval[i]);
-                            foreach(DateTime planedDate in range.Step(x => x.AddDays(1)))
+                            foreach(DateTime planedDate in VacationsToAproval[i].DateRange)
                             {
                                 countSecondPeriod++;
                                 if(countSecondPeriod >= 7)

@@ -17,13 +17,13 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         DateTime DateUnblockPlanning { get; set; }
         bool IsCalendarUnblocked { get; set; }
         bool CheckDateUnblockedCalendarAsync();
-        bool IsCalendarPlannedOpen { get;}
+        bool IsCalendarPlannedOpen { get; }
         bool CheckNextCalendarPlanningUnlock();
         ICommand LoadHolidays { get; }
         ICommand LoadHolidayTypes { get; }
         ICommand Login { get; }
 
-        ObservableCollection<Vacation> ProcessedVacations {get; set;}
+        ObservableCollection<Vacation> ProcessedVacations { get; set; }
 
         ObservableCollection<Vacation> VacationsOnApproval { get; set; }
 
@@ -47,6 +47,6 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation);
         Task UpdateVacationStatusAsync(Vacation vacation);
         IEnumerable<CalendarSettings> GetSettingsForCalendar();
-        
+
     }
 }

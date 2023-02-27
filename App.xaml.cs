@@ -10,7 +10,6 @@ using Vacation_Portal.HostBuilders;
 using Vacation_Portal.MVVM.Views;
 using Vacation_Portal.Services.Providers;
 using Vacation_Portal.Services.Providers.Interfaces;
-using Vacation_Portal.Extensions;
 
 namespace Vacation_Portal
 {
@@ -21,7 +20,7 @@ namespace Vacation_Portal
         public static IInformationSplashScreenService SplashScreenService { get; private set; }
         public static IDependencyDetector DependencyDetector { get; private set; }
         public static SplashScreen SplashScreen { get; set; }
-        public static string SelectedMode {get;set;}
+        public static string SelectedMode { get; set; }
         public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
         public App()
         {
@@ -39,14 +38,13 @@ namespace Vacation_Portal
             DependencyDetector.StopDependencyPlannedHoliday();
             DependencyDetector.StopDependencyPlannedVacation();
         }
-        protected override async void OnStartup(StartupEventArgs e)
+        protected override void OnStartup(StartupEventArgs e)
         {
             _host.Start();
 
             API = new LunchRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
             SplashScreenService = new InformationSplashScreenService();
             API.LoadHolidays.Execute(new object());
-            //API.LoadHolidayTypes.Execute(null);
             DependencyDetector = new DependencyDetector(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
 
             DependencyDetector.StartDependencyPerson();
@@ -58,8 +56,8 @@ namespace Vacation_Portal
 
             SplashScreen.Show();
 
-            
-            
+
+
             base.OnStartup(e);
         }
     }

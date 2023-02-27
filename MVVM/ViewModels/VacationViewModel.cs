@@ -1,6 +1,5 @@
-﻿using MiscUtil.Collections;
-using MiscUtil.Collections.Extensions;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Media;
 
 namespace Vacation_Portal.MVVM.ViewModels
@@ -43,17 +42,19 @@ namespace Vacation_Portal.MVVM.ViewModels
             return HashCode.Combine(User_Id_SAP, Name, DateStart, DateEnd);
         }
 
-        public Range<DateTime> ReturnVacationRange()
+        public IEnumerable<DateTime> GetDateRange(DateTime start, DateTime end)
         {
-            Range<DateTime> range = DateEnd > DateStart ? DateStart.To(DateEnd) : DateEnd.To(DateStart);
-            return range;
+            for(DateTime date = start.Date; date <= end.Date; date = date.AddDays(1))
+            {
+                yield return date;
+            }
         }
 
         private int GetCount()
         {
             int count = 0;
-            Range<DateTime> range = ReturnVacationRange();
-            foreach(DateTime date in range.Step(x => x.AddDays(1)))
+            IEnumerable<DateTime> range = GetDateRange(DateStart, DateEnd);
+            foreach(DateTime date in range)
             {
                 count++;
             }

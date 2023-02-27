@@ -1,8 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using Vacation_Portal.MVVM.Models;
+﻿using System.Windows.Controls;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 
 namespace Vacation_Portal.MVVM.Views.Controls

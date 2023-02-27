@@ -21,7 +21,6 @@ namespace Vacation_Portal.HostBuilders
         {
             hostBuilder.ConfigureServices((hostContext, services) =>
             {
-                //services.AddSingleton<VacationSummary>();
                 services.AddSingleton((s) => new MainWindowViewModel());
                 services.AddSingleton(s => new MainWindow()
                 {

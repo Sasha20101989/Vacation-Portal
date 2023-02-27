@@ -57,7 +57,7 @@ namespace Vacation_Portal.MVVM.ViewModels
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            return MemberwiseClone();
         }
     }
 }
