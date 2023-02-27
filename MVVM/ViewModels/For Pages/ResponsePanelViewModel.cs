@@ -129,7 +129,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 
                 foreach(Vacation vacation in IntersectingVacations)
                 {
-                    if(vacation.Range.Contains(date))
+                    if(vacation.DateRange.Contains(date))
                     {
                         day.IsAlreadyScheduledVacation = true;
                         day.ToolTipText = vacation.User_Surname;

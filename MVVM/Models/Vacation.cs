@@ -35,7 +35,6 @@ namespace Vacation_Portal.MVVM.Models
         public PackIconKind VacationStatusKind { get; set; }
         public Brush BadgeBackground { get; set; }
         public bool IsIntersectingVacation { get; set; }
-        public IEnumerable<DateTime> Range => GetDateRange(Date_Start, Date_end);
         public override string ToString()
         {
             return $"{Count}: {Date_Start:dd.MM.yyyy} - {Date_end:dd.MM.yyyy}";
