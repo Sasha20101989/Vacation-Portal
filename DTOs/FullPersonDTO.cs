@@ -1,9 +1,7 @@
 ﻿using System;
 
-namespace Vacation_Portal.DTOs
-{
-    public class FullPersonDTO
-    {
+namespace Vacation_Portal.DTOs {
+    public class FullPersonDTO {
         //PersonTDO
         public int User_Id_SAP { get; set; }
         public string User_Id_Account { get; set; }

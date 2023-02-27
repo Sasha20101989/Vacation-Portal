@@ -4,12 +4,9 @@ using System.Linq;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
-namespace Vacation_Portal.MVVM.ViewModels
-{
-    public class PrintPreViewModel : ViewModelBase
-    {
-        public PrintPreViewModel(string fullName, string position, string virtualDepartment, int sapId, Vacation vacationToCompensate)
-        {
+namespace Vacation_Portal.MVVM.ViewModels {
+    public class PrintPreViewModel : ViewModelBase {
+        public PrintPreViewModel(string fullName, string position, string virtualDepartment, int sapId, Vacation vacationToCompensate) {
             FullName = fullName;
             Position = position;
             VirtualDepartment = virtualDepartment;
@@ -17,8 +14,7 @@ namespace Vacation_Portal.MVVM.ViewModels
             VacationToCompensate = vacationToCompensate;
         }
 
-        public PrintPreViewModel(string fullName, string position, string virtualDepartment, int sapId, IEnumerable<Vacation> allAvailableToShiftVacations)
-        {
+        public PrintPreViewModel(string fullName, string position, string virtualDepartment, int sapId, IEnumerable<Vacation> allAvailableToShiftVacations) {
             FullName = fullName;
             Position = position;
             VirtualDepartment = virtualDepartment;

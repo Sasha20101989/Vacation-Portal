@@ -1,16 +1,12 @@
 ﻿using System;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
-namespace Vacation_Portal.MVVM.ViewModels.For_Pages
-{
-    public class AdminPageHrViewModel : ViewModelBase
-    {
+namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
+    public class AdminPageHrViewModel : ViewModelBase {
         private DateTime _dateUnblockNextCalendar;
-        public DateTime DateUnblockNextCalendar
-        {
+        public DateTime DateUnblockNextCalendar {
             get => _dateUnblockNextCalendar;
-            set
-            {
+            set {
                 _dateUnblockNextCalendar = value;
                 App.API.DateUnblockNextCalendar = _dateUnblockNextCalendar;
                 OnPropertyChanged(nameof(DateUnblockNextCalendar));
@@ -18,18 +14,15 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
         private DateTime _dateUnblockPlanningCalendar;
-        public DateTime DateUnblockPlanningCalendar
-        {
+        public DateTime DateUnblockPlanningCalendar {
             get => _dateUnblockPlanningCalendar;
-            set
-            {
+            set {
                 _dateUnblockPlanningCalendar = value;
                 OnPropertyChanged(nameof(DateUnblockPlanningCalendar));
 
             }
         }
-        public AdminPageHrViewModel()
-        {
+        public AdminPageHrViewModel() {
             DateUnblockNextCalendar = App.API.DateUnblockNextCalendar;
             DateUnblockPlanningCalendar = App.API.DateUnblockPlanning;
         }

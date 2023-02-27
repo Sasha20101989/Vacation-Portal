@@ -1,19 +1,14 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 
-namespace Vacation_Portal.Extensions
-{
-    public static class FindParent
-    {
-        public static T FindParentOfType<T>(this DependencyObject child) where T : DependencyObject
-        {
+namespace Vacation_Portal.Extensions {
+    public static class FindParent {
+        public static T FindParentOfType<T>(this DependencyObject child) where T : DependencyObject {
             DependencyObject parentDepObj = child;
-            do
-            {
+            do {
                 parentDepObj = VisualTreeHelper.GetParent(parentDepObj);
                 T parent = parentDepObj as T;
-                if(parent != null)
-                {
+                if(parent != null) {
                     return parent;
                 }
             }

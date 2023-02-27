@@ -2,10 +2,8 @@
 using System.Windows.Media;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
-namespace Vacation_Portal.MVVM.Models
-{
-    public class Day : ViewModelBase
-    {
+namespace Vacation_Portal.MVVM.Models {
+    public class Day : ViewModelBase {
         public DateTime Date { get; set; }
         public int Week { get; set; }
         public string ToolTipText { get; set; }
@@ -17,22 +15,18 @@ namespace Vacation_Portal.MVVM.Models
         public bool IsNotConflict { get; set; }
 
         private bool _isInSelectedVacation;
-        public bool IsInSelectedVacation
-        {
+        public bool IsInSelectedVacation {
             get => _isInSelectedVacation;
-            set
-            {
+            set {
                 _isInSelectedVacation = value;
                 OnPropertyChanged(nameof(IsInSelectedVacation));
             }
         }
 
         private bool _isAlreadyScheduledVacation;
-        public bool IsAlreadyScheduledVacation
-        {
+        public bool IsAlreadyScheduledVacation {
             get => _isAlreadyScheduledVacation;
-            set
-            {
+            set {
                 _isAlreadyScheduledVacation = value;
                 OnPropertyChanged(nameof(IsAlreadyScheduledVacation));
             }
@@ -40,19 +34,16 @@ namespace Vacation_Portal.MVVM.Models
 
         public DayOfWeek DayOfWeek => Date.DayOfWeek;
 
-        public Day(DateTime date)
-        {
+        public Day(DateTime date) {
             Date = date;
         }
 
-        public override bool Equals(object obj)
-        {
+        public override bool Equals(object obj) {
             return obj is Day day &&
                    Date == day.Date;
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return HashCode.Combine(Date);
         }
     }

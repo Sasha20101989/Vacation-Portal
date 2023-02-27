@@ -5,15 +5,12 @@ using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.Base;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 
-namespace Vacation_Portal.MVVM.ViewModels.ForPages
-{
-    public class SettingsViewModel : ViewModelBase
-    {
+namespace Vacation_Portal.MVVM.ViewModels.ForPages {
+    public class SettingsViewModel : ViewModelBase {
         private readonly PaletteHelper _paletteHelper = new PaletteHelper();
         private readonly MainWindowViewModel _mainWindowViewModel;
         private Color? _primaryColor;
-        public SettingsViewModel(MainWindowViewModel mainWindowViewModel)
-        {
+        public SettingsViewModel(MainWindowViewModel mainWindowViewModel) {
             _mainWindowViewModel = mainWindowViewModel;
             ITheme theme = _paletteHelper.GetTheme();
             _primaryColor = theme.PrimaryMid.Color;
@@ -21,13 +18,10 @@ namespace Vacation_Portal.MVVM.ViewModels.ForPages
         }
 
         private ColorScheme _activeScheme;
-        public ColorScheme ActiveScheme
-        {
+        public ColorScheme ActiveScheme {
             get => _activeScheme;
-            set
-            {
-                if(_activeScheme != value)
-                {
+            set {
+                if(_activeScheme != value) {
                     _activeScheme = value;
                     OnPropertyChanged();
                 }
@@ -35,30 +29,24 @@ namespace Vacation_Portal.MVVM.ViewModels.ForPages
         }
 
         private Color? _selectedColor;
-        public Color? SelectedColor
-        {
+        public Color? SelectedColor {
             get => _selectedColor;
-            set
-            {
-                if(_selectedColor != value)
-                {
+            set {
+                if(_selectedColor != value) {
                     _selectedColor = value;
                     OnPropertyChanged();
 
-                    if(value is Color color)
-                    {
+                    if(value is Color color) {
                         ChangeCustomColor(color);
                     }
                 }
             }
         }
 
-        private void ChangeCustomColor(object obj)
-        {
+        private void ChangeCustomColor(object obj) {
             Color color = (Color) obj;
 
-            if(ActiveScheme == ColorScheme.Primary)
-            {
+            if(ActiveScheme == ColorScheme.Primary) {
 
                 _paletteHelper.ChangePrimaryColor(color);
                 _primaryColor = color;

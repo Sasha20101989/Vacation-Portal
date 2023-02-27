@@ -7,29 +7,23 @@ using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 using Vacation_Portal.MVVM.Views;
 
-namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
-{
-    public class ShiftVacationsCommand : CommandBase
-    {
+namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
+    public class ShiftVacationsCommand : CommandBase {
         private readonly PersonalVacationPlanningViewModel _viewModel;
         private PrintPreView Viewer = null;
 
-        public ShiftVacationsCommand(PersonalVacationPlanningViewModel viewModel)
-        {
+        public ShiftVacationsCommand(PersonalVacationPlanningViewModel viewModel) {
             _viewModel = viewModel;
         }
 
-        public override void Execute(object parameter)
-        {
+        public override void Execute(object parameter) {
             PrintPreViewModel printPreViewModel = null;
             IEnumerable<Vacation> allAvailableToShiftVacations = null;
 
-            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal))
-            {
+            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
                 allAvailableToShiftVacations = App.API.Person.User_Vacations.Where(vac => vac.Date_end > System.DateTime.Today && vac.Vacation_Status_Name == "Approved").Take(5).ToList();
 
-                if(allAvailableToShiftVacations.Any())
-                {
+                if(allAvailableToShiftVacations.Any()) {
                     printPreViewModel = new PrintPreViewModel(App.API.Person.FullName,
                                                                 App.API.Person.Position,
                                                                 App.API.Person.Virtual_Department_Name,
@@ -37,12 +31,10 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                                                                 allAvailableToShiftVacations);
                 }
 
-            } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD))
-            {
+            } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
                 allAvailableToShiftVacations = _viewModel.SelectedSubordinate.Subordinate_Vacations.Where(vac => vac.Date_end > System.DateTime.Today && vac.Vacation_Status_Name == "Approved").Take(5).ToList();
 
-                if(allAvailableToShiftVacations.Any())
-                {
+                if(allAvailableToShiftVacations.Any()) {
                     printPreViewModel = new PrintPreViewModel(_viewModel.SelectedSubordinate.FullName,
                                                               _viewModel.SelectedSubordinate.Position,
                                                               _viewModel.SelectedSubordinate.Virtual_Department_Name,
@@ -53,8 +45,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             }
 
 
-            if(printPreViewModel == null)
-            {
+            if(printPreViewModel == null) {
                 return;
             }
 

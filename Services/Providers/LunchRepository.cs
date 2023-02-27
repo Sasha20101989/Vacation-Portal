@@ -18,10 +18,8 @@ using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.Services.Providers.Interfaces;
 
-namespace Vacation_Portal.Services.Providers
-{
-    public class LunchRepository : ILunchRepository
-    {
+namespace Vacation_Portal.Services.Providers {
+    public class LunchRepository : ILunchRepository {
         public SqlTableDependency<HolidayDTO> tableDependencyHoliday;
         private readonly SqlDbConnectionFactory _sqlDbConnectionFactory;
         public ICommand LoadHolidays { get; } = new LoadHolidaysCommand();
@@ -31,10 +29,8 @@ namespace Vacation_Portal.Services.Providers
         #region PropChange
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual bool SetProperty<T>(ref T member, T value, [CallerMemberName] string propertyName = null)
-        {
-            if(EqualityComparer<T>.Default.Equals(member, value))
-            {
+        protected virtual bool SetProperty<T>(ref T member, T value, [CallerMemberName] string propertyName = null) {
+            if(EqualityComparer<T>.Default.Equals(member, value)) {
                 return false;
             }
             member = value;
@@ -42,43 +38,35 @@ namespace Vacation_Portal.Services.Providers
             return true;
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
 
-        public LunchRepository(SqlDbConnectionFactory sqlDbConnectionFactory)
-        {
+        public LunchRepository(SqlDbConnectionFactory sqlDbConnectionFactory) {
             _sqlDbConnectionFactory = sqlDbConnectionFactory;
         }
         private ObservableCollection<Subordinate> _personsWithVacationsOnApproval = new ObservableCollection<Subordinate>();
-        public ObservableCollection<Subordinate> PersonsWithVacationsOnApproval
-        {
+        public ObservableCollection<Subordinate> PersonsWithVacationsOnApproval {
             get => _personsWithVacationsOnApproval;
-            set
-            {
+            set {
                 _personsWithVacationsOnApproval = value;
                 OnPropertyChanged(nameof(PersonsWithVacationsOnApproval));
             }
         }
         private ObservableCollection<Vacation> _processedVacations = new ObservableCollection<Vacation>();
-        public ObservableCollection<Vacation> ProcessedVacations
-        {
+        public ObservableCollection<Vacation> ProcessedVacations {
             get => _processedVacations;
-            set
-            {
+            set {
                 _processedVacations = value;
                 OnPropertyChanged(nameof(ProcessedVacations));
             }
         }
 
         private ObservableCollection<Vacation> _vacationsOnApproval = new ObservableCollection<Vacation>();
-        public ObservableCollection<Vacation> VacationsOnApproval
-        {
+        public ObservableCollection<Vacation> VacationsOnApproval {
             get => _vacationsOnApproval;
-            set
-            {
+            set {
                 _vacationsOnApproval = value;
                 OnPropertyChanged(nameof(VacationsOnApproval));
             }
@@ -89,13 +77,10 @@ namespace Vacation_Portal.Services.Providers
         public DateTime DateUnblockNextCalendar { get; set; }
         public bool IsCalendarUnblocked { get; set; }
 
-        public bool CheckDateUnblockedCalendarAsync()
-        {
+        public bool CheckDateUnblockedCalendarAsync() {
             IEnumerable<CalendarSettings> calendarSettings = GetSettingsForCalendar();
-            foreach(CalendarSettings settings in calendarSettings)
-            {
-                if(settings.Setting_Name == "NextCalendarUnlock")
-                {
+            foreach(CalendarSettings settings in calendarSettings) {
+                if(settings.Setting_Name == "NextCalendarUnlock") {
                     DateUnblockNextCalendar = settings.Setting_Date;
                     IsCalendarUnblocked = DateUnblockNextCalendar <= DateTime.UtcNow;
                     return IsCalendarUnblocked;
@@ -104,13 +89,10 @@ namespace Vacation_Portal.Services.Providers
             return false;
         }
 
-        public bool CheckNextCalendarPlanningUnlock()
-        {
+        public bool CheckNextCalendarPlanningUnlock() {
             IEnumerable<CalendarSettings> calendarSettings = GetSettingsForCalendar();
-            foreach(CalendarSettings settings in calendarSettings)
-            {
-                if(settings.Setting_Name == "NextCalendarPlanningUnlock")
-                {
+            foreach(CalendarSettings settings in calendarSettings) {
+                if(settings.Setting_Name == "NextCalendarPlanningUnlock") {
                     DateUnblockPlanning = settings.Setting_Date;
                     IsCalendarPlannedOpen = DateUnblockPlanning <= DateTime.UtcNow;
                     return IsCalendarPlannedOpen;
@@ -126,21 +108,17 @@ namespace Vacation_Portal.Services.Providers
         public Action<ObservableCollection<Holiday>> OnHolidayTypesChanged { get; set; }
 
         private ObservableCollection<HolidayViewModel> _holidays = new ObservableCollection<HolidayViewModel>();
-        public ObservableCollection<HolidayViewModel> Holidays
-        {
+        public ObservableCollection<HolidayViewModel> Holidays {
             get => _holidays;
-            set
-            {
+            set {
                 _holidays = value;
                 OnPropertyChanged(nameof(Holidays));
             }
         }
         private ObservableCollection<Holiday> _holidayTypes = new ObservableCollection<Holiday>();
-        public ObservableCollection<Holiday> HolidayTypes
-        {
+        public ObservableCollection<Holiday> HolidayTypes {
             get => _holidayTypes;
-            set
-            {
+            set {
                 _holidayTypes = value;
                 OnPropertyChanged(nameof(HolidayTypes));
             }
@@ -156,40 +134,31 @@ namespace Vacation_Portal.Services.Providers
 
         #region Person
 
-        public async IAsyncEnumerable<Vacation> FetchVacationsAsync(int sapId)
-        {
+        public async IAsyncEnumerable<Vacation> FetchVacationsAsync(int sapId) {
             IEnumerable<Vacation> vacations = await LoadVacationsAsync(sapId);
 
-            foreach(Vacation item in vacations)
-            {
+            foreach(Vacation item in vacations) {
                 yield return item;
             }
         }
-        public async IAsyncEnumerable<VacationAllowanceViewModel> FetchVacationAllowancesAsync(int sapId)
-        {
+        public async IAsyncEnumerable<VacationAllowanceViewModel> FetchVacationAllowancesAsync(int sapId) {
             IEnumerable<VacationAllowanceViewModel> vacationAllowances = await GetVacationAllowanceAsync(sapId);
-            foreach(VacationAllowanceViewModel item in vacationAllowances)
-            {
+            foreach(VacationAllowanceViewModel item in vacationAllowances) {
                 yield return item;
             }
         }
-        public async Task<Person> LoginAsync(string account)
-        {
+        public async Task<Person> LoginAsync(string account) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            try
-            {
-                object parametersPerson = new
-                {
+            try {
+                object parametersPerson = new {
                     Account = account
                 };
                 bool isHrAdmin = false;
                 BrushConverter converter = new System.Windows.Media.BrushConverter();
                 IEnumerable<PersonDTO> fullPersonDTOs = await database.QueryAsync<PersonDTO>("usp_Get_Users", parametersPerson, commandType: CommandType.StoredProcedure);
 
-                foreach(PersonDTO personDTO in fullPersonDTOs)
-                {
-                    if(personDTO.User_Id_Account == account && personDTO.Role_Name == "HR Admin")
-                    {
+                foreach(PersonDTO personDTO in fullPersonDTOs) {
+                    if(personDTO.User_Id_Account == account && personDTO.Role_Name == "HR Admin") {
                         isHrAdmin = true;
                     }
                 }
@@ -197,55 +166,42 @@ namespace Vacation_Portal.Services.Providers
                 App.SplashScreen.status.Text = "В поисках ваших отпусков";
                 App.SplashScreen.status.Foreground = Brushes.Black;
 
-                foreach(PersonDTO personDTO in fullPersonDTOs)
-                {
-                    await foreach(Vacation vacation in FetchVacationsAsync(personDTO.User_Id_SAP))
-                    {
+                foreach(PersonDTO personDTO in fullPersonDTOs) {
+                    await foreach(Vacation vacation in FetchVacationsAsync(personDTO.User_Id_SAP)) {
                         Brush brushColor;
-                        if(vacation.Color == null)
-                        {
+                        if(vacation.Color == null) {
                             brushColor = Brushes.Gray;
-                        } else
-                        {
+                        } else {
                             brushColor = vacation.Color;
                         }
 
-                        if(!Vacations.Contains(vacation))
-                        {
+                        if(!Vacations.Contains(vacation)) {
                             vacation.User_Name = personDTO.User_Name;
                             vacation.User_Surname = personDTO.User_Surname;
                             Vacations.Add(vacation);
                         }
                     }
 
-                    await foreach(VacationAllowanceViewModel vacationAllowance in FetchVacationAllowancesAsync(personDTO.User_Id_SAP))
-                    {
+                    await foreach(VacationAllowanceViewModel vacationAllowance in FetchVacationAllowancesAsync(personDTO.User_Id_SAP)) {
                         VacationAllowanceViewModel vacationAllowanceViewModel = new VacationAllowanceViewModel(vacationAllowance.User_Id_SAP, vacationAllowance.Vacation_Name, vacationAllowance.Vacation_Id, vacationAllowance.Vacation_Year, vacationAllowance.Vacation_Days_Quantity, vacationAllowance.Vacation_Color);
-                        if(!VacationAllowances.Contains(vacationAllowanceViewModel))
-                        {
+                        if(!VacationAllowances.Contains(vacationAllowanceViewModel)) {
                             VacationAllowances.Add(vacationAllowanceViewModel);
                         }
                     }
 
                 }
                 //собираю общий список с персонами и их отпусками
-                foreach(PersonDTO item in fullPersonDTOs)
-                {
+                foreach(PersonDTO item in fullPersonDTOs) {
                     ObservableCollection<Vacation> VacationsForPerson = new ObservableCollection<Vacation>();
                     ObservableCollection<VacationAllowanceViewModel> VacationAllowancesForPerson = new ObservableCollection<VacationAllowanceViewModel>();
-                    foreach(Vacation vacationForPerson in Vacations)
-                    {
-                        if(vacationForPerson.User_Id_SAP == item.User_Id_SAP)
-                        {
+                    foreach(Vacation vacationForPerson in Vacations) {
+                        if(vacationForPerson.User_Id_SAP == item.User_Id_SAP) {
                             VacationsForPerson.Add(vacationForPerson);
                         }
                     }
-                    foreach(VacationAllowanceViewModel vacationAllowanceForPerson in VacationAllowances)
-                    {
-                        if(vacationAllowanceForPerson.User_Id_SAP == item.User_Id_SAP)
-                        {
-                            if(!VacationAllowancesForPerson.Contains(vacationAllowanceForPerson))
-                            {
+                    foreach(VacationAllowanceViewModel vacationAllowanceForPerson in VacationAllowances) {
+                        if(vacationAllowanceForPerson.User_Id_SAP == item.User_Id_SAP) {
+                            if(!VacationAllowancesForPerson.Contains(vacationAllowanceForPerson)) {
                                 VacationAllowancesForPerson.Add(vacationAllowanceForPerson);
                             }
                         }
@@ -257,25 +213,20 @@ namespace Vacation_Portal.Services.Providers
                                                item.Virtual_Department_Name, item.User_Sub_Department_Id, item.Role_Name, item.User_App_Color,
                                                item.User_Supervisor_Id_SAP, item.Position, VacationsForPerson, VacationAllowancesForPerson);
                     Brush brushColor;
-                    if(item.User_App_Color == null)
-                    {
+                    if(item.User_App_Color == null) {
                         brushColor = Brushes.Gray;
-                    } else
-                    {
+                    } else {
                         brushColor = (Brush) converter.ConvertFromString(item.User_App_Color);
                     }
-                    if(!FullPersons.Contains(person))
-                    {
+                    if(!FullPersons.Contains(person)) {
                         FullPersons.Add(person);
                     }
                 }
 
                 FullPersons = new List<Person>(FullPersons.OrderBy(i => i.Surname));
 
-                for(int i = 0; i < FullPersons.Count; i++)
-                {
-                    if(FullPersons[i].Id_Account == Environment.UserName)
-                    {
+                for(int i = 0; i < FullPersons.Count; i++) {
+                    if(FullPersons[i].Id_Account == Environment.UserName) {
                         App.SplashScreen.status.Foreground = Brushes.Black;
                         Person = new Person(
                             FullPersons[i].Id_SAP,
@@ -298,10 +249,8 @@ namespace Vacation_Portal.Services.Providers
                     }
                 }
                 // выделяю подчиненных из общего списка персон, если имя компьютера не равен итерируемому id то подчинённый
-                for(int i = 0; i < FullPersons.Count; i++)
-                {
-                    if(FullPersons[i].Id_Account != Environment.UserName)
-                    {
+                for(int i = 0; i < FullPersons.Count; i++) {
+                    if(FullPersons[i].Id_Account != Environment.UserName) {
                         Person.Subordinates.Add(new Subordinate(
                             FullPersons[i].Id_SAP,
                             FullPersons[i].Name,
@@ -317,97 +266,76 @@ namespace Vacation_Portal.Services.Providers
                 GetPersonsWithVacationsOnApproval();
                 OnLoginSuccess?.Invoke(Person);
                 return Person;
-            } catch(Exception ex)
-            {
+            } catch(Exception ex) {
                 MessageBox.Show(ex.Message);
-                Application.Current.Dispatcher.Invoke((Action) delegate
-                {
+                Application.Current.Dispatcher.Invoke((Action) delegate {
                     App.SplashScreen.status.Text = "Вас нет в базе данных";
                     App.SplashScreen.status.Foreground = Brushes.Red;
                 });
                 return null;
             }
         }
-        private void GetPersonsWithVacationsOnApproval()
-        {
+        private void GetPersonsWithVacationsOnApproval() {
             PersonsWithVacationsOnApproval.Clear();
-            foreach(Subordinate subordinate in App.API.Person.Subordinates)
-            {
-                foreach(Vacation vacation in subordinate.Subordinate_Vacations)
-                {
-                    if(vacation.Vacation_Status_Name == "On Approval")
-                    {
+            foreach(Subordinate subordinate in App.API.Person.Subordinates) {
+                foreach(Vacation vacation in subordinate.Subordinate_Vacations) {
+                    if(vacation.Vacation_Status_Name == "On Approval") {
 
-                        if(!PersonsWithVacationsOnApproval.Contains(subordinate))
-                        {
+                        if(!PersonsWithVacationsOnApproval.Contains(subordinate)) {
                             PersonsWithVacationsOnApproval.Add(subordinate);
                         }
                     }
                 }
             }
         }
-        public IEnumerable<CalendarSettings> GetSettingsForCalendar()
-        {
+        public IEnumerable<CalendarSettings> GetSettingsForCalendar() {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            try
-            {
+            try {
                 IEnumerable<CalendarSettingsDTO> settingsDTOs = database.Query<CalendarSettingsDTO>("usp_Load_Settings_For_Calendar", commandType: CommandType.StoredProcedure);
                 return settingsDTOs.Select(ToSettings);
-            } catch(Exception)
-            {
+            } catch(Exception) {
                 return null;
             }
         }
         #endregion
 
         #region Holidays
-        public async Task<IEnumerable<Holiday>> GetHolidayTypesAsync()
-        {
+        public async Task<IEnumerable<Holiday>> GetHolidayTypesAsync() {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            try
-            {
+            try {
                 IEnumerable<HolidayDTO> holidayTypesDTOs = await database.QueryAsync<HolidayDTO>("usp_Load_Holiday_Types", commandType: CommandType.StoredProcedure);
 
                 return holidayTypesDTOs.Select(ToHolidayTypes);
-            } catch(Exception ex)
-            {
+            } catch(Exception ex) {
                 MessageBox.Show(ex.Message);
                 return null;
             }
         }
-        public async Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(int yearCurrent, int yearNext)
-        {
+        public async Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(int yearCurrent, int yearNext) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            object parameters = new
-            {
+            object parameters = new {
                 Date_Year_Current = yearCurrent,
                 Date_Year_Next = yearNext
             };
-            try
-            {
+            try {
 
                 IEnumerable<HolidayDTO> holidayDTOs = await database.QueryAsync<HolidayDTO>("usp_Load_Holidays", parameters, commandType: CommandType.StoredProcedure);
                 return holidayDTOs.Select(ToHolidays);
-            } catch(Exception ex)
-            {
+            } catch(Exception ex) {
                 MessageBox.Show(ex.Message);
                 return null;
             }
         }
-        public async Task DeleteHolidayAsync(HolidayViewModel holiday)
-        {
+        public async Task DeleteHolidayAsync(HolidayViewModel holiday) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            object parameters = new
-            {
+            object parameters = new {
                 Holiday_Id = holiday.Id
             };
             _ = await database.QueryAsync<HolidayDTO>("usp_Delete_Holiday", parameters, commandType: CommandType.StoredProcedure);
         }
-        public async Task AddHolidayAsync(HolidayViewModel holiday)
-        {
+        public async Task AddHolidayAsync(HolidayViewModel holiday) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            object parameters = new
-            {
+            object parameters = new {
                 Holiday_Id = holiday.Id,
                 Holiday_Date = holiday.Date,
                 Holiday_Year = holiday.Date.Year
@@ -417,66 +345,50 @@ namespace Vacation_Portal.Services.Providers
         #endregion
 
         #region Vacations
-        public async Task<IEnumerable<VacationAllowanceViewModel>> GetVacationAllowanceAsync(int UserIdSAP)
-        {
+        public async Task<IEnumerable<VacationAllowanceViewModel>> GetVacationAllowanceAsync(int UserIdSAP) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            object parameters = new
-            {
+            object parameters = new {
                 User_Id_SAP = UserIdSAP
             };
-            try
-            {
+            try {
                 IEnumerable<VacationAllowanceDTO> vacationAllowanceDTOs = await database.QueryAsync<VacationAllowanceDTO>("usp_Load_Vacation_Allowance_For_User", parameters, commandType: CommandType.StoredProcedure);
                 return vacationAllowanceDTOs.Select(ToVacationAllowance);
-            } catch(Exception)
-            {
+            } catch(Exception) {
                 return null;
             }
         }
-        public async Task UpdateVacationAllowanceAsync(int userIdSAP, int vacation_Id, int year, int count)
-        {
+        public async Task UpdateVacationAllowanceAsync(int userIdSAP, int vacation_Id, int year, int count) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            object parameters = new
-            {
+            object parameters = new {
                 User_Id_SAP = userIdSAP,
                 Vacation_Id = vacation_Id,
                 Vacation_Year = year,
                 Quantity = count
             };
-            try
-            {
+            try {
                 await database.QueryAsync("usp_Update_Vacation_Allowance", parameters, commandType: CommandType.StoredProcedure);
-            } catch(Exception ex)
-            {
+            } catch(Exception ex) {
                 MessageBox.Show(ex.Message);
             }
         }
 
-        public async Task UpdateVacationStatusAsync(Vacation vacation)
-        {
+        public async Task UpdateVacationStatusAsync(Vacation vacation) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             int status = 0;
-            if(vacation.Vacation_Status_Name == "Being Planned")
-            {
+            if(vacation.Vacation_Status_Name == "Being Planned") {
                 status = 1;
-            } else if(vacation.Vacation_Status_Name == "On Approval")
-            {
+            } else if(vacation.Vacation_Status_Name == "On Approval") {
                 status = 2;
-            } else if(vacation.Vacation_Status_Name == "Approved")
-            {
+            } else if(vacation.Vacation_Status_Name == "Approved") {
                 status = 3;
-            } else if(vacation.Vacation_Status_Name == "Passed to HR")
-            {
+            } else if(vacation.Vacation_Status_Name == "Passed to HR") {
                 status = 4;
-            } else if(vacation.Vacation_Status_Name == "Commited")
-            {
+            } else if(vacation.Vacation_Status_Name == "Commited") {
                 status = 5;
-            } else if(vacation.Vacation_Status_Name == "Deleted")
-            {
+            } else if(vacation.Vacation_Status_Name == "Deleted") {
                 status = 6;
             }
-            object parameters = new
-            {
+            object parameters = new {
                 User_Id_SAP = vacation.User_Id_SAP,
                 Vacation_Id = vacation.Vacation_Id,
                 Vacation_Year = vacation.Date_Start.Year,
@@ -484,39 +396,29 @@ namespace Vacation_Portal.Services.Providers
                 Vacation_End_Date = vacation.Date_end,
                 Vacation_Status_Id = status
             };
-            try
-            {
+            try {
                 await database.QueryAsync("usp_Update_Vacation_Status", parameters, commandType: CommandType.StoredProcedure);
-            } catch(Exception ex)
-            {
+            } catch(Exception ex) {
                 MessageBox.Show(ex.Message);
             }
         }
-        public async Task AddVacationAsync(Vacation vacation)
-        {
+        public async Task AddVacationAsync(Vacation vacation) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             int status = 0;
-            if(vacation.Vacation_Status_Name == "Being Planned")
-            {
+            if(vacation.Vacation_Status_Name == "Being Planned") {
                 status = 1;
-            } else if(vacation.Vacation_Status_Name == "On Approval")
-            {
+            } else if(vacation.Vacation_Status_Name == "On Approval") {
                 status = 2;
-            } else if(vacation.Vacation_Status_Name == "Approved")
-            {
+            } else if(vacation.Vacation_Status_Name == "Approved") {
                 status = 3;
-            } else if(vacation.Vacation_Status_Name == "Passed to HR")
-            {
+            } else if(vacation.Vacation_Status_Name == "Passed to HR") {
                 status = 4;
-            } else if(vacation.Vacation_Status_Name == "Commited")
-            {
+            } else if(vacation.Vacation_Status_Name == "Commited") {
                 status = 5;
-            } else if(vacation.Vacation_Status_Name == "Deleted")
-            {
+            } else if(vacation.Vacation_Status_Name == "Deleted") {
                 status = 6;
             }
-            object parameters = new
-            {
+            object parameters = new {
                 User_Id_SAP = vacation.User_Id_SAP,
                 Vacation_Id = vacation.Vacation_Id,
                 Vacation_Year = vacation.Date_Start.Year,
@@ -525,39 +427,29 @@ namespace Vacation_Portal.Services.Providers
                 Vacation_Status_Id = status,
                 Creator_Id = Person.Id_Account
             };
-            try
-            {
+            try {
                 _ = await database.QueryAsync<Vacation>("usp_Add_Vacation", parameters, commandType: CommandType.StoredProcedure);
-            } catch(Exception ex)
-            {
+            } catch(Exception ex) {
                 MessageBox.Show(ex.Message);
             }
         }
-        public async Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation)
-        {
+        public async Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             int status = 0;
-            if(vacation.Vacation_Status_Name == "Being Planned")
-            {
+            if(vacation.Vacation_Status_Name == "Being Planned") {
                 status = 1;
-            } else if(vacation.Vacation_Status_Name == "On Approval")
-            {
+            } else if(vacation.Vacation_Status_Name == "On Approval") {
                 status = 2;
-            } else if(vacation.Vacation_Status_Name == "Approved")
-            {
+            } else if(vacation.Vacation_Status_Name == "Approved") {
                 status = 3;
-            } else if(vacation.Vacation_Status_Name == "Passed to HR")
-            {
+            } else if(vacation.Vacation_Status_Name == "Passed to HR") {
                 status = 4;
-            } else if(vacation.Vacation_Status_Name == "Commited")
-            {
+            } else if(vacation.Vacation_Status_Name == "Commited") {
                 status = 5;
-            } else if(vacation.Vacation_Status_Name == "Deleted")
-            {
+            } else if(vacation.Vacation_Status_Name == "Deleted") {
                 status = 6;
             }
-            object parameters = new
-            {
+            object parameters = new {
                 User_Id_SAP = vacation.User_Id_SAP,
                 Vacation_Id = vacation.Vacation_Id,
                 Vacation_Year = vacation.Date_Start.Year,
@@ -565,87 +457,68 @@ namespace Vacation_Portal.Services.Providers
                 Vacation_Date_End = vacation.Date_end,
                 Vacation_Status_Id = status
             };
-            try
-            {
+            try {
                 IEnumerable<VacationDTO> vacationDTOs = await database.QueryAsync<VacationDTO>("usp_Load_Conflicting_Vacation_For_User", parameters, commandType: CommandType.StoredProcedure);
                 return vacationDTOs;
-            } catch(Exception ex)
-            {
+            } catch(Exception ex) {
                 MessageBox.Show(ex.Message);
                 return null;
             }
         }
-        public async Task DeleteVacationAsync(Vacation vacation)
-        {
+        public async Task DeleteVacationAsync(Vacation vacation) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            object parameters = new
-            {
+            object parameters = new {
                 User_Id_SAP = vacation.User_Id_SAP,
                 Vacation_Id = vacation.Vacation_Id,
                 Vacation_Year = vacation.Date_Start.Year,
                 Vacation_Start_Date = vacation.Date_Start,
                 Vacation_End_Date = vacation.Date_end
             };
-            try
-            {
+            try {
                 _ = await database.QueryAsync<Vacation>("usp_Delete_Vacation", parameters, commandType: CommandType.StoredProcedure);
-            } catch(Exception ex)
-            {
+            } catch(Exception ex) {
                 MessageBox.Show(ex.Message);
             }
         }
-        public async Task<IEnumerable<Vacation>> LoadVacationsAsync(int UserIdSAP)
-        {
+        public async Task<IEnumerable<Vacation>> LoadVacationsAsync(int UserIdSAP) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            object parameters = new
-            {
+            object parameters = new {
                 User_Id_SAP = UserIdSAP
             };
-            try
-            {
+            try {
                 IEnumerable<VacationDTO> vacationDTOs = await database.QueryAsync<VacationDTO>("usp_Load_Vacation_For_User", parameters, commandType: CommandType.StoredProcedure);
                 return vacationDTOs.Select(ToVacation);
-            } catch(Exception ex)
-            {
+            } catch(Exception ex) {
                 MessageBox.Show(ex.Message);
                 return null;
             }
         }
 
-        public async Task<IEnumerable<Vacation>> LoadAllVacationsAsync()
-        {
+        public async Task<IEnumerable<Vacation>> LoadAllVacationsAsync() {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
 
-            try
-            {
+            try {
                 IEnumerable<VacationDTO> vacationDTOs = await database.QueryAsync<VacationDTO>("usp_Load_All_Vacations", commandType: CommandType.StoredProcedure);
                 return vacationDTOs.Select(ToVacation);
-            } catch(Exception ex)
-            {
+            } catch(Exception ex) {
                 MessageBox.Show(ex.Message);
                 return null;
             }
         }
         #endregion
 
-        private string ReturnUserName(int sapId)
-        {
-            foreach(Person person in FullPersons)
-            {
-                if(person.Id_SAP == sapId)
-                {
+        private string ReturnUserName(int sapId) {
+            foreach(Person person in FullPersons) {
+                if(person.Id_SAP == sapId) {
                     return person.Name;
                 }
             }
             return null;
         }
 
-        private string ReturnUserSurname(int sapId)
-        {
-            foreach(Person person in FullPersons)
-            {
-                if(person.Id_SAP == sapId)
-                {
+        private string ReturnUserSurname(int sapId) {
+            foreach(Person person in FullPersons) {
+                if(person.Id_SAP == sapId) {
                     return person.Surname;
                 }
             }
@@ -653,28 +526,23 @@ namespace Vacation_Portal.Services.Providers
         }
 
         #region ToObj
-        private Vacation ToVacation(VacationDTO dto)
-        {
+        private Vacation ToVacation(VacationDTO dto) {
             BrushConverter converter = new System.Windows.Media.BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
             return new Vacation(dto.Id, dto.Vacation_Name, dto.User_Id_SAP, ReturnUserName(dto.User_Id_SAP), ReturnUserSurname(dto.User_Id_SAP), dto.Vacation_Id, dto.Count, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status_Name, dto.Creator_Id);
         }
-        private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto)
-        {
+        private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto) {
             BrushConverter converter = new System.Windows.Media.BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
             return new VacationAllowanceViewModel(dto.User_Id_SAP, dto.Vacation_Name, dto.Vacation_Id, dto.Vacation_Year, dto.Vacation_Days_Quantity, brushColor);
         }
-        private HolidayViewModel ToHolidays(HolidayDTO dto)
-        {
+        private HolidayViewModel ToHolidays(HolidayDTO dto) {
             return new HolidayViewModel(dto.Id, dto.Holiday_Name, dto.Holiday_Date, dto.Holiday_Year);
         }
-        private Holiday ToHolidayTypes(HolidayDTO dto)
-        {
+        private Holiday ToHolidayTypes(HolidayDTO dto) {
             return new Holiday(dto.Id, dto.Holiday_Name);
         }
-        private CalendarSettings ToSettings(CalendarSettingsDTO dto)
-        {
+        private CalendarSettings ToSettings(CalendarSettingsDTO dto) {
             return new CalendarSettings(dto.Static_Date_Name, dto.Static_Date);
         }
 

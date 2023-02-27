@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel;
 
-namespace Vacation_Portal
-{
-    public enum Modes
-    {
+namespace Vacation_Portal {
+    public enum Modes {
         [Description("Страница персонального планирования отпуска")]
         Personal = 1,
         [Description("Страница руководителя")]

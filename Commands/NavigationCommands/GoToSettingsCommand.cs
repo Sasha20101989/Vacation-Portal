@@ -5,19 +5,15 @@ using Vacation_Portal.MVVM.ViewModels.For_Pages;
 using Vacation_Portal.MVVM.ViewModels.ForPages;
 using Vacation_Portal.MVVM.Views;
 
-namespace UI.Commands.NavigationCommands
-{
-    public class GoToSettingsCommand : CommandBase
-    {
+namespace UI.Commands.NavigationCommands {
+    public class GoToSettingsCommand : CommandBase {
         private readonly MainWindowViewModel _mainWindowViewModel;
 
-        public GoToSettingsCommand(MainWindowViewModel mainWindowViewModel)
-        {
+        public GoToSettingsCommand(MainWindowViewModel mainWindowViewModel) {
             _mainWindowViewModel = mainWindowViewModel;
         }
 
-        public override void Execute(object parameter)
-        {
+        public override void Execute(object parameter) {
             _mainWindowViewModel.SearchKeyword = string.Empty;
             _mainWindowViewModel.SelectedItem = new MenuItem(
                "Settings",

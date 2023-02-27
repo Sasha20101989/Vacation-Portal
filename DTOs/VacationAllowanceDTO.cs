@@ -1,7 +1,5 @@
-﻿namespace Vacation_Portal.DTOs
-{
-    public class VacationAllowanceDTO
-    {
+﻿namespace Vacation_Portal.DTOs {
+    public class VacationAllowanceDTO {
         public int User_Id_SAP { get; set; }
         public int Vacation_Id { get; set; }
         public string Vacation_Name { get; set; }

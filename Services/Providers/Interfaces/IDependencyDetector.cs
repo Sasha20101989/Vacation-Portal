@@ -1,7 +1,5 @@
-﻿namespace Vacation_Portal.Services.Providers.Interfaces
-{
-    public interface IDependencyDetector
-    {
+﻿namespace Vacation_Portal.Services.Providers.Interfaces {
+    public interface IDependencyDetector {
         bool StartDependencyPlannedHoliday();
         bool StopDependencyPlannedHoliday();
         bool StartDependencyPlannedVacation();

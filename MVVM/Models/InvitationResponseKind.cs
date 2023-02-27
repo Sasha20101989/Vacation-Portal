@@ -1,9 +1,7 @@
 ﻿
 
-namespace Vacation_Portal.MVVM.Models
-{
-    public enum InviteResponseKind
-    {
+namespace Vacation_Portal.MVVM.Models {
+    public enum InviteResponseKind {
         /// <summary>
         /// The user has not yet accepted or declined.
         /// </summary>

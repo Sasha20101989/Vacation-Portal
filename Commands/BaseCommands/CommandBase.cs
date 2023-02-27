@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Vacation_Portal.Commands.BaseCommands
-{
-    public abstract class CommandBase : ICommand
-    {
+namespace Vacation_Portal.Commands.BaseCommands {
+    public abstract class CommandBase : ICommand {
         public event EventHandler CanExecuteChanged;
 
-        public virtual bool CanExecute(object parameter)
-        {
+        public virtual bool CanExecute(object parameter) {
             return true;
         }
         public abstract void Execute(object parameter);
 
-        protected void OnCanExecutedChanged()
-        {
+        protected void OnCanExecutedChanged() {
             CanExecuteChanged?.Invoke(this, new EventArgs());
         }
     }

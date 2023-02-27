@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using Vacation_Portal.MVVM.ViewModels;
 
-namespace Vacation_Portal.DTOs
-{
-    public class PersonDTO
-    {
+namespace Vacation_Portal.DTOs {
+    public class PersonDTO {
         public int User_Id_SAP { get; set; }
         public string User_Id_Account { get; set; }
         public string User_Name { get; set; }

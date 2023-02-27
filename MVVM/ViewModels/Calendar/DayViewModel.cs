@@ -2,10 +2,8 @@
 using Vacation_Portal.MVVM.ViewModels.Base;
 using Vacation_Portal.MVVM.Views.Controls;
 
-namespace Vacation_Portal.MVVM.ViewModels.Calendar
-{
-    public class DayViewModel : ViewModelBase
-    {
+namespace Vacation_Portal.MVVM.ViewModels.Calendar {
+    public class DayViewModel : ViewModelBase {
         public ObservableCollection<DayControl> Days { get; set; }
         public int WorkDaysCount { get; set; }
         public int DayOffCount { get; set; }
@@ -13,8 +11,7 @@ namespace Vacation_Portal.MVVM.ViewModels.Calendar
         public int WorkingOnHolidayCount { get; set; }
         public int UnscheduledCount { get; set; }
 
-        public DayViewModel(ObservableCollection<DayControl> days, int workDaysCount, int dayOffCount, int holidaysCount, int workingOnHolidayCount, int unscheduledCount)
-        {
+        public DayViewModel(ObservableCollection<DayControl> days, int workDaysCount, int dayOffCount, int holidaysCount, int workingOnHolidayCount, int unscheduledCount) {
             Days = days;
             WorkDaysCount = workDaysCount;
             DayOffCount = dayOffCount;

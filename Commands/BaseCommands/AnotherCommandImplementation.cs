@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Vacation_Portal.Commands.BaseCommands
-{
-    public class AnotherCommandImplementation : ICommand
-    {
+namespace Vacation_Portal.Commands.BaseCommands {
+    public class AnotherCommandImplementation : ICommand {
         private readonly Action<object> _execute;
         private readonly Func<object, bool> _canExecute;
 
         public AnotherCommandImplementation(Action<object> execute)
-            : this(execute, null)
-        { }
+            : this(execute, null) { }
 
-        public AnotherCommandImplementation(Action<object> execute, Func<object, bool> canExecute)
-        {
-            if(execute is null)
-            {
+        public AnotherCommandImplementation(Action<object> execute, Func<object, bool> canExecute) {
+            if(execute is null) {
                 throw new ArgumentNullException(nameof(execute));
             }
 
@@ -23,30 +18,24 @@ namespace Vacation_Portal.Commands.BaseCommands
             _canExecute = canExecute ?? (x => true);
         }
 
-        public bool CanExecute(object parameter)
-        {
+        public bool CanExecute(object parameter) {
             return _canExecute(parameter);
         }
 
-        public void Execute(object parameter)
-        {
+        public void Execute(object parameter) {
             _execute(parameter);
         }
 
-        public event EventHandler CanExecuteChanged
-        {
-            add
-            {
+        public event EventHandler CanExecuteChanged {
+            add {
                 CommandManager.RequerySuggested += value;
             }
-            remove
-            {
+            remove {
                 CommandManager.RequerySuggested -= value;
             }
         }
 
-        public void Refresh()
-        {
+        public void Refresh() {
             CommandManager.InvalidateRequerySuggested();
         }
     }

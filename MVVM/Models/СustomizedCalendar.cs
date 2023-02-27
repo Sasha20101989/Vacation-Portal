@@ -1,35 +1,28 @@
 ﻿using System.Collections.ObjectModel;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
-namespace Vacation_Portal.MVVM.Models
-{
-    public class СustomizedCalendar : ViewModelBase
-    {
+namespace Vacation_Portal.MVVM.Models {
+    public class СustomizedCalendar : ViewModelBase {
         private ObservableCollection<CalendarDay> _days;
-        public ObservableCollection<CalendarDay> Days
-        {
+        public ObservableCollection<CalendarDay> Days {
             get => _days;
-            set
-            {
+            set {
                 _days = value;
                 OnPropertyChanged(nameof(Days));
             }
         }
 
         private Vacation _selectedVacation;
-        public Vacation SelectedVacation
-        {
+        public Vacation SelectedVacation {
             get => _selectedVacation;
-            set
-            {
+            set {
                 _selectedVacation = value;
                 UpdateCalendarDays();
                 OnPropertyChanged(nameof(SelectedVacation));
             }
         }
 
-        public СustomizedCalendar()
-        {
+        public СustomizedCalendar() {
             Days = new ObservableCollection<CalendarDay>();
 
             // Заполнение коллекции дней
@@ -40,8 +33,7 @@ namespace Vacation_Portal.MVVM.Models
         }
 
         // Обновление свойства IsSelected для каждого дня в календаре
-        private void UpdateCalendarDays()
-        {
+        private void UpdateCalendarDays() {
             //foreach(var day in Days)
             //{
             //    day.IsSelected = SelectedVacation != null && day.Date >= SelectedVacation.StartDate && day.Date <= SelectedVacation.EndDate;

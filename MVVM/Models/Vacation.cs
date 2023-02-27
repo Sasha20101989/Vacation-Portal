@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using System.Windows.Media;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
-namespace Vacation_Portal.MVVM.Models
-{
-    public class Vacation : ViewModelBase, ICloneable
-    {
+namespace Vacation_Portal.MVVM.Models {
+    public class Vacation : ViewModelBase, ICloneable {
         public int _Id;
         public string Name { get; set; }
         public string User_Name { get; set; }
@@ -17,11 +15,9 @@ namespace Vacation_Portal.MVVM.Models
         public int Vacation_Id { get; set; }
 
         private int _count;
-        public int Count
-        {
+        public int Count {
             get => _count;
-            set
-            {
+            set {
                 _count = value;
                 OnPropertyChanged(nameof(Count));
             }
@@ -35,32 +31,25 @@ namespace Vacation_Portal.MVVM.Models
         public PackIconKind VacationStatusKind { get; set; }
         public Brush BadgeBackground { get; set; }
         public bool IsIntersectingVacation { get; set; }
-        public override string ToString()
-        {
+        public override string ToString() {
             return $"{Count}: {Date_Start:dd.MM.yyyy} - {Date_end:dd.MM.yyyy}";
         }
 
-        public override bool Equals(object obj)
-        {
+        public override bool Equals(object obj) {
             return obj is Vacation vacation && Date_Start == vacation.Date_Start && Date_end == vacation.Date_end;
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return HashCode.Combine(Date_Start, Date_end);
         }
 
-        public IEnumerable<DateTime> GetDateRange(DateTime start, DateTime end)
-        {
-            for(DateTime date = start.Date; date <= end.Date; date = date.AddDays(1))
-            {
+        public IEnumerable<DateTime> GetDateRange(DateTime start, DateTime end) {
+            for(DateTime date = start.Date; date <= end.Date; date = date.AddDays(1)) {
                 yield return date;
             }
         }
 
-        public Vacation(int Id, string name, int user_Id_SAP, string userName, string userSurname, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, string statusName, string creator_Id)
-
-        {
+        public Vacation(int Id, string name, int user_Id_SAP, string userName, string userSurname, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, string statusName, string creator_Id) {
             _Id = Id;
             Name = name;
             User_Id_SAP = user_Id_SAP;
@@ -75,13 +64,11 @@ namespace Vacation_Portal.MVVM.Models
             User_Surname = userSurname;
         }
 
-        public bool IsInRange(DateTime date)
-        {
+        public bool IsInRange(DateTime date) {
             return date >= Date_Start && date <= Date_end;
         }
 
-        public object Clone()
-        {
+        public object Clone() {
             return MemberwiseClone();
         }
     }

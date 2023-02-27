@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace Vacation_Portal.MVVM.ViewModels
-{
-    public class VacationViewModel
-    {
+namespace Vacation_Portal.MVVM.ViewModels {
+    public class VacationViewModel {
         public string Name { get; set; }
         public int User_Id_SAP { get; set; }
         public int Vacation_Id { get; set; }
@@ -16,8 +14,7 @@ namespace Vacation_Portal.MVVM.ViewModels
         public string Creator_Id { get; set; }
         public int Count => GetCount();
 
-        public VacationViewModel(string name, int user_Id_SAP, int vacation_Id, Brush color, DateTime dateStart, DateTime dateEnd, string statusName, string creator_Id)
-        {
+        public VacationViewModel(string name, int user_Id_SAP, int vacation_Id, Brush color, DateTime dateStart, DateTime dateEnd, string statusName, string creator_Id) {
             Name = name;
             User_Id_SAP = user_Id_SAP;
             Vacation_Id = vacation_Id;
@@ -28,8 +25,7 @@ namespace Vacation_Portal.MVVM.ViewModels
             Creator_Id = creator_Id;
         }
 
-        public override bool Equals(object obj)
-        {
+        public override bool Equals(object obj) {
             return obj is VacationViewModel model &&
                    User_Id_SAP == model.User_Id_SAP &&
                    Name == model.Name &&
@@ -37,25 +33,20 @@ namespace Vacation_Portal.MVVM.ViewModels
                    DateEnd == model.DateEnd;
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return HashCode.Combine(User_Id_SAP, Name, DateStart, DateEnd);
         }
 
-        public IEnumerable<DateTime> GetDateRange(DateTime start, DateTime end)
-        {
-            for(DateTime date = start.Date; date <= end.Date; date = date.AddDays(1))
-            {
+        public IEnumerable<DateTime> GetDateRange(DateTime start, DateTime end) {
+            for(DateTime date = start.Date; date <= end.Date; date = date.AddDays(1)) {
                 yield return date;
             }
         }
 
-        private int GetCount()
-        {
+        private int GetCount() {
             int count = 0;
             IEnumerable<DateTime> range = GetDateRange(DateStart, DateEnd);
-            foreach(DateTime date in range)
-            {
+            foreach(DateTime date in range) {
                 count++;
             }
             return count;
