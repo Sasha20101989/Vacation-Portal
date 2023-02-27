@@ -15,6 +15,8 @@ namespace Vacation_Portal.MVVM.Models {
         public int Vacation_Id { get; set; }
 
         private int _count;
+        private string _vacation_Status_Name;
+
         public int Count {
             get => _count;
             set {
@@ -26,7 +28,13 @@ namespace Vacation_Portal.MVVM.Models {
         public DateTime Date_Start { get; set; }
         public DateTime Date_end { get; set; }
         public IEnumerable<DateTime> DateRange => GetDateRange(Date_Start, Date_end);
-        public string Vacation_Status_Name { get; set; }
+        public string Vacation_Status_Name {
+            get => _vacation_Status_Name;
+            set {
+                _vacation_Status_Name = value;
+                OnPropertyChanged(nameof(Vacation_Status_Name));
+            }
+        }
         public string Creator_Id { get; set; }
         public PackIconKind VacationStatusKind { get; set; }
         public Brush BadgeBackground { get; set; }

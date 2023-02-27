@@ -87,7 +87,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
 
                 if(lastVacation != null &&
                     lastVacation.Name == vacation.Name &&
-                    lastVacation.Vacation_Status_Name != "On Approval" &&
+                    lastVacation.Vacation_Status_Name != MyEnumExtensions.ToDescriptionString(Statuses.OnApproval) &&
                     lastVacation.Date_end.AddDays(1) == vacation.Date_Start) {
                     _viewModel.Calendar.WorkingDays.Add(true);
                     int countHolidays = 0;
@@ -103,7 +103,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                     await App.API.DeleteVacationAsync(lastVacation);
                     await App.API.DeleteVacationAsync(vacation);
                     lastVacation.Date_end = vacation.Date_end;
-                    lastVacation.Vacation_Status_Name = "Being Planned";
+                    lastVacation.Vacation_Status_Name = MyEnumExtensions.ToDescriptionString(Statuses.BeingPlanned);
                     _viewModel.ShowAlert("Несколько периодов объединены в один.");
                 } else {
                     mergedVacations.Add(vacation);

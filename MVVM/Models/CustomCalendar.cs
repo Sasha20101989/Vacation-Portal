@@ -164,7 +164,7 @@ namespace Vacation_Portal.MVVM.Models {
                                         _viewModel.PlannedItem.Count--;
                                         CountSelectedDays--;
                                         DayAddition = GetDayAddition(CountSelectedDays);
-                                        _viewModel.PlannedVacationString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.YYYY") + " - " + FirstSelectedDate.ToString("dd.MM.YYYY");
+                                        _viewModel.PlannedVacationString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
                                     }
 
                                     button.Background = _viewModel.PlannedItem.Color;
@@ -294,11 +294,13 @@ namespace Vacation_Portal.MVVM.Models {
                             if(CountSelectedDays <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity) {
                                 if(SelectedNameDay != "Праздник") {
                                     DayAddition = GetDayAddition(CountSelectedDays);
-                                    _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.YYYY");
+                                    _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.yyyy");
                                     if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
-                                        _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Being Planned", Environment.UserName);
+                                        _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, MyEnumExtensions.ToDescriptionString(Statuses.BeingPlanned), Environment.UserName);
+                                        Statuses status = Statuses.Deleted;
+                                        int statusId = (int) Statuses.Deleted;
                                     } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
-                                        _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, "Being Planned", Environment.UserName);
+                                        _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, MyEnumExtensions.ToDescriptionString(Statuses.BeingPlanned), Environment.UserName);
                                     }
                                 } else {
                                     _viewModel.ShowAlert("Этот день является праздничным, начните планирование отпуска с другого дня");
@@ -323,11 +325,11 @@ namespace Vacation_Portal.MVVM.Models {
                                 if(availableQuantity <= _viewModel.SelectedItemAllowance.Vacation_Days_Quantity) {
                                     if(SelectedNameDay != "Праздник") {
                                         DayAddition = GetDayAddition(CountSelectedDays);
-                                        _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.YYYY") + " - " + SecondSelectedDate.ToString("dd.MM.YYYY");
+                                        _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
                                         if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
-                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, "Being Planned", Environment.UserName);
+                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, MyEnumExtensions.ToDescriptionString(Statuses.BeingPlanned), Environment.UserName);
                                         } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
-                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, "Being Planned", Environment.UserName);
+                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, MyEnumExtensions.ToDescriptionString(Statuses.BeingPlanned), Environment.UserName);
                                         }
                                     } else {
                                         _viewModel.ShowAlert("Этот день является праздничным, закончите планирование отпуска другим днём");
@@ -342,8 +344,8 @@ namespace Vacation_Portal.MVVM.Models {
                                     if(SelectedNameDay != "Праздник") {
 
                                         DayAddition = GetDayAddition(CountSelectedDays);
-                                        _viewModel.PlannedVacationString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.YYYY") + " - " + FirstSelectedDate.ToString("dd.MM.YYYY");
-                                        _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate, "Being Planned", Environment.UserName);
+                                        _viewModel.PlannedVacationString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
+                                        _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate, MyEnumExtensions.ToDescriptionString(Statuses.BeingPlanned), Environment.UserName);
                                     } else {
                                         _viewModel.ShowAlert("Этот день является праздничным, закончите планирование отпуска с другим днём");
                                     }

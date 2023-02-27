@@ -35,7 +35,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             Calendar = new СustomizedCalendar();
             PersonsWithVacationsOnApproval = App.API.PersonsWithVacationsOnApproval;
         }
-        private void UpdateMonths() {
+        private void UpdateWeeks() {
             List<List<Day>> allWeeks = GetWeeksInYear(2023);
 
             int weeksToShow = 5;
@@ -99,9 +99,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                     foreach(DateTime vacationDate in vacation.DateRange) {
                         if(vacationDate == date) {
                             day.IsInSelectedVacation = true;
-                            if(day.ToolTipText == null) {
-                                day.ToolTipText = vacation.User_Surname;
-                            }
+                            day.ToolTipText ??= vacation.User_Surname;
 
                             break;
                         }
@@ -118,9 +116,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
 
                 if(date.Date.DayOfWeek == DayOfWeek.Saturday || date.Date.DayOfWeek == DayOfWeek.Sunday) {
                     day.IsHoliday = true;
-                    if(day.ToolTipText == null) {
-                        day.ToolTipText = "Выходной";
-                    }
+                    day.ToolTipText ??= "Выходной";
                 }
 
                 currentWeek.Add(day);
@@ -190,10 +186,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             set { _acceptBorderOpacity = value; OnPropertyChanged(nameof(AcceptBorderOpacity)); }
         }
 
-        private double _accepRootOpacity = 1.0;
+        private double _acceptRootOpacity = 1.0;
         public double AcceptRootOpacity {
-            get => _accepRootOpacity;
-            set { _accepRootOpacity = value; OnPropertyChanged(nameof(AcceptRootOpacity)); }
+            get => _acceptRootOpacity;
+            set { _acceptRootOpacity = value; OnPropertyChanged(nameof(AcceptRootOpacity)); }
         }
 
         public bool IsAcceptedButtonEnabled {
@@ -373,7 +369,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                     VisibilityInfoBar = false;
                 } else {
                     GetIntersectingVacations();
-                    UpdateMonths();
+                    UpdateWeeks();
                     VisibilityInfoBar = true;
                 }
             }

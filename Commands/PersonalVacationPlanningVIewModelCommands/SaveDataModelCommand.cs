@@ -80,9 +80,9 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                         _viewModel.UpdateDataForSubordinate();
                     }
                 } else {
-                    item.Vacation_Status_Name = "On Approval";
+                    item.Vacation_Status_Name = MyEnumExtensions.ToDescriptionString(Statuses.OnApproval);
                     if(isSupervisorView) {
-                        item.Vacation_Status_Name = "Approved";
+                        item.Vacation_Status_Name = MyEnumExtensions.ToDescriptionString(Statuses.Approved);
                     }
                     await App.API.UpdateVacationStatusAsync(item);
                 }

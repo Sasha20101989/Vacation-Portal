@@ -20,10 +20,10 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
             return true;
         }
         public override void Execute(object parameter) {
-            LernVacation("Выберете отпуск который хотите запланировать.");
+            LearnVacation("Выберете отпуск который хотите запланировать.");
         }
 
-        private void LernVacation(string message) {
+        private void LearnVacation(string message) {
 
             DateTime started = DateTime.Now;
 
@@ -115,7 +115,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                     if(o is DispatcherTimer timer) {
                         timer.Stop();
                         if(message != "И здесь") {
-                            LernVacation("До момента, как вы подтвердите, вы можете изменить вид отпуска.");
+                            LearnVacation("До момента, как вы подтвердите, вы можете изменить вид отпуска.");
                         } else {
                             LernVIewPLanedVacations("После вашего подтверждения, выбранные в календаре дни добавляются в этот список. и остаток выбранного вида отпуска уменьшается.");
                         }

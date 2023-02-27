@@ -26,7 +26,7 @@
                   SelectedItem="{Binding SelectedPersonWithVacationsOnApproval, UpdateSourceTrigger=PropertyChanged}"
                   Height="130" 
                   VerticalAlignment="Top" 
-                  Margin="0 5 0 0">
+                  Margin="0 5 0 0" d:ItemsSource="{d:SampleData ItemCount=5}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" />
@@ -250,8 +250,8 @@
                                                     <Ellipse Width="44" Height="44" Fill="Gray" />
                                                     <Image Width="44" Height="44" />
                                                     <TextBlock Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InitialsConverter}}"
-                                       FontSize="23" Foreground="White"
-                                       VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                                               FontSize="23" Foreground="White"
+                                                               VerticalAlignment="Center" HorizontalAlignment="Center" />
                                                 </Grid>
                                                 <TextBlock Margin="0 5 0 0" Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" FontSize="10"/>
                                             </StackPanel>
@@ -308,7 +308,7 @@
                                                                     <Binding ElementName="VacationItemListView" Path="SelectedItem" />
                                                                 </MultiBinding>
                                                             </Border.Background>
-                                                            <TextBlock Text="{Binding Date.Day}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{Binding IsHoliday, Converter={StaticResource IsHolidayToColorConverter}}"/>
+                                                            <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}" Text="{Binding Date.Day}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{Binding IsHoliday, Converter={StaticResource IsHolidayToColorConverter}}"/>
                                                         </Border>
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>

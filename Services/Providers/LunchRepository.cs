@@ -14,6 +14,7 @@ using TableDependency.SqlClient;
 using Vacation_Portal.Commands;
 using Vacation_Portal.DbContext;
 using Vacation_Portal.DTOs;
+using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.Services.Providers.Interfaces;
@@ -279,7 +280,7 @@ namespace Vacation_Portal.Services.Providers {
             PersonsWithVacationsOnApproval.Clear();
             foreach(Subordinate subordinate in App.API.Person.Subordinates) {
                 foreach(Vacation vacation in subordinate.Subordinate_Vacations) {
-                    if(vacation.Vacation_Status_Name == "On Approval") {
+                    if(vacation.Vacation_Status_Name == MyEnumExtensions.ToDescriptionString(Statuses.OnApproval)) {
 
                         if(!PersonsWithVacationsOnApproval.Contains(subordinate)) {
                             PersonsWithVacationsOnApproval.Add(subordinate);
@@ -374,19 +375,11 @@ namespace Vacation_Portal.Services.Providers {
 
         public async Task UpdateVacationStatusAsync(Vacation vacation) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            int status = 0;
-            if(vacation.Vacation_Status_Name == "Being Planned") {
-                status = 1;
-            } else if(vacation.Vacation_Status_Name == "On Approval") {
-                status = 2;
-            } else if(vacation.Vacation_Status_Name == "Approved") {
-                status = 3;
-            } else if(vacation.Vacation_Status_Name == "Passed to HR") {
-                status = 4;
-            } else if(vacation.Vacation_Status_Name == "Commited") {
-                status = 5;
-            } else if(vacation.Vacation_Status_Name == "Deleted") {
-                status = 6;
+            int status;
+            if(Enum.TryParse(vacation.Vacation_Status_Name, out Statuses parsedStatus)) {
+                status = (int) parsedStatus;
+            } else {
+                status = 0; // значение по умолчанию
             }
             object parameters = new {
                 User_Id_SAP = vacation.User_Id_SAP,
@@ -404,19 +397,11 @@ namespace Vacation_Portal.Services.Providers {
         }
         public async Task AddVacationAsync(Vacation vacation) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            int status = 0;
-            if(vacation.Vacation_Status_Name == "Being Planned") {
-                status = 1;
-            } else if(vacation.Vacation_Status_Name == "On Approval") {
-                status = 2;
-            } else if(vacation.Vacation_Status_Name == "Approved") {
-                status = 3;
-            } else if(vacation.Vacation_Status_Name == "Passed to HR") {
-                status = 4;
-            } else if(vacation.Vacation_Status_Name == "Commited") {
-                status = 5;
-            } else if(vacation.Vacation_Status_Name == "Deleted") {
-                status = 6;
+            int status;
+            if(Enum.TryParse(vacation.Vacation_Status_Name, out Statuses parsedStatus)) {
+                status = (int) parsedStatus;
+            } else {
+                status = 0; // значение по умолчанию
             }
             object parameters = new {
                 User_Id_SAP = vacation.User_Id_SAP,
@@ -435,19 +420,11 @@ namespace Vacation_Portal.Services.Providers {
         }
         public async Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            int status = 0;
-            if(vacation.Vacation_Status_Name == "Being Planned") {
-                status = 1;
-            } else if(vacation.Vacation_Status_Name == "On Approval") {
-                status = 2;
-            } else if(vacation.Vacation_Status_Name == "Approved") {
-                status = 3;
-            } else if(vacation.Vacation_Status_Name == "Passed to HR") {
-                status = 4;
-            } else if(vacation.Vacation_Status_Name == "Commited") {
-                status = 5;
-            } else if(vacation.Vacation_Status_Name == "Deleted") {
-                status = 6;
+            int status;
+            if(Enum.TryParse(vacation.Vacation_Status_Name, out Statuses parsedStatus)) {
+                status = (int) parsedStatus;
+            } else {
+                status = 0; // значение по умолчанию
             }
             object parameters = new {
                 User_Id_SAP = vacation.User_Id_SAP,

@@ -9,7 +9,8 @@ namespace Vacation_Portal.Extensions {
             if(value is bool isHoliday && isHoliday) {
                 return Brushes.Red;
             } else {
-                return Brushes.Black;
+                return Brushes.Black; 
+                //return (Brush) System.Windows.Application.Current.FindResource("PrimaryHueMidForegroundBrush");
             }
         }
 
