@@ -13,7 +13,7 @@ namespace Vacation_Portal.HostBuilders
         {
             hostBuilder.ConfigureServices((hostContext, services) =>
             {
-                services.AddSingleton(new SqlDbConnectionFactory(hostContext.Configuration.GetConnectionString("HomeSasha")));
+                services.AddSingleton(new SqlDbConnectionFactory(hostContext.Configuration.GetConnectionString("Default")));
             });
             return hostBuilder;
         }
