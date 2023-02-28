@@ -395,7 +395,8 @@ namespace Vacation_Portal.Services.Providers {
                 MessageBox.Show(ex.Message);
             }
         }
-        public async Task AddVacationAsync(Vacation vacation) {
+        public async Task AddVacationAsync(Vacation vacation)
+        {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             int status;
             if(Enum.TryParse(vacation.Vacation_Status_Name, out Statuses parsedStatus)) {
@@ -503,12 +504,14 @@ namespace Vacation_Portal.Services.Providers {
         }
 
         #region ToObj
-        private Vacation ToVacation(VacationDTO dto) {
-            BrushConverter converter = new System.Windows.Media.BrushConverter();
+        private Vacation ToVacation(VacationDTO dto)
+        {
+            BrushConverter converter = new BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
             return new Vacation(dto.Id, dto.Vacation_Name, dto.User_Id_SAP, ReturnUserName(dto.User_Id_SAP), ReturnUserSurname(dto.User_Id_SAP), dto.Vacation_Id, dto.Count, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status_Name, dto.Creator_Id);
         }
-        private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto) {
+        private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto) 
+        {
             BrushConverter converter = new System.Windows.Media.BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
             return new VacationAllowanceViewModel(dto.User_Id_SAP, dto.Vacation_Name, dto.Vacation_Id, dto.Vacation_Year, dto.Vacation_Days_Quantity, brushColor);

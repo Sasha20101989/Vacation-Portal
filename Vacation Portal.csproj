@@ -31,11 +31,7 @@
 		<PackageReference Include="MaterialDesignThemes" Version="4.7.1" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
-		<PackageReference Include="PropertyWithPropChangeMethodSnippet" Version="2.0.0" />
 		<PackageReference Include="SqlTableDependency" Version="8.5.8" />
-		<PackageReference Include="System.Linq" Version="4.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>

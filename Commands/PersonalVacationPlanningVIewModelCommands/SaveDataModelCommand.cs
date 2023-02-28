@@ -21,7 +21,8 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
         public SaveDataModelCommand(PersonalVacationPlanningViewModel viewModel) {
             _viewModel = viewModel;
         }
-        public override async Task ExecuteAsync(object parameter) {
+        public override async Task ExecuteAsync(object parameter)
+        {
             DateTime started = DateTime.Now;
             _viewModel.IsSaving = true;
             bool isSupervisorView = false;
@@ -70,7 +71,8 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 foreach(VacationDTO vacationDTO in conflictingVacations) {
                     countConflicts++;
                 }
-                if(countConflicts == 0) {
+                if (countConflicts == 0)
+                {
                     VacationAllowanceViewModel vacationAllowance = GetVacationAllowance(item.Name);
                     await _viewModel.UpdateVacationAllowance(item.User_Id_SAP, item.Vacation_Id, item.Date_Start.Year, vacationAllowance.Vacation_Days_Quantity);
                     await App.API.AddVacationAsync(plannedVacation);
