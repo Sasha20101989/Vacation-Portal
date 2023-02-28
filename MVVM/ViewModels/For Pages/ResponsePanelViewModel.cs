@@ -35,9 +35,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             Calendar = new СustomizedCalendar();
             PersonsWithVacationsOnApproval = App.API.PersonsWithVacationsOnApproval;
         }
-        private void UpdateWeeks() {
+        private void UpdateWeeksAsync() {
             List<List<Day>> allWeeks = GetWeeksInYear(2023);
-
+            //AllStatuses = App.API.GetStatuses();
             int weeksToShow = 5;
             int vacationWeeks = ISOWeek.GetWeekOfYear(VacationItem.Date_end) - ISOWeek.GetWeekOfYear(VacationItem.Date_Start) + 1;
 
@@ -284,6 +284,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         #endregion
 
         #region Collections
+        public List<Status> AllStatuses = new List<Status>();
         private List<Month> _months = new List<Month>();
         public List<Month> Months {
             get => _months;
@@ -337,7 +338,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         }
         #endregion
 
-        #region Visicility settings
+        #region Visibility settings
         private bool _visibilityInfoBar;
         public bool VisibilityInfoBar {
             get => _visibilityInfoBar;
@@ -369,7 +370,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                     VisibilityInfoBar = false;
                 } else {
                     GetIntersectingVacations();
-                    UpdateWeeks();
+                    UpdateWeeksAsync();
                     VisibilityInfoBar = true;
                 }
             }

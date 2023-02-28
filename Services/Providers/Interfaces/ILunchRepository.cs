@@ -11,6 +11,7 @@ namespace Vacation_Portal.Services.Providers.Interfaces {
     public interface ILunchRepository {
         Person Person { get; set; }
         ObservableCollection<Subordinate> PersonsWithVacationsOnApproval { get; set; }
+        List<Status> AllStatuses { get; set; }
         DateTime DateUnblockNextCalendar { get; set; }
         DateTime DateUnblockPlanning { get; set; }
         bool IsCalendarUnblocked { get; set; }
@@ -31,6 +32,7 @@ namespace Vacation_Portal.Services.Providers.Interfaces {
         Action<ObservableCollection<Holiday>> OnHolidayTypesChanged { get; set; }
         Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
         Action<Person> OnLoginSuccess { get; set; }
+        List<Status> GetStatuses();
         Task<Person> LoginAsync(string account);
         Task<IEnumerable<HolidayViewModel>> GetHolidaysAsync(int yearCurrent, int yearNext);
         Task<IEnumerable<Holiday>> GetHolidayTypesAsync();
