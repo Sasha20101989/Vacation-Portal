@@ -46,6 +46,7 @@ namespace Vacation_Portal.Services.Providers {
 
         public LunchRepository(SqlDbConnectionFactory sqlDbConnectionFactory) {
             _sqlDbConnectionFactory = sqlDbConnectionFactory;
+            AllStatuses = GetStatuses();
         }
         private ObservableCollection<Subordinate> _personsWithVacationsOnApproval = new ObservableCollection<Subordinate>();
         public ObservableCollection<Subordinate> PersonsWithVacationsOnApproval {
@@ -131,8 +132,20 @@ namespace Vacation_Portal.Services.Providers {
         public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
         public List<Person> FullPersons { get; set; } = new List<Person>();
 
-        #endregion
+        public List<Status> AllStatuses { get; set; }
 
+        #endregion
+        public List<Status> GetStatuses() {
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            try {
+                IEnumerable<Status> statusDTOs = database.Query<Status>("usp_Get_Statuses", commandType: CommandType.StoredProcedure);
+                List<Status> allStatuses = statusDTOs.ToList();
+                return allStatuses;
+            } catch(Exception ex) {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
         #region Person
 
         public async IAsyncEnumerable<Vacation> FetchVacationsAsync(int sapId) {
@@ -154,15 +167,9 @@ namespace Vacation_Portal.Services.Providers {
                 object parametersPerson = new {
                     Account = account
                 };
-                bool isHrAdmin = false;
+
                 BrushConverter converter = new System.Windows.Media.BrushConverter();
                 IEnumerable<PersonDTO> fullPersonDTOs = await database.QueryAsync<PersonDTO>("usp_Get_Users", parametersPerson, commandType: CommandType.StoredProcedure);
-
-                foreach(PersonDTO personDTO in fullPersonDTOs) {
-                    if(personDTO.User_Id_Account == account && personDTO.Role_Name == "HR Admin") {
-                        isHrAdmin = true;
-                    }
-                }
 
                 App.SplashScreen.status.Text = "В поисках ваших отпусков";
                 App.SplashScreen.status.Foreground = Brushes.Black;
