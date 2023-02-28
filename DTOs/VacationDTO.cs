@@ -11,6 +11,7 @@ namespace Vacation_Portal.DTOs {
         public string Vacation_Color { get; set; }
         public DateTime Vacation_Start_Date { get; set; }
         public DateTime Vacation_End_Date { get; set; }
+        public string Vacation_Status_Id { get; set; }
         public string Vacation_Status_Name { get; set; }
         public string Creator_Id { get; set; }
         public int Count => GetCount();

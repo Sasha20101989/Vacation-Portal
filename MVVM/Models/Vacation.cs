@@ -5,7 +5,8 @@ using System.Windows.Media;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.Models {
-    public class Vacation : ViewModelBase, ICloneable {
+    public class Vacation : ViewModelBase, ICloneable
+    {
         public int _Id;
         public string Name { get; set; }
         public string User_Name { get; set; }
@@ -30,11 +31,25 @@ namespace Vacation_Portal.MVVM.Models {
         public IEnumerable<DateTime> DateRange => GetDateRange(Date_Start, Date_end);
         public string Vacation_Status_Name {
             get => _vacation_Status_Name;
-            set {
+            set
+            {
                 _vacation_Status_Name = value;
                 OnPropertyChanged(nameof(Vacation_Status_Name));
             }
         }
+
+        private int _vacation_Status_Id;
+
+        public int Vacation_Status_Id
+        {
+            get => _vacation_Status_Id;
+            set
+            {
+                _vacation_Status_Id = value;
+                OnPropertyChanged(nameof(Vacation_Status_Name));
+            }
+        }
+
         public string Creator_Id { get; set; }
         public PackIconKind VacationStatusKind { get; set; }
         public Brush BadgeBackground { get; set; }
@@ -57,7 +72,8 @@ namespace Vacation_Portal.MVVM.Models {
             }
         }
 
-        public Vacation(int Id, string name, int user_Id_SAP, string userName, string userSurname, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, string statusName, string creator_Id) {
+        public Vacation(int Id, string name, int user_Id_SAP, string userName, string userSurname, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, string statusName, string creator_Id)
+        {
             _Id = Id;
             Name = name;
             User_Id_SAP = user_Id_SAP;
@@ -70,6 +86,14 @@ namespace Vacation_Portal.MVVM.Models {
             Creator_Id = creator_Id;
             User_Name = userName;
             User_Surname = userSurname;
+        }
+
+        public Vacation(int vacation_Id, DateTime date_Start, DateTime date_end, int vacation_Status_Id)
+        {
+            Vacation_Id = vacation_Id;
+            Date_Start = date_Start;
+            Date_end = date_end;
+            Vacation_Status_Id = vacation_Status_Id;
         }
 
         public bool IsInRange(DateTime date) {
