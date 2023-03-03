@@ -13,11 +13,19 @@ namespace Vacation_Portal {
         Approved = 3,
         [Description("Passed to HR")]
         PassedToHR = 4,
-        [Description("Committed")]
-        Committed = 5,
-        [Description("Deleted")]
-        Deleted = 6,
+        [Description("Completed")]
+        Completed = 5,
+        [Description("Canceled")]
+        Canceled = 6,
         [Description("Planned")]
-        Planned = 7
+        Planned = 7,
+        [Description("Compensated")]
+        Compensated = 8,
+        [Description("On Compensation")]
+        OnCompensation = 9,
+        [Description("To Cancel")]
+        ToCancel = 10,
+        [Description("Not Agreed")]
+        NotAgreed = 11
     }
 }
