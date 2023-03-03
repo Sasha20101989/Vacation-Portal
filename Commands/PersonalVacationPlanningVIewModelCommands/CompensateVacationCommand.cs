@@ -1,4 +1,6 @@
-﻿using Vacation_Portal.Commands.BaseCommands;
+﻿using MaterialDesignThemes.Wpf;
+using System.Threading.Tasks;
+using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels;
@@ -8,7 +10,7 @@ using Vacation_Portal.MVVM.Views;
 namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
     public class CompensateVacationCommand : CommandBase {
         private readonly PersonalVacationPlanningViewModel _viewModel;
-        private PrintPreView Viewer = null;
+        private PrintPreView _viewer = new PrintPreView();
 
         public CompensateVacationCommand(PersonalVacationPlanningViewModel viewModel) {
             _viewModel = viewModel;
@@ -37,9 +39,8 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 return;
             }
 
-            Viewer?.Close();
-            Viewer = new PrintPreView { DataContext = printPreViewModel };
-            Viewer.Show();
+            _viewer.MyDocument.DataContext = printPreViewModel;
+            Task<object> openCheck = DialogHost.Show(_viewer, "RootDialog", _viewModel.ExtendedClosingEventHandler);
 
         }
     }

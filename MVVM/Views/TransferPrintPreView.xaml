@@ -1,4 +1,4 @@
-﻿<Window x:Class="Vacation_Portal.MVVM.Views.TransferPrintPreView"
+﻿<UserControl x:Class="Vacation_Portal.MVVM.Views.TransferPrintPreView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,23 +6,30 @@
         xmlns:local="clr-namespace:Vacation_Portal.MVVM.Views"
         xmlns:ext="clr-namespace:Vacation_Portal.Extensions"
         xmlns:md="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
-        
-        mc:Ignorable="d"
-        Title="TransferPrintPreView" Height="800" Width="800"
-        WindowStartupLocation="CenterScreen">
-    <Window.Resources>
+        xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        mc:Ignorable="d">
+    <UserControl.Resources>
         <ResourceDictionary>
             <ext:FirstLetterToLowercaseConverter x:Key="FirstLetterToLowercaseConverter" />
         </ResourceDictionary>
-    </Window.Resources>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="800"/>
         </Grid.ColumnDefinitions>
         <Button Grid.Column="0" Click="Print_Click"
                 Content="{md:PackIcon Kind=PrinterOutline}"
                 Foreground="{StaticResource MaterialDesignDarkForeground}"/>
+        <Button VerticalAlignment="Bottom"
+                   Command="{x:Static md:DialogHost.CloseDialogCommand}"
+                   IsCancel="True"
+                   Style="{StaticResource MaterialDesignFlatButton}"
+                ToolTip="Закрыть"
+                Margin="0 0 0 7">
+            <md:PackIcon Kind="CloseBold" Foreground="Red" Width="20" Height="20"/>
+        </Button>
         <FlowDocumentPageViewer Grid.Column="1" 
                                 HorizontalAlignment="Center"
                                 Margin="10"
@@ -31,7 +38,7 @@
                                 x:Name="MyDocument">
             <FlowDocumentPageViewer.Document>
 
-                <FlowDocument ColumnWidth="700"
+                <FlowDocument ColumnWidth="800"
                               FontFamily="Verdana">
                     <Paragraph TextAlignment="Right">
                         <TextBlock Foreground="Red"
@@ -468,4 +475,4 @@
             </FlowDocumentPageViewer.Document>
         </FlowDocumentPageViewer>
     </Grid>
-</Window>
+</UserControl>
