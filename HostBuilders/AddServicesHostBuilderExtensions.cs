@@ -9,7 +9,7 @@ namespace Vacation_Portal.HostBuilders {
     public static class AddServicesHostBuilderExtensions {
         public static IHostBuilder CreateDbConnectionFactory(this IHostBuilder hostBuilder) {
             hostBuilder.ConfigureServices((hostContext, services) => {
-                services.AddSingleton(new SqlDbConnectionFactory(hostContext.Configuration.GetConnectionString("Home")));
+                services.AddSingleton(new SqlDbConnectionFactory(hostContext.Configuration.GetConnectionString("HomeSasha")));
             });
             return hostBuilder;
         }

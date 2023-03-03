@@ -1,16 +1,25 @@
-﻿using System.Printing;
+﻿using System;
+using System.Collections.Generic;
+using System.Printing;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Xps;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
-namespace Vacation_Portal.MVVM.Views {
+namespace Vacation_Portal.MVVM.Views
+{
     /// <summary>
-    /// Логика взаимодействия для PrintPreView.xaml
+    /// Логика взаимодействия для TransferPrintPreView.xaml
     /// </summary>
-    public partial class PrintPreView : Window {
-        public PrintPreView() {
+    public partial class TransferPrintPreView : Window
+    {
+        public TransferPrintPreView()
+        {
             InitializeComponent();
         }
 
@@ -22,14 +31,14 @@ namespace Vacation_Portal.MVVM.Views {
             printDialog.PrintTicket.PageOrientation = PageOrientation.Landscape;
 
             printDialog.PrintTicket.PageOrientation = PageOrientation.Portrait;
-            printDialog.PrintTicket.PageScalingFactor = 100;
+            printDialog.PrintTicket.PageScalingFactor = 110;
             printDialog.PrintTicket.PageBorderless = PageBorderless.None;
             printDialog.PrintTicket.PageMediaSize = new PageMediaSize(PageMediaSizeName.ISOA4);
 
 
             if(printDialog.ShowDialog() == true) {
                 // вызываем метод PrintDocument
-                printDialog.PrintDocument(((IDocumentPaginatorSource) this.MyDocument.Document).DocumentPaginator, "Заявление на выплату компенсации");
+                printDialog.PrintDocument(((IDocumentPaginatorSource) this.MyDocument.Document).DocumentPaginator, "Заявление на перенос");
             }
         }
     }

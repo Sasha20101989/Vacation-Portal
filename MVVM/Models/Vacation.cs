@@ -1,13 +1,21 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Media;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.Models {
     public class Vacation : ViewModelBase, ICloneable
     {
-        public int _Id;
+        private int _id;
+        public int Id {
+            get => _id;
+            set {
+                _id = value;
+                OnPropertyChanged(nameof(Id));
+            }
+        }
         public string Name { get; set; }
         public string User_Name { get; set; }
         public string User_Surname { get; set; }
@@ -47,6 +55,10 @@ namespace Vacation_Portal.MVVM.Models {
             {
                 _vacation_Status_Id = value;
                 OnPropertyChanged(nameof(Vacation_Status_Name));
+                Status status = App.API.AllStatuses.FirstOrDefault(s => s.Id == _vacation_Status_Id);
+                if(status != null) {
+                    Vacation_Status_Name = status.Status_Name;
+                }
             }
         }
 
@@ -72,9 +84,9 @@ namespace Vacation_Portal.MVVM.Models {
             }
         }
 
-        public Vacation(int Id, string name, int user_Id_SAP, string userName, string userSurname, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, string statusName, string creator_Id)
+        public Vacation(int id, string name, int user_Id_SAP, string userName, string userSurname, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, int statusId, string creator_Id)
         {
-            _Id = Id;
+            Id = id;
             Name = name;
             User_Id_SAP = user_Id_SAP;
             Vacation_Id = vacation_Id;
@@ -82,7 +94,7 @@ namespace Vacation_Portal.MVVM.Models {
             Color = color;
             Date_Start = date_Start;
             Date_end = date_end;
-            Vacation_Status_Name = statusName;
+            Vacation_Status_Id = statusId;
             Creator_Id = creator_Id;
             User_Name = userName;
             User_Surname = userSurname;

@@ -37,10 +37,10 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
             _viewModel.IsEnabled = false;
             bool isFirstCheckDaysPlaned = false;
             bool isSecondCheckDaysPlaned = false;
-
+            int countFirstPeriod = 0;
             for(int i = 0; i < VacationsToAproval.Count; i++) {
-                int countFirstPeriod = 0;
-                if(VacationsToAproval[i].Name == "Основной") {
+                
+                if(VacationsToAproval[i].Name == MyEnumExtensions.ToDescriptionString(VacationName.Principal)) {
                     foreach(DateTime planedDate in VacationsToAproval[i].DateRange) {
                         countFirstPeriod++;
                         if(countFirstPeriod >= 14) {
@@ -63,7 +63,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 } else {
                     for(int i = 0; i < VacationsToAproval.Count; i++) {
                         int countSecondPeriod = 0;
-                        if(VacationsToAproval[i].Name == "Основной" && VacationsToAproval[i] != CheckedVacation) {
+                        if(VacationsToAproval[i].Name == MyEnumExtensions.ToDescriptionString(VacationName.Principal) && VacationsToAproval[i] != CheckedVacation) {
                             foreach(DateTime planedDate in VacationsToAproval[i].DateRange) {
                                 countSecondPeriod++;
                                 if(countSecondPeriod >= 7) {

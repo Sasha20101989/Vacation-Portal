@@ -3,7 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Printing;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using Vacation_Portal.Commands.BaseCommands;
@@ -494,6 +497,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             ShiftVacations = new ShiftVacationsCommand(this);
 
             PersonName = App.API.Person.ToString();
+
             MovePrevYearCommand = new AnotherCommandImplementation(
                _ => {
                    if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
@@ -625,7 +629,12 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             FilteredPositionNames = Clone(PositionNames);
             FilteredSubordinates = App.API.Person.Subordinates;
 
-            List<string> VacationNames = new List<string> { "Основной", "Вредность", "Ненормированность", "Стаж" };
+            List<string> VacationNames = new List<string> {
+                MyEnumExtensions.ToDescriptionString(VacationName.Principal),
+                MyEnumExtensions.ToDescriptionString(VacationName.Harmfulness),
+                MyEnumExtensions.ToDescriptionString(VacationName.Irregularity),
+                MyEnumExtensions.ToDescriptionString(VacationName.Experience)
+            };
             foreach(string vacationName in VacationNames) {
                 VacationAllowanceViewModel defaultAllowance = new VacationAllowanceViewModel(0, vacationName, 0, 0, 0, null);
                 DefaultVacationAllowances.Add(defaultAllowance);
@@ -688,7 +697,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             }
 
             eventArgs.Cancel();
-
+            //TODO: проверить
             Task.Delay(TimeSpan.FromSeconds(0.3))
                 .ContinueWith((t, _) => eventArgs.Session.Close(false), null,
                     TaskScheduler.FromCurrentSynchronizationContext());

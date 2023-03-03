@@ -10,7 +10,7 @@ using Vacation_Portal.MVVM.Views;
 namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
     public class ShiftVacationsCommand : CommandBase {
         private readonly PersonalVacationPlanningViewModel _viewModel;
-        private PrintPreView Viewer = null;
+        private TransferPrintPreView Viewer = null;
 
         public ShiftVacationsCommand(PersonalVacationPlanningViewModel viewModel) {
             _viewModel = viewModel;
@@ -26,7 +26,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 if(allAvailableToShiftVacations.Any()) {
                     printPreViewModel = new PrintPreViewModel(App.API.Person.FullName,
                                                                 App.API.Person.Position,
-                                                                App.API.Person.Virtual_Department_Name,
+                                                                App.API.Person.Department_Name,
                                                                 App.API.Person.Id_SAP,
                                                                 allAvailableToShiftVacations);
                 }
@@ -37,7 +37,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 if(allAvailableToShiftVacations.Any()) {
                     printPreViewModel = new PrintPreViewModel(_viewModel.SelectedSubordinate.FullName,
                                                               _viewModel.SelectedSubordinate.Position,
-                                                              _viewModel.SelectedSubordinate.Virtual_Department_Name,
+                                                              _viewModel.SelectedSubordinate.Department_Name,
                                                               _viewModel.SelectedSubordinate.Id_SAP,
                                                               allAvailableToShiftVacations);
                 }
@@ -50,7 +50,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
             }
 
             Viewer?.Close();
-            Viewer = new PrintPreView { DataContext = printPreViewModel };
+            Viewer = new TransferPrintPreView { DataContext = printPreViewModel };
             Viewer.Show();
 
         }

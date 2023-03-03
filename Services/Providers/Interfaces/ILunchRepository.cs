@@ -40,7 +40,7 @@ namespace Vacation_Portal.Services.Providers.Interfaces {
         Task DeleteHolidayAsync(HolidayViewModel holiday);
         Task<IEnumerable<VacationAllowanceViewModel>> GetVacationAllowanceAsync(int UserIdSAP);
         Task UpdateVacationAllowanceAsync(int userIdSAP, int vacation_Id, int year, int count);
-        Task AddVacationAsync(Vacation vacation);
+        Task<Vacation> AddVacationAsync(Vacation vacation);
         Task DeleteVacationAsync(Vacation vacation);
         Task<IEnumerable<Vacation>> LoadVacationsAsync(int UserIdSAP);
         Task<IEnumerable<Vacation>> LoadAllVacationsAsync();

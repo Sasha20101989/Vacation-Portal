@@ -382,19 +382,14 @@ namespace Vacation_Portal.Services.Providers {
 
         public async Task UpdateVacationStatusAsync(Vacation vacation) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            int status;
-            if(Enum.TryParse(vacation.Vacation_Status_Name, out Statuses parsedStatus)) {
-                status = (int) parsedStatus;
-            } else {
-                status = 0; // значение по умолчанию
-            }
+
             object parameters = new {
                 User_Id_SAP = vacation.User_Id_SAP,
                 Vacation_Id = vacation.Vacation_Id,
                 Vacation_Year = vacation.Date_Start.Year,
                 Vacation_Start_Date = vacation.Date_Start,
                 Vacation_End_Date = vacation.Date_end,
-                Vacation_Status_Id = status
+                Vacation_Status_Id = vacation.Vacation_Status_Id
             };
             try {
                 await database.QueryAsync("usp_Update_Vacation_Status", parameters, commandType: CommandType.StoredProcedure);
@@ -402,45 +397,42 @@ namespace Vacation_Portal.Services.Providers {
                 MessageBox.Show(ex.Message);
             }
         }
-        public async Task AddVacationAsync(Vacation vacation)
+        public async Task<Vacation> AddVacationAsync(Vacation vacation)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            int status;
-            if(Enum.TryParse(vacation.Vacation_Status_Name, out Statuses parsedStatus)) {
-                status = (int) parsedStatus;
-            } else {
-                status = 0; // значение по умолчанию
-            }
-            object parameters = new {
-                User_Id_SAP = vacation.User_Id_SAP,
-                Vacation_Id = vacation.Vacation_Id,
-                Vacation_Year = vacation.Date_Start.Year,
-                Vacation_Start_Date = vacation.Date_Start,
-                Vacation_End_Date = vacation.Date_end,
-                Vacation_Status_Id = status,
-                Creator_Id = Person.Id_Account
-            };
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@User_Id_SAP", vacation.User_Id_SAP);
+            parameters.Add("@Vacation_Id", vacation.Vacation_Id);
+            parameters.Add("@Vacation_Year", vacation.Date_Start.Year);
+            parameters.Add("@Vacation_Start_Date", vacation.Date_Start);
+            parameters.Add("@Vacation_End_Date", vacation.Date_end);
+            parameters.Add("@Vacation_Status_Id", vacation.Vacation_Status_Id);
+            parameters.Add("@Creator_Id", Person.Id_Account);
+            parameters.Add("@InsertedId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
             try {
-                _ = await database.QueryAsync<Vacation>("usp_Add_Vacation", parameters, commandType: CommandType.StoredProcedure);
+                await database.ExecuteAsync(
+                    "usp_Add_Vacation", parameters, commandType: CommandType.StoredProcedure);
+
+                vacation.Id = parameters.Get<int>("@InsertedId");
+
+                return vacation;
             } catch(Exception ex) {
                 MessageBox.Show(ex.Message);
+                return null;
             }
         }
         public async Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
-            int status;
-            if(Enum.TryParse(vacation.Vacation_Status_Name, out Statuses parsedStatus)) {
-                status = (int) parsedStatus;
-            } else {
-                status = 0; // значение по умолчанию
-            }
+
             object parameters = new {
                 User_Id_SAP = vacation.User_Id_SAP,
                 Vacation_Id = vacation.Vacation_Id,
                 Vacation_Year = vacation.Date_Start.Year,
                 Vacation_Date_Start = vacation.Date_Start,
                 Vacation_Date_End = vacation.Date_end,
-                Vacation_Status_Id = status
+                Vacation_Status_Id = vacation.Vacation_Status_Id
             };
             try {
                 IEnumerable<VacationDTO> vacationDTOs = await database.QueryAsync<VacationDTO>("usp_Load_Conflicting_Vacation_For_User", parameters, commandType: CommandType.StoredProcedure);
@@ -453,11 +445,7 @@ namespace Vacation_Portal.Services.Providers {
         public async Task DeleteVacationAsync(Vacation vacation) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             object parameters = new {
-                User_Id_SAP = vacation.User_Id_SAP,
-                Vacation_Id = vacation.Vacation_Id,
-                Vacation_Year = vacation.Date_Start.Year,
-                Vacation_Start_Date = vacation.Date_Start,
-                Vacation_End_Date = vacation.Date_end
+                Id = vacation.Id
             };
             try {
                 _ = await database.QueryAsync<Vacation>("usp_Delete_Vacation", parameters, commandType: CommandType.StoredProcedure);
@@ -515,7 +503,7 @@ namespace Vacation_Portal.Services.Providers {
         {
             BrushConverter converter = new BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
-            return new Vacation(dto.Id, dto.Vacation_Name, dto.User_Id_SAP, ReturnUserName(dto.User_Id_SAP), ReturnUserSurname(dto.User_Id_SAP), dto.Vacation_Id, dto.Count, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status_Name, dto.Creator_Id);
+            return new Vacation(dto.Id, dto.Vacation_Name, dto.User_Id_SAP, ReturnUserName(dto.User_Id_SAP), ReturnUserSurname(dto.User_Id_SAP), dto.Vacation_Id, dto.Count, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status_Id, dto.Creator_Id);
         }
         private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto) 
         {

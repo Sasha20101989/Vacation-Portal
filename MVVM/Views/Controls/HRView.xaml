@@ -7,11 +7,11 @@
              xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages"  
              xmlns:vModels="clr-namespace:Vacation_Portal.MVVM.ViewModels"  
              xmlns:md="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
-             xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
+             xmlns:ext="clr-namespace:Vacation_Portal.Extensions"
              d:DataContext="{d:DesignInstance vm:PersonalVacationPlanningViewModel}" Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <ResourceDictionary>
-
+            <ext:VacationStatusNameToVisibilityConverter x:Key="VacationStatusNameToVisibilityConverter" />
             <!--#region Styling Scrollbar-->
             <Style x:Key="ScrollThumbs"
            TargetType="{x:Type Thumb}">
@@ -408,29 +408,16 @@
                                     <GridViewColumn Width="40" Header="">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <ContentControl>
-                                                    <ContentControl.Style>
-                                                        <Style TargetType="ContentControl">
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Vacation_Status_Name}" Value="Approved">
-                                                                    <Setter Property="Content">
-                                                                        <Setter.Value>
-                                                                            <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="ForestGreen" Width="20" Height="20"
+                                                <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="ForestGreen" Width="20" Height="20"
                                                                                     Command="{Binding RelativeSource={
                                                                                     RelativeSource AncestorType=ListView},
                                                                                     Path=DataContext.CompensateVacation}"
                                                                                     CommandParameter="{Binding RelativeSource={
                                                                                     RelativeSource AncestorType=ListView},
-                                                                                    Path=SelectedItem}">
-                                                                                <md:PackIcon Kind="FileExcel"  Width="20" Height="20"></md:PackIcon>
-                                                                            </Button>
-                                                                        </Setter.Value>
-                                                                    </Setter>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </ContentControl.Style>
-                                                </ContentControl>
+                                                                                    Path=SelectedItem}"
+                                                                                    Visibility="{Binding Converter={StaticResource VacationStatusNameToVisibilityConverter}}">
+                                                    <md:PackIcon Kind="FileExcel"  Width="20" Height="20"></md:PackIcon>
+                                                </Button>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>

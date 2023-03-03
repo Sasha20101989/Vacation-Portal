@@ -6,18 +6,18 @@ using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.ViewModels {
     public class PrintPreViewModel : ViewModelBase {
-        public PrintPreViewModel(string fullName, string position, string virtualDepartment, int sapId, Vacation vacationToCompensate) {
+        public PrintPreViewModel(string fullName, string position, string department, int sapId, Vacation vacationToCompensate) {
             FullName = fullName;
             Position = position;
-            VirtualDepartment = virtualDepartment;
+            Department = department;
             SapId = sapId;
             VacationToCompensate = vacationToCompensate;
         }
 
-        public PrintPreViewModel(string fullName, string position, string virtualDepartment, int sapId, IEnumerable<Vacation> allAvailableToShiftVacations) {
+        public PrintPreViewModel(string fullName, string position, string department, int sapId, IEnumerable<Vacation> allAvailableToShiftVacations) {
             FullName = fullName;
             Position = position;
-            VirtualDepartment = virtualDepartment;
+            Department = department;
             SapId = sapId;
             AllAvailableToShiftVacations = new ObservableCollection<Vacation>(allAvailableToShiftVacations);
             SelectedToShiftVacations = new ObservableCollection<Vacation>(allAvailableToShiftVacations.Take(2));
@@ -27,7 +27,7 @@ namespace Vacation_Portal.MVVM.ViewModels {
 
         public string FullName { get; private set; }
         public string Position { get; private set; }
-        public string VirtualDepartment { get; private set; }
+        public string Department { get; private set; }
         public int SapId { get; private set; }
         public Vacation VacationToCompensate { get; private set; }
         private ObservableCollection<Vacation> AllAvailableToShiftVacations { get; }

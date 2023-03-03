@@ -51,43 +51,37 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                     }
                 }
             }
-            ObservableCollection<Vacation> VacationsToAproval = new ObservableCollection<Vacation>();
+
+            ObservableCollection<Vacation> VacationsToApproval = new ObservableCollection<Vacation>();
             ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
             if(SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
-                VacationsToAproval = new ObservableCollection<Vacation>(
+                VacationsToApproval = new ObservableCollection<Vacation>(
                     _viewModel.SelectedSubordinate.Subordinate_Vacations.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
                 _viewModel.SelectedSubordinate.Subordinate_Vacations.Add(_viewModel.PlannedItem);
-                VacationsToAproval = _viewModel.SelectedSubordinate.Subordinate_Vacations;
+                VacationsToApproval = _viewModel.SelectedSubordinate.Subordinate_Vacations;
                 VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                     _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
             } else if(SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
-                VacationsToAproval = new ObservableCollection<Vacation>(
+                VacationsToApproval = new ObservableCollection<Vacation>(
                     App.API.Person.User_Vacations.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
                 App.API.Person.User_Vacations.Add(_viewModel.PlannedItem);
-                VacationsToAproval = App.API.Person.User_Vacations;
+                VacationsToApproval = App.API.Person.User_Vacations;
                 VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                     App.API.Person.User_Vacation_Allowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
             }
 
             _viewModel.SelectedItemAllowance.Vacation_Days_Quantity -= _viewModel.Calendar.CountSelectedDays;
 
-            _viewModel.PlannedVacationString = "";
-            _viewModel.Calendar.ClicksOnCalendar = 0;
-
-            if(_viewModel.SelectedItemAllowance.Vacation_Days_Quantity == 0) {
-                VacationAllowanceViewModel selectedAllowance = VacationAllowances.FirstOrDefault(a => a.Vacation_Days_Quantity > 0);
-                if(selectedAllowance != null) {
-                    _viewModel.SelectedItemAllowance = selectedAllowance;
-                }
-            }
+            
             List<Vacation> mergedVacations = new List<Vacation>();
 
-            foreach(Vacation vacation in VacationsToAproval.OrderBy(v => v.Date_Start)) {
+            foreach(Vacation vacation in VacationsToApproval.OrderBy(v => v.Date_Start)) {
                 Vacation lastVacation = mergedVacations.LastOrDefault();
+                Vacation firstVacation = mergedVacations.FirstOrDefault();
 
                 if(lastVacation != null &&
                     lastVacation.Name == vacation.Name &&
-                    lastVacation.Vacation_Status_Name != MyEnumExtensions.ToDescriptionString(Statuses.OnApproval) &&
+                    (lastVacation.Vacation_Status_Name != MyEnumExtensions.ToDescriptionString(Statuses.OnApproval) && vacation.Vacation_Status_Name != MyEnumExtensions.ToDescriptionString(Statuses.OnApproval)) &&
                     lastVacation.Date_end.AddDays(1) == vacation.Date_Start) {
                     _viewModel.Calendar.WorkingDays.Add(true);
                     int countHolidays = 0;
@@ -99,11 +93,11 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                             }
                         }
                     }
-                    lastVacation.Count += GetCountDays(vacation) - countHolidays;
+                    lastVacation.Count += vacation.Count - countHolidays;
                     await App.API.DeleteVacationAsync(lastVacation);
                     await App.API.DeleteVacationAsync(vacation);
                     lastVacation.Date_end = vacation.Date_end;
-                    lastVacation.Vacation_Status_Name = MyEnumExtensions.ToDescriptionString(Statuses.BeingPlanned);
+                    lastVacation.Vacation_Status_Id = (int)Statuses.BeingPlanned;
                     _viewModel.ShowAlert("Несколько периодов объединены в один.");
                 } else {
                     mergedVacations.Add(vacation);
@@ -115,7 +109,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
             if(_viewModel.Calendar.WorkingDays.Contains(true)) {
                 List<Vacation> conflictFreeVacations = new List<Vacation>();
                 foreach(Vacation item in VacationsToAprovalClone) {
-                    Vacation plannedVacation = new Vacation(item._Id, item.Name, item.User_Id_SAP, item.User_Name, item.User_Surname, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Name, item.Creator_Id);
+                    Vacation plannedVacation = new Vacation(item.Id, item.Name, item.User_Id_SAP, item.User_Name, item.User_Surname, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Id, item.Creator_Id);
                     IEnumerable<VacationDTO> conflictingVacations = await App.API.GetConflictingVacationAsync(plannedVacation);
                     if(!conflictingVacations.Any()) {
                         conflictFreeVacations.Add(item);
@@ -137,6 +131,15 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 }
 
                 _viewModel.PlannedIndex = 0;
+                _viewModel.PlannedVacationString = "";
+                _viewModel.Calendar.ClicksOnCalendar = 0;
+
+                if(_viewModel.SelectedItemAllowance.Vacation_Days_Quantity == 0) {
+                    VacationAllowanceViewModel selectedAllowance = VacationAllowances.FirstOrDefault(a => a.Vacation_Days_Quantity > 0);
+                    if(selectedAllowance != null) {
+                        _viewModel.SelectedItemAllowance = selectedAllowance;
+                    }
+                }
 
             } else {
                 _viewModel.ShowAlert("В выбранном периоде, отсутствуют рабочие дни выбранного типа отпуска.");
@@ -151,14 +154,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                     _viewModel.UpdateDataForPerson();
                 }
             }
-        }
-
-        private int GetCountDays(Vacation vacation) {
-            int count = 0;
-            foreach(DateTime date in vacation.DateRange) {
-                count++;
-            }
-            return count;
         }
     }
 }

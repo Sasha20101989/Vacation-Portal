@@ -21,13 +21,13 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
                     printPreViewModel = new PrintPreViewModel(App.API.Person.FullName,
                                                               App.API.Person.Position,
-                                                              App.API.Person.Virtual_Department_Name,
+                                                              App.API.Person.Department_Name,
                                                               App.API.Person.Id_SAP,
                                                               vacationToCompensate);
                 } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
                     printPreViewModel = new PrintPreViewModel(_viewModel.SelectedSubordinate.FullName,
                                                               _viewModel.SelectedSubordinate.Position,
-                                                              _viewModel.SelectedSubordinate.Virtual_Department_Name,
+                                                              _viewModel.SelectedSubordinate.Department_Name,
                                                               _viewModel.SelectedSubordinate.Id_SAP,
                                                               vacationToCompensate);
                 }
