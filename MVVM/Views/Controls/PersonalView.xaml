@@ -7,7 +7,7 @@
              xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages"  
              xmlns:vModels="clr-namespace:Vacation_Portal.MVVM.ViewModels"  
              xmlns:md="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
-             xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
+             xmlns:main="clr-namespace:Vacation_Portal"
              xmlns:ext="clr-namespace:Vacation_Portal.Extensions"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance vm:PersonalVacationPlanningViewModel}" Loaded="UserControl_Loaded">
@@ -145,7 +145,7 @@
             <!--#endregion-->
 
             <ext:VacationStatusNameToVisibilityConverter x:Key="VacationStatusNameToVisibilityConverter" />
-            
+            <ext:CountToBoolConverter x:Key="CountToBoolConverter"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml" />
@@ -304,6 +304,10 @@
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="IsSelected" Value="True"/>
                                         </Trigger>
+                                        <DataTrigger Binding="{Binding Vacation_Status_Name}" Value="Not Agreed">
+                                            <Setter Property="Foreground" Value="red" />
+                                            <Setter Property="Background" Value="#ffeeeeee" />
+                                        </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </ListView.ItemContainerStyle>
@@ -359,7 +363,10 @@
                                     Style="{DynamicResource MaterialDesignOutlinedLightButton}"
                                     Content="Оформить перенос"
                                     Command="{Binding ShiftVacations}"
-                                    IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
+                                    IsEnabled="{Binding VacationsToAprovalForPerson.Count, 
+                                                Converter={StaticResource CountToBoolConverter},
+                                                ConverterParameter=1,
+                                                UpdateSourceTrigger=PropertyChanged}"/>
                             <Button Width="280" VerticalAlignment="Bottom"
                                     Margin="30 0 3 6"
                                     Style="{DynamicResource MaterialDesignOutlinedLightButton}"
