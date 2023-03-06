@@ -12,6 +12,8 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ext:VacationStatusNameToVisibilityConverter x:Key="VacationStatusNameToVisibilityConverter" />
+            <ext:CountToBoolConverter x:Key="CountToBoolConverter"/>
+
             <!--#region Styling Scrollbar-->
             <Style x:Key="ScrollThumbs"
            TargetType="{x:Type Thumb}">
@@ -380,6 +382,10 @@
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="IsSelected" Value="True"/>
                                         </Trigger>
+                                        <DataTrigger Binding="{Binding Vacation_Status_Name}" Value="Not Agreed">
+                                            <Setter Property="Foreground" Value="red" />
+                                            <Setter Property="Background" Value="#ffeeeeee" />
+                                        </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </ListView.ItemContainerStyle>
@@ -424,13 +430,24 @@
                                 </GridView>
                             </ListView.View>
                         </ListView>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <Button VerticalAlignment="Bottom" 
+                                    HorizontalAlignment="Left"
+                                    Margin="3 0 3 6"
+                                    Style="{DynamicResource MaterialDesignOutlinedLightButton}"
+                                    Content="Оформить перенос"
+                                    Command="{Binding ShiftVacations}"
+                                    IsEnabled="{Binding VacationsToAprovalForSubordinate.Count, 
+                                                Converter={StaticResource CountToBoolConverter},
+                                                ConverterParameter=1,
+                                                UpdateSourceTrigger=PropertyChanged}"/>
                             <Button Width="280" VerticalAlignment="Bottom"
-                            Margin="3 0 3 6"
-                            Style="{DynamicResource MaterialDesignOutlinedLightButton}"
-                            Command="{Binding CheckVacations}" Content="Проверить и согласовать"
-                            IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                                    Margin="30 0 3 6"
+                                    Style="{DynamicResource MaterialDesignOutlinedLightButton}"
+                                    Command="{Binding CheckVacations}" Content="Проверить и согласовать"
+                                    IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
                             </Button>
+
                         </StackPanel>
                         <md:Snackbar  Grid.Row="2" MessageQueue="{Binding MessageQueuePLanedVacations,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" ActionButtonPlacement="SeparateLine"/>
                     </Grid>

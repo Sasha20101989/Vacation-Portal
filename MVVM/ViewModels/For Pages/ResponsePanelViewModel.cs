@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.Commands.ResponsePanelCommands;
+using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.Base;
 using Vacation_Portal.MVVM.Views.Controls;
@@ -156,7 +157,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         private void GetVacationsOnApproval() {
             VacationsOnApproval.Clear();
             foreach(Vacation vacation in SelectedPersonWithVacationsOnApproval.Subordinate_Vacations) {
-                if(vacation.Vacation_Status_Name == "On Approval") {
+                if(vacation.Vacation_Status_Name == MyEnumExtensions.ToDescriptionString(Statuses.OnApproval)) {
                     if(!VacationsOnApproval.Contains(vacation)) {
                         VacationsOnApproval.Add(vacation);
                     }
@@ -442,7 +443,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             IsAcceptedButtonEnabled = true;
             VacationItem.VacationStatusKind = PackIconKind.CheckBold;
             VacationItem.BadgeBackground = Brushes.DarkSeaGreen;
-            ProcessedVacations.Add(VacationItem);
+            VacationItem.Vacation_Status_Id = (int) Statuses.Approved;
+            await App.API.UpdateVacationStatusAsync(VacationItem);
+            GetIntersectingVacations();
+            //ProcessedVacations.Add(VacationItem);
             VacationsOnApproval.Remove(VacationItem);
             IntersectingVacations.Clear();
             if(VacationsOnApproval.Count > 0) {
@@ -461,7 +465,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             IsDeclinedButtonEnabled = true;
             VacationItem.VacationStatusKind = PackIconKind.Close;
             VacationItem.BadgeBackground = Brushes.IndianRed;
-            ProcessedVacations.Add(VacationItem);
+            VacationItem.Vacation_Status_Id = (int) Statuses.NotAgreed;
+            await App.API.UpdateVacationStatusAsync(VacationItem);
+            //ProcessedVacations.Add(VacationItem);
             VacationsOnApproval.Remove(VacationItem);
             IntersectingVacations.Clear();
             if(VacationsOnApproval.Count > 0) {
