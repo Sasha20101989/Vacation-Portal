@@ -17,10 +17,10 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
         public override async void Execute(object parameter) {
             Vacation deletedVacation = (Vacation) parameter;
             ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
-            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+            if(App.SelectedMode == WindowMode.Personal) {
                 VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                     App.API.Person.User_Vacation_Allowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
-            } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+            } else if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                 VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                     _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
             }
@@ -35,11 +35,11 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
 
                 await _viewModel.DeleteVacation(deletedVacation);
 
-                if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+                if(App.SelectedMode == WindowMode.Personal) {
                     App.API.Person.User_Vacation_Allowances[index].Vacation_Days_Quantity += deletedVacation.Count;
                     await _viewModel.UpdateVacationAllowance(deletedVacation.User_Id_SAP, deletedVacation.Vacation_Id, deletedVacation.Date_Start.Year, App.API.Person.User_Vacation_Allowances[index].Vacation_Days_Quantity);
                     App.API.Person.User_Vacations.Remove(deletedVacation);
-                } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+                } else if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                     _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances[index].Vacation_Days_Quantity += deletedVacation.Count;
                     await _viewModel.UpdateVacationAllowance(deletedVacation.User_Id_SAP, deletedVacation.Vacation_Id, deletedVacation.Date_Start.Year, _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances[index].Vacation_Days_Quantity);
                     _viewModel.SelectedSubordinate.Subordinate_Vacations.Remove(deletedVacation);
@@ -52,10 +52,10 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
 
                 _viewModel.PlannedIndex = 0;
 
-                if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+                if(App.SelectedMode == WindowMode.Personal) {
                     _viewModel.UpdateDataForPerson();
                     _viewModel.Calendar.UpdateColor(App.API.Person.User_Vacations);
-                } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+                } else if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                     _viewModel.UpdateDataForSubordinate();
                     _viewModel.Calendar.UpdateColor(_viewModel.SelectedSubordinate.Subordinate_Vacations);
                 }

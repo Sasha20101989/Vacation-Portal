@@ -26,10 +26,10 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
             _checkVacationView.ClearVisibility();
             bool isSupervisorView = false;
             ObservableCollection<Vacation> VacationsToAproval = new ObservableCollection<Vacation>();
-            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+            if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                 isSupervisorView = true;
                 VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.SelectedSubordinate.Subordinate_Vacations.OrderByDescending(i => i.Count));
-            } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+            } else if(App.SelectedMode == WindowMode.Personal) {
                 VacationsToAproval = new ObservableCollection<Vacation>(App.API.Person.User_Vacations.OrderByDescending(i => i.Count));
             }
 
@@ -75,7 +75,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                             }
                         }
                     }
-                    if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+                    if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                         _checkVacationView.VisibilityExclamationButtonSecondCheck(isSupervisorView);
                     }
                 }

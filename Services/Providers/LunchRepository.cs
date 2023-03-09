@@ -283,7 +283,7 @@ namespace Vacation_Portal.Services.Providers {
                 return null;
             }
         }
-        private void GetPersonsWithVacationsOnApproval() {
+        public void GetPersonsWithVacationsOnApproval() {
             PersonsWithVacationsOnApproval.Clear();
             foreach(Subordinate subordinate in App.API.Person.Subordinates) {
                 foreach(Vacation vacation in subordinate.Subordinate_Vacations) {

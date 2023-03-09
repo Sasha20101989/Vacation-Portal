@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Vacation_Portal.Extensions {
     public static class MyEnumExtensions {

@@ -24,7 +24,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
              
             IEnumerable<Vacation> allAvailableToShiftVacations = null;
 
-            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+            if(App.SelectedMode == WindowMode.Personal) {
                 allAvailableToShiftVacations = App.API.Person.User_Vacations.Where(vac => vac.Date_end > System.DateTime.Today && vac.Vacation_Status_Name == MyEnumExtensions.ToDescriptionString(Statuses.Approved)).Take(5).ToList();
 
                 if(allAvailableToShiftVacations.Any()) {
@@ -35,7 +35,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                                                                 allAvailableToShiftVacations);
                 }
 
-            } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+            } else if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                 allAvailableToShiftVacations = _viewModel.SelectedSubordinate.Subordinate_Vacations.Where(vac => vac.Date_end > System.DateTime.Today && vac.Vacation_Status_Name == MyEnumExtensions.ToDescriptionString(Statuses.Approved)).Take(5).ToList();
 
                 if(allAvailableToShiftVacations.Any()) {

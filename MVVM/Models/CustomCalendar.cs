@@ -231,7 +231,7 @@ namespace Vacation_Portal.MVVM.Models {
                 if(_viewModel.SelectedItemAllowance != null) {
                     ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
                     ObservableCollection<Vacation> VacationsToApproval = new ObservableCollection<Vacation>();
-                    if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+                    if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                         if(_viewModel.SelectedSubordinate != null) {
                             VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                             _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances.Where(f => f.Vacation_Year == CurrentYear));
@@ -239,7 +239,7 @@ namespace Vacation_Portal.MVVM.Models {
                         } else {
                             _viewModel.ShowAlert("Сначала выберете подчинённого!");
                         }
-                    } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+                    } else if(App.SelectedMode == WindowMode.Personal) {
                         VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                             App.API.Person.User_Vacation_Allowances.Where(f => f.Vacation_Year == CurrentYear));
                         VacationsToApproval = new ObservableCollection<Vacation>(App.API.Person.User_Vacations.Where(f => f.Date_Start.Year == CurrentYear));
@@ -296,9 +296,9 @@ namespace Vacation_Portal.MVVM.Models {
                                     DayAddition = GetDayAddition(CountSelectedDays);
                                     _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("d.MM.yyyy");
                                     int statusId = (int)Vacation_Portal.Statuses.BeingPlanned;
-                                    if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {     
+                                    if(App.SelectedMode == WindowMode.Personal) {     
                                         _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, statusId, Environment.UserName);
-                                    } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+                                    } else if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                                         _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, FirstSelectedDate, statusId, Environment.UserName);
                                     }
                                 } else {
@@ -327,9 +327,9 @@ namespace Vacation_Portal.MVVM.Models {
                                         _viewModel.PlannedVacationString = DayAddition + ": " + FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + SecondSelectedDate.ToString("dd.MM.yyyy");
 
                                         int statusId = (int)Vacation_Portal.Statuses.BeingPlanned;
-                                        if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+                                        if(App.SelectedMode == WindowMode.Personal) {
                                             _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, statusId, Environment.UserName);
-                                        } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+                                        } else if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                                             _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, FirstSelectedDate, SecondSelectedDate, statusId, Environment.UserName);
                                         }
                                     } else {
@@ -348,9 +348,9 @@ namespace Vacation_Portal.MVVM.Models {
                                         _viewModel.PlannedVacationString = DayAddition + ": " + SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + FirstSelectedDate.ToString("dd.MM.yyyy");
 
                                         int statusId = (int)Vacation_Portal.Statuses.BeingPlanned;
-                                        if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+                                        if(App.SelectedMode == WindowMode.Personal) {
                                             _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate, statusId, Environment.UserName);
-                                        } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+                                        } else if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                                             _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, SecondSelectedDate, FirstSelectedDate, statusId, Environment.UserName);
                                         }
                                     } else {

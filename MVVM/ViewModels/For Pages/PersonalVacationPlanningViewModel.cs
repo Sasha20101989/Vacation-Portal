@@ -322,9 +322,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 if(SelectedItemAllowance != null) {
                     Calendar.CalendarClickable = SelectedItemAllowance.Vacation_Days_Quantity > 0;
                 }
-                if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+                if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                     Calendar.ClearVacationData(VacationsToAprovalForSubordinate);
-                } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+                } else if(App.SelectedMode == WindowMode.Personal) {
                     Calendar.ClearVacationData(VacationsToAprovalForPerson);
                 }
             }
@@ -500,7 +500,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
 
             MovePrevYearCommand = new AnotherCommandImplementation(
                _ => {
-                   if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+                   if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                        if(SelectedSubordinate != null) {
                            IsLoadingCalendarPage = true;
                            IsPreviousYearEnabled = false;
@@ -512,7 +512,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                        } else {
                            ShowAlert("Сначала выберите сотрудника");
                        }
-                   } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+                   } else if(App.SelectedMode == WindowMode.Personal) {
                        IsLoadingCalendarPage = true;
                        IsPreviousYearEnabled = false;
                        IsNextYearEnabled = true;
@@ -525,9 +525,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
 
             MoveNextYearCommand = new AnotherCommandImplementation(
                _ => {
-                   if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) ||
-                      App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD) ||
-                      App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.ACCOUNTING)) {
+                   if(App.SelectedMode == WindowMode.Subordinate ||
+                      App.SelectedMode == WindowMode.HR_GOD ||
+                      App.SelectedMode == WindowMode.Accounting) {
                        if(SelectedSubordinate != null) {
                            IsLoadingCalendarPage = true;
                            IsPreviousYearEnabled = true;
@@ -539,7 +539,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                        } else {
                            ShowAlert("Сначала выберете сотрудника");
                        }
-                   } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+                   } else if(App.SelectedMode == WindowMode.Personal) {
                        IsLoadingCalendarPage = true;
                        IsPreviousYearEnabled = true;
                        IsNextYearEnabled = false;

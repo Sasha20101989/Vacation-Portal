@@ -445,7 +445,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             VacationItem.BadgeBackground = Brushes.DarkSeaGreen;
             VacationItem.Vacation_Status_Id = (int) Statuses.Approved;
             await App.API.UpdateVacationStatusAsync(VacationItem);
-            GetIntersectingVacations();
+            App.API.GetPersonsWithVacationsOnApproval();
             //ProcessedVacations.Add(VacationItem);
             VacationsOnApproval.Remove(VacationItem);
             IntersectingVacations.Clear();
@@ -467,6 +467,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             VacationItem.BadgeBackground = Brushes.IndianRed;
             VacationItem.Vacation_Status_Id = (int) Statuses.NotAgreed;
             await App.API.UpdateVacationStatusAsync(VacationItem);
+            App.API.GetPersonsWithVacationsOnApproval();
             //ProcessedVacations.Add(VacationItem);
             VacationsOnApproval.Remove(VacationItem);
             IntersectingVacations.Clear();

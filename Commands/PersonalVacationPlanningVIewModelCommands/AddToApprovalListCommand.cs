@@ -54,14 +54,14 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
 
             ObservableCollection<Vacation> VacationsToApproval = new ObservableCollection<Vacation>();
             ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
-            if(SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+            if(SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                 VacationsToApproval = new ObservableCollection<Vacation>(
                     _viewModel.SelectedSubordinate.Subordinate_Vacations.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
                 _viewModel.SelectedSubordinate.Subordinate_Vacations.Add(_viewModel.PlannedItem);
                 VacationsToApproval = _viewModel.SelectedSubordinate.Subordinate_Vacations;
                 VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                     _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
-            } else if(SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+            } else if(SelectedMode == WindowMode.Personal) {
                 VacationsToApproval = new ObservableCollection<Vacation>(
                     App.API.Person.User_Vacations.Where(f => f.Date_Start.Year == _viewModel.CurrentYear));
                 App.API.Person.User_Vacations.Add(_viewModel.PlannedItem);
@@ -122,10 +122,10 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                     await App.API.AddVacationAsync(conflictFreeVacation);
                 }
 
-                if(SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+                if(SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                     _viewModel.SelectedSubordinate.Subordinate_Vacations = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
                     _viewModel.UpdateDataForSubordinate();
-                } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+                } else if(App.SelectedMode == WindowMode.Personal) {
                     App.API.Person.User_Vacations = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
                     _viewModel.UpdateDataForPerson();
                 }
@@ -144,11 +144,11 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
             } else {
                 _viewModel.ShowAlert("В выбранном периоде, отсутствуют рабочие дни выбранного типа отпуска.");
                 _viewModel.SelectedItemAllowance.Vacation_Days_Quantity += _viewModel.Calendar.CountSelectedDays;
-                if(SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+                if(SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                     _viewModel.SelectedSubordinate.Subordinate_Vacations.Remove(_viewModel.PlannedItem);
                     _viewModel.Calendar.ClearVacationData(_viewModel.SelectedSubordinate.Subordinate_Vacations);
                     _viewModel.UpdateDataForSubordinate();
-                } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+                } else if(App.SelectedMode == WindowMode.Personal) {
                     App.API.Person.User_Vacations.Remove(_viewModel.PlannedItem);
                     _viewModel.Calendar.ClearVacationData(App.API.Person.User_Vacations);
                     _viewModel.UpdateDataForPerson();

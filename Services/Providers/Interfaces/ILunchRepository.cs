@@ -18,6 +18,7 @@ namespace Vacation_Portal.Services.Providers.Interfaces {
         bool CheckDateUnblockedCalendarAsync();
         bool IsCalendarPlannedOpen { get; }
         bool CheckNextCalendarPlanningUnlock();
+        void GetPersonsWithVacationsOnApproval();
         ICommand LoadHolidays { get; }
         ICommand LoadHolidayTypes { get; }
         ICommand Login { get; }

@@ -20,13 +20,13 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
             PrintPreViewModel printPreViewModel = null;
 
             if(parameter is Vacation vacationToCompensate) {
-                if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+                if(App.SelectedMode == WindowMode.Personal) {
                     printPreViewModel = new PrintPreViewModel(App.API.Person.FullName,
                                                               App.API.Person.Position,
                                                               App.API.Person.Department_Name,
                                                               App.API.Person.Id_SAP,
                                                               vacationToCompensate);
-                } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+                } else if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                     printPreViewModel = new PrintPreViewModel(_viewModel.SelectedSubordinate.FullName,
                                                               _viewModel.SelectedSubordinate.Position,
                                                               _viewModel.SelectedSubordinate.Department_Name,

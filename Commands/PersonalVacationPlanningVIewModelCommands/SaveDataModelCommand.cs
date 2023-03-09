@@ -23,46 +23,71 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
         }
         public override async Task ExecuteAsync(object parameter)
         {
-            DateTime started = DateTime.Now;
             _viewModel.IsSaving = true;
-            bool isSupervisorView = false;
-            bool isPersonalView = false;
-
-            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
-                isSupervisorView = true;
-                VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.SelectedSubordinate.Subordinate_Vacations.OrderByDescending(i => i.Count));
-                VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(_viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances);
-            } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
-                isPersonalView = true;
-                VacationsToAproval = new ObservableCollection<Vacation>(App.API.Person.User_Vacations.OrderByDescending(i => i.Count));
-                VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(App.API.Person.User_Vacation_Allowances);
-            }
             _viewModel.IsEnabled = false;
-            _ = new DispatcherTimer(
-                TimeSpan.FromMilliseconds(50),
-                DispatcherPriority.Normal,
-                new EventHandler((o, e) => {
-                    long totalDuration = started.AddSeconds(3).Ticks - started.Ticks;
-                    long currentProgress = DateTime.Now.Ticks - started.Ticks;
-                    double currentProgressPercent = 100.0 / totalDuration * currentProgress;
+            bool isPersonalView = App.SelectedMode == WindowMode.Personal;
+            bool isSupervisorView = App.SelectedMode == WindowMode.Subordinate;
+            switch(App.SelectedMode) {
+                case WindowMode.Subordinate:
+                case WindowMode.HR_GOD:
+                    VacationsToAproval = new ObservableCollection<Vacation>(_viewModel.SelectedSubordinate.Subordinate_Vacations.OrderByDescending(i => i.Count));
+                    VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(_viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances);
+                    _viewModel.UpdateDataForSubordinate();
+                    break;
+                case WindowMode.Personal:
+                    VacationsToAproval = new ObservableCollection<Vacation>(App.API.Person.User_Vacations.OrderByDescending(i => i.Count));
+                    VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(App.API.Person.User_Vacation_Allowances);
+                    _viewModel.UpdateDataForPerson();
+                    break;
+            }
 
-                    _viewModel.SaveProgress = currentProgressPercent;
+            var timerInterval = TimeSpan.FromMilliseconds(50);
+            var totalDuration = TimeSpan.FromSeconds(3);
+            var started = DateTime.Now;
+            while(DateTime.Now - started < totalDuration) {
+                var currentProgressPercent = (DateTime.Now - started).TotalMilliseconds / totalDuration.TotalMilliseconds * 100.0;
+                _viewModel.SaveProgress = currentProgressPercent;
 
-                    if(_viewModel.SaveProgress >= 100) {
-                        VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAproval.OrderBy(i => i.Date_Start));
+                await Task.Delay(timerInterval);
+            }
 
-                        _viewModel.IsSaveComplete = true;
-                        _viewModel.IsSaving = false;
+            VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAproval.OrderBy(i => i.Date_Start));
 
-                        _viewModel.SaveProgress = 0;
-                        if(o is DispatcherTimer timer) {
-                            timer.Stop();
-                        }
-                        Timer timer1 = new Timer(3000);
-                        timer1.Elapsed += Timer1_Elapsed;
-                        timer1.Enabled = true;
+            _viewModel.IsSaveComplete = true;
+            _viewModel.IsSaving = false;
+            _viewModel.SaveProgress = 0;
+
+            Timer timer1 = new Timer(3000);
+            timer1.Elapsed += Timer1_Elapsed;
+            timer1.Enabled = true;
+
+            #region Merged vacations
+            var vacationsToMerge = GroupVacationsByDateRange(VacationsToAproval);
+            var vacationsToAdd = new List<Vacation>();
+
+            foreach(var vacation in VacationsToAproval) {
+                if(!vacation.UsedForMerging) {
+                    vacationsToAdd.Add(vacation);
+                }
+            }
+
+            foreach(var vacation in vacationsToAdd) {
+                vacationsToMerge.Add(new List<Vacation> { vacation });
+            }
+            var vacationsToRemove = new List<Vacation>();
+
+            foreach(var vacation in VacationsToAproval) {
+                    if(!vacationsToMerge.SelectMany(g => g).Any(v => v.Id == vacation.Id)) {
+                        vacationsToRemove.Add(vacation);
                     }
-                }), Dispatcher.CurrentDispatcher);
+            }
+
+            foreach(var vacation in vacationsToRemove) {
+                await App.API.DeleteVacationAsync(vacation);
+            }
+            //await MergeVacationsByDateRange(vacationsToMerge, App.SelectedMode == WindowMode.Personal, App.SelectedMode == WindowMode.Subordinate);
+            #endregion
+
             foreach(Vacation item in VacationsToAproval) {
                 int countConflicts = 0;
                 Vacation plannedVacation = new Vacation(item.Id, item.Name, item.User_Id_SAP, item.User_Name, item.User_Surname, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Id, item.Creator_Id);
@@ -94,9 +119,9 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                     }
                 }
             }
-            if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Subordinate) || App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.HR_GOD)) {
+            if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                 _viewModel.UpdateDataForSubordinate();
-            } else if(App.SelectedMode == MyEnumExtensions.ToDescriptionString(Modes.Personal)) {
+            } else if(App.SelectedMode == WindowMode.Personal) {
                 _viewModel.UpdateDataForPerson();
             }
 
@@ -115,6 +140,124 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 _viewModel.IsSaveComplete = false;
                 _viewModel.IsEnabled = true;
                 timer.Enabled = false;
+            }
+        }
+
+        private List<List<Vacation>> GroupVacationsByDateRange(ObservableCollection<Vacation> vacations) {
+            var groups = vacations
+                .Where(v => v.Vacation_Status_Id == (int) Statuses.OnApproval)
+                .GroupBy(v => (v.Name))
+                .Select(group => {
+                    Vacation firstVacation = group.First();
+                    var mergedVacation = new Vacation(
+                        firstVacation.Id,
+                        firstVacation.Name,
+                        firstVacation.User_Id_SAP,
+                        firstVacation.User_Name,
+                        firstVacation.User_Surname,
+                        firstVacation.Vacation_Id,
+                        group.Sum(v => v.Count),
+                        firstVacation.Color,
+                        group.Min(v => v.Date_Start),
+                        group.Max(v => v.Date_end),
+                        firstVacation.Vacation_Status_Id,
+                        firstVacation.Creator_Id
+                    );
+                
+                    // Установить флаг, что отпуск использован при объединении
+                    foreach(var vacation in group) {
+                        vacation.UsedForMerging = true;
+                    }
+                
+                    return mergedVacation;
+                })
+                .GroupBy(v => v.Name)
+                .Select(g => g.Cast<Vacation>().ToList())
+                .ToList();
+
+            return groups;
+        }
+
+        private async Task MergeVacationsByDateRange(List<List<Vacation>> vacationsToMerge, bool isPersonalView, bool isSupervisorView) {
+            foreach(var vacations in vacationsToMerge) {
+                if(vacations.Count() > 1) {
+                    var vacationList = vacations.ToList();
+                    var vacationToSave = new Vacation(
+                        vacationList[0].Id,
+                        vacationList[0].Name,
+                        vacationList[0].User_Id_SAP,
+                        vacationList[0].User_Name,
+                        vacationList[0].User_Surname,
+                        vacationList[0].Vacation_Id,
+                        vacationList.Sum(x => x.Count),
+                        vacationList[0].Color,
+                        vacationList.Min(x => x.Date_Start),
+                        vacationList.Max(x => x.Date_end),
+                        (int) Statuses.OnApproval,
+                        vacationList[0].Creator_Id
+                    );
+
+                    foreach(var vacation in vacationList) {
+                        await App.API.DeleteVacationAsync(vacation);
+                    }
+
+                    var countConflicts = (await App.API.GetConflictingVacationAsync(vacationToSave)).Count();
+
+                    if(countConflicts == 0) {
+                        var vacationAllowance = GetVacationAllowance(vacationToSave.Name);
+                        await _viewModel.UpdateVacationAllowance(vacationToSave.User_Id_SAP, vacationToSave.Vacation_Id, vacationToSave.Date_Start.Year, vacationAllowance.Vacation_Days_Quantity);
+                        await App.API.AddVacationAsync(vacationToSave);
+
+                        if(isPersonalView) {
+                            _viewModel.UpdateDataForPerson();
+                        } else if(isSupervisorView) {
+                            _viewModel.UpdateDataForSubordinate();
+                        }
+                    } else {
+                        vacationToSave.Vacation_Status_Id = (int) Statuses.OnApproval;
+
+                        if(isSupervisorView) {
+                            vacationToSave.Vacation_Status_Id = (int) Statuses.Approved;
+                        }
+
+                        await App.API.AddVacationAsync(vacationToSave);
+
+                        if(isPersonalView) {
+                            _viewModel.UpdateDataForPerson();
+                        } else if(isSupervisorView) {
+                            _viewModel.UpdateDataForSubordinate();
+                        }
+                    }
+                } else {
+                    var vacation = vacations.First();
+
+                    var countConflicts = (await App.API.GetConflictingVacationAsync(vacation)).Count();
+
+                    if(countConflicts == 0) {
+                        var vacationAllowance = GetVacationAllowance(vacation.Name);
+                        await _viewModel.UpdateVacationAllowance(vacation.User_Id_SAP, vacation.Vacation_Id, vacation.Date_Start.Year, vacationAllowance.Vacation_Days_Quantity);
+
+                        if(isPersonalView) {
+                            _viewModel.UpdateDataForPerson();
+                        } else if(isSupervisorView) {
+                            _viewModel.UpdateDataForSubordinate();
+                        }
+                    } else {
+                        vacation.Vacation_Status_Id = (int) Statuses.OnApproval;
+
+                        if(isSupervisorView) {
+                            vacation.Vacation_Status_Id = (int) Statuses.Approved;
+                        }
+
+                        await App.API.UpdateVacationStatusAsync(vacation);
+
+                        if(isPersonalView) {
+                            _viewModel.UpdateDataForPerson();
+                        } else if(isSupervisorView) {
+                            _viewModel.UpdateDataForSubordinate();
+                        }
+                    }
+                }
             }
         }
     }
