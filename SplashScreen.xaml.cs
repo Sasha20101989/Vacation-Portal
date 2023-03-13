@@ -41,7 +41,13 @@ namespace Vacation_Portal {
             });
 
             for(int i = 0; i <= 100; i++) {
-                (sender as BackgroundWorker).ReportProgress(i);
+                if(_person != null && i < 80) {
+                    (sender as BackgroundWorker).ReportProgress(80);
+                    i = 80;
+                } else {
+                    (sender as BackgroundWorker).ReportProgress(i);
+                }
+
                 Thread.Sleep(100);
             }
         }

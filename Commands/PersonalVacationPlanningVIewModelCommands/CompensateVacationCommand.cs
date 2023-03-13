@@ -1,7 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System.Threading.Tasks;
 using Vacation_Portal.Commands.BaseCommands;
-using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;

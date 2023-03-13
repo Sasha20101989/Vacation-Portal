@@ -14,7 +14,7 @@ namespace Vacation_Portal.MVVM.Models {
         private static readonly string _settingsPage = "Настройки приложения";
         private static readonly string _holidaysPage = "Настройки выходных и праздников";
         private static readonly string _supervisorPage = "Страница руководителя";
-        private static readonly string _approvalPage = "Страница подтверждения отпусков";
+        private static readonly string _approvalPage = "Страница подтверждения переносимых отпусков";
         private static readonly string _hrGodPage = "Страница HR бога";
         private static readonly string _hrAdminPage = "Настройки календаря";
         private static readonly string _accounting = "Страница табельщика";
@@ -114,6 +114,7 @@ namespace Vacation_Portal.MVVM.Models {
             return viewModel.MainMenuItems;
         }
         private IEnumerable<MenuItem> GenerateMenuItems(MainWindowViewModel viewModel) {
+
             yield return new MenuItem(
             _personalVacationPlanning,
             typeof(PersonalVacationPlanningView),

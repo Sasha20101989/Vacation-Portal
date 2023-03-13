@@ -445,7 +445,10 @@
                                     Margin="30 0 3 6"
                                     Style="{DynamicResource MaterialDesignOutlinedLightButton}"
                                     Command="{Binding CheckVacations}" Content="Проверить и согласовать"
-                                    IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                                    IsEnabled="{Binding VacationsToAprovalForSubordinate.Count, 
+                                                Converter={StaticResource CountToBoolConverter},
+                                                ConverterParameter=1,
+                                                UpdateSourceTrigger=PropertyChanged}">
                             </Button>
 
                         </StackPanel>

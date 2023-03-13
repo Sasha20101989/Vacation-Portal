@@ -17,11 +17,13 @@ using Vacation_Portal.MVVM.Views.Controls;
 
 namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
     public class ResponsePanelViewModel : ViewModelBase {
+
         private bool _isAcceptButtonEnabled = true;
         private bool _isDeclineButtonEnabled = true;
 
         public ICommand ReturnCommand { get; set; }
         public СustomizedCalendar Calendar { get; set; }
+
         public ResponsePanelViewModel() {
             VisibilityInfoBar = false;
             AcceptText = "Подтвердить";
@@ -36,6 +38,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             Calendar = new СustomizedCalendar();
             PersonsWithVacationsOnApproval = App.API.PersonsWithVacationsOnApproval;
         }
+
         private void UpdateWeeksAsync() {
             List<List<Day>> allWeeks = GetWeeksInYear(2023);
             //AllStatuses = App.API.GetStatuses();
@@ -163,6 +166,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                     }
                 }
             }
+            VacationsOnApproval = new ObservableCollection<Vacation>(VacationsOnApproval.OrderBy(x => x.Date_Start));
         }
 
         #region Button settings
@@ -412,6 +416,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 OnPropertyChanged(nameof(SelectedPersonWithVacationsOnApproval));
                 if(SelectedPersonWithVacationsOnApproval == null) {
                     VisibilityListVacations = false;
+                    VisibilityInfoBar = false;
                 } else {
                     GetVacationsOnApproval();
                     VisibilityListVacations = true;
@@ -439,19 +444,26 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 DeclineBorderOpacity -= 0.1;
                 DeclineRootOpacity -= 0.1;
             }
-            await SubmitResponseAsync(InviteResponseKind.Accepted);
             IsAcceptedButtonEnabled = true;
+            await SubmitResponseAsync(InviteResponseKind.Accepted);
+
             VacationItem.VacationStatusKind = PackIconKind.CheckBold;
             VacationItem.BadgeBackground = Brushes.DarkSeaGreen;
             VacationItem.Vacation_Status_Id = (int) Statuses.Approved;
             await App.API.UpdateVacationStatusAsync(VacationItem);
-            App.API.GetPersonsWithVacationsOnApproval();
+            await MergeVacationsApprovedStatusAsync();
+
+
             //ProcessedVacations.Add(VacationItem);
             VacationsOnApproval.Remove(VacationItem);
             IntersectingVacations.Clear();
             if(VacationsOnApproval.Count > 0) {
                 VacationIndex = 0;
             }
+            if(VacationsOnApproval.Count == 0) {
+                App.API.GetPersonsWithVacationsOnApproval();
+            }
+
         }
 
         private async Task SetDeclinedStateAsync() {
@@ -515,5 +527,95 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         }
         #endregion
 
+        private async Task MergeVacationsApprovedStatusAsync() {
+            Subordinate selectedSubordinate = null;
+            foreach(Subordinate subordinate in App.API.Person.Subordinates) {
+                if(subordinate.Id_SAP == VacationItem.User_Id_SAP) {
+                    selectedSubordinate = subordinate;
+                }
+            }
+            int count = selectedSubordinate.Subordinate_Vacations
+              .Where(v => v.Vacation_Status_Id == (int) Statuses.Approved && v.Name == VacationItem.Name)
+              .Count();
+
+            if(count > 1) {
+                var vacationsToMerge = GroupVacationsByDateRange(selectedSubordinate.Subordinate_Vacations);
+
+                foreach(var vacation in vacationsToMerge.SelectMany(group => group)) {
+                    await App.API.AddVacationAsync(vacation);
+                    selectedSubordinate.Subordinate_Vacations.Add(vacation);
+                }
+
+                var vacationsToAdd = new List<Vacation>();
+                var vacationsToRemove = new List<Vacation>();
+
+                foreach(var vacation in selectedSubordinate.Subordinate_Vacations) {
+                    if(vacation.Vacation_Status_Id == (int) Statuses.Approved && !vacation.UsedForMerging) {
+                        vacationsToAdd.Add(vacation);
+                    }
+                }
+
+                foreach(var vacation in vacationsToAdd) {
+                    vacationsToMerge.Add(new List<Vacation> { vacation });
+                }
+
+                foreach(var vacation in selectedSubordinate.Subordinate_Vacations) {
+                    if(vacation.UsedForMerging) {
+                        vacationsToRemove.Add(vacation);
+                    }
+                }
+
+                foreach(var vacation in vacationsToRemove) {
+                    await App.API.DeleteVacationAsync(vacation);
+                    selectedSubordinate.Subordinate_Vacations.Remove(vacation);
+                }
+            }
+        }
+
+        private List<List<Vacation>> GroupVacationsByDateRange(ObservableCollection<Vacation> vacations) {
+            foreach(var vacation in vacations) {
+                vacation.UsedForMerging = false;
+            }
+            var groups = vacations
+                .Where(v => v.Vacation_Status_Id == (int) Statuses.Approved)
+                .GroupBy(v => v.Name)
+                .Select(group => {
+                    Vacation firstVacation = group.First();
+                    var mergedVacation = new Vacation(
+                        firstVacation.Id,
+                        firstVacation.Name,
+                        firstVacation.User_Id_SAP,
+                        firstVacation.User_Name,
+                        firstVacation.User_Surname,
+                        firstVacation.Vacation_Id,
+                        group.Sum(v => v.Count),
+                        firstVacation.Color,
+                        group.Min(v => v.Date_Start),
+                        group.Max(v => v.Date_end),
+                        firstVacation.Vacation_Status_Id,
+                        firstVacation.Creator_Id
+                    );
+
+                    // Установить флаг, что отпуск использован при объединении
+                    foreach(var vacation in group) {
+                        if(vacation.Date_Start <= VacationItem.Date_end || vacation.Date_end >= VacationItem.Date_Start) {
+                            vacation.UsedForMerging = true;
+                        }
+                    }
+
+                    return mergedVacation;
+                })
+                .GroupBy(v => v.Name)
+                .Select(g => g.Cast<Vacation>().ToList())
+                .ToList();
+
+            //foreach(var vacation in vacations) {
+            //    if(vacation.Vacation_Status_Id == (int) Statuses.Approved) {
+            //        vacation.UsedForMerging = true;
+            //    }
+            //}
+
+            return groups;
+        }
     }
 }

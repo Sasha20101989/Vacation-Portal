@@ -72,7 +72,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
 
             _viewModel.SelectedItemAllowance.Vacation_Days_Quantity -= _viewModel.Calendar.CountSelectedDays;
 
-            
+
             List<Vacation> mergedVacations = new List<Vacation>();
 
             foreach(Vacation vacation in VacationsToApproval.OrderBy(v => v.Date_Start)) {
@@ -97,7 +97,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                     await App.API.DeleteVacationAsync(lastVacation);
                     await App.API.DeleteVacationAsync(vacation);
                     lastVacation.Date_end = vacation.Date_end;
-                    lastVacation.Vacation_Status_Id = (int)Statuses.BeingPlanned;
+                    lastVacation.Vacation_Status_Id = (int) Statuses.BeingPlanned;
                     _viewModel.ShowAlert("Несколько периодов объединены в один.");
                 } else {
                     mergedVacations.Add(vacation);
@@ -124,7 +124,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
 
                 if(SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                     _viewModel.SelectedSubordinate.Subordinate_Vacations = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
-                    _viewModel.UpdateDataForSubordinate();
+                    await _viewModel.UpdateDataForSubordinateAsync();
                 } else if(App.SelectedMode == WindowMode.Personal) {
                     App.API.Person.User_Vacations = new ObservableCollection<Vacation>(VacationsToAprovalClone.OrderBy(i => i.Date_Start));
                     _viewModel.UpdateDataForPerson();
@@ -146,14 +146,15 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 _viewModel.SelectedItemAllowance.Vacation_Days_Quantity += _viewModel.Calendar.CountSelectedDays;
                 if(SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                     _viewModel.SelectedSubordinate.Subordinate_Vacations.Remove(_viewModel.PlannedItem);
-                    _viewModel.Calendar.ClearVacationData(_viewModel.SelectedSubordinate.Subordinate_Vacations);
-                    _viewModel.UpdateDataForSubordinate();
+                    await _viewModel.Calendar.ClearVacationData(_viewModel.SelectedSubordinate.Subordinate_Vacations);
+                    await _viewModel.UpdateDataForSubordinateAsync();
                 } else if(App.SelectedMode == WindowMode.Personal) {
                     App.API.Person.User_Vacations.Remove(_viewModel.PlannedItem);
-                    _viewModel.Calendar.ClearVacationData(App.API.Person.User_Vacations);
+                    await _viewModel.Calendar.ClearVacationData(App.API.Person.User_Vacations);
                     _viewModel.UpdateDataForPerson();
                 }
             }
+
         }
     }
 }

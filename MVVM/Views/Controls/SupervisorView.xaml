@@ -331,7 +331,7 @@
             </md:Card>
         </md:Badged>
 
-        <md:Badged Grid.Row="1" BadgePlacementMode="Top"  Margin="0 8 0 0">
+        <md:Badged Grid.Row="1" BadgePlacementMode="Top"  Margin="0 7 0 0">
             <md:Badged.Badge>
                 <TextBlock Text="Запланированные отпуска" Margin="3" FontSize="10"/>
             </md:Badged.Badge>
@@ -353,7 +353,6 @@
                                 <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignGridViewItem}">
                                     <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
                                     <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
-                                    <Setter Property="Foreground" Value="Black" />
                                     <Style.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="IsSelected" Value="True"/>
@@ -425,7 +424,10 @@
                                     Margin="30 0 3 6"
                                     Style="{DynamicResource MaterialDesignOutlinedLightButton}"
                                     Command="{Binding CheckVacations}" Content="Проверить и согласовать"
-                                    IsEnabled="{Binding IsEnabled,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                                    IsEnabled="{Binding VacationsToAprovalForSubordinate.Count, 
+                                                Converter={StaticResource CountToBoolConverter},
+                                                ConverterParameter=1,
+                                                UpdateSourceTrigger=PropertyChanged}">
                             </Button>
 
                         </StackPanel>

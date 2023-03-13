@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Windows.Data;
 
-namespace Vacation_Portal.Extensions
-{
+namespace Vacation_Portal.Extensions {
     public class FirstLetterToLowercaseConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             if(value is string stringValue && !string.IsNullOrEmpty(stringValue)) {

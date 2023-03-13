@@ -1,16 +1,18 @@
 ﻿using System.Collections.ObjectModel;
-using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.ViewModels.Calendar {
-    public class CalendarViewModel : ViewModelBase {
-        public ObservableCollection<DayViewModel> Days { get; set; }
-        public int ColumnOfWeek { get; set; }
+    public class CalendarViewModel {
+        public ObservableCollection<DayViewModel> FullDays { get; set; }
+        public int DaysOfWeek { get; set; }
         public int CountRows { get; set; }
 
-        public CalendarViewModel(ObservableCollection<DayViewModel> days, int columnOfWeek, int countRows) {
-            Days = days;
-            ColumnOfWeek = columnOfWeek;
+        public string MonthName { get; set; }
+
+        public CalendarViewModel(ObservableCollection<DayViewModel> fullDays, int daysOfWeek, int countRows, string monthName) {
+            FullDays = fullDays;
+            DaysOfWeek = daysOfWeek;
             CountRows = countRows;
+            MonthName = monthName;
         }
     }
 }

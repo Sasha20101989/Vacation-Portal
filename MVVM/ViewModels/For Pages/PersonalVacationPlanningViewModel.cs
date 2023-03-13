@@ -3,10 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Printing;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using Vacation_Portal.Commands.BaseCommands;
@@ -18,6 +15,7 @@ using Vacation_Portal.MVVM.Views.Controls;
 
 namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
     public class PersonalVacationPlanningViewModel : ViewModelBase {
+
         #region Props
         private Lazy<Task> _initializeLazy;
         private readonly SampleError _sampleError = new SampleError();
@@ -218,7 +216,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 VacationAllowancesForSubordinate = Clone(DefaultVacationAllowances);
                 VacationsToAprovalForSubordinate.Clear();
                 if(SelectedSubordinate != null) {
-                    UpdateDataForSubordinate();
+                    App.Current.Dispatcher.Invoke(async () => {
+                        await UpdateDataForSubordinateAsync();
+                    });
                 }
             }
         }
@@ -323,9 +323,13 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                     Calendar.CalendarClickable = SelectedItemAllowance.Vacation_Days_Quantity > 0;
                 }
                 if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
-                    Calendar.ClearVacationData(VacationsToAprovalForSubordinate);
+                    App.Current.Dispatcher.Invoke(async () => {
+                        await Calendar.ClearVacationData(VacationsToAprovalForSubordinate);
+                    });
                 } else if(App.SelectedMode == WindowMode.Personal) {
-                    Calendar.ClearVacationData(VacationsToAprovalForPerson);
+                    App.Current.Dispatcher.Invoke(async () => {
+                        await Calendar.ClearVacationData(VacationsToAprovalForPerson);
+                    });
                 }
             }
         }
@@ -478,6 +482,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public ICommand CheckVacations { get; }
         public AnotherCommandImplementation MovePrevYearCommand { get; }
         public AnotherCommandImplementation MoveNextYearCommand { get; }
+        public AnotherCommandImplementation UpdateData { get; }
         #endregion Commands
 
         #region Constructor
@@ -499,7 +504,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             PersonName = App.API.Person.ToString();
 
             MovePrevYearCommand = new AnotherCommandImplementation(
-               _ => {
+               async _ => {
                    if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
                        if(SelectedSubordinate != null) {
                            IsLoadingCalendarPage = true;
@@ -507,7 +512,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                            IsNextYearEnabled = true;
                            Calendar = Calendars[0];
                            CurrentYear = Calendars[0].CurrentYear;
-                           UpdateDataForSubordinate();
+                           await UpdateDataForSubordinateAsync();
                            IsLoadingCalendarPage = false;
                        } else {
                            ShowAlert("Сначала выберите сотрудника");
@@ -524,7 +529,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                });
 
             MoveNextYearCommand = new AnotherCommandImplementation(
-               _ => {
+               async _ => {
                    if(App.SelectedMode == WindowMode.Subordinate ||
                       App.SelectedMode == WindowMode.HR_GOD ||
                       App.SelectedMode == WindowMode.Accounting) {
@@ -534,7 +539,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                            IsNextYearEnabled = false;
                            Calendar = Calendars[1];
                            CurrentYear = Calendars[1].CurrentYear;
-                           UpdateDataForSubordinate();
+                           await UpdateDataForSubordinateAsync();
                            IsLoadingCalendarPage = false;
                        } else {
                            ShowAlert("Сначала выберете сотрудника");
@@ -549,6 +554,24 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                        IsLoadingCalendarPage = false;
                    }
                });
+
+            UpdateData = new AnotherCommandImplementation(
+               async _ => {
+                   if(App.SelectedMode == WindowMode.Subordinate ||
+                      App.SelectedMode == WindowMode.HR_GOD ||
+                      App.SelectedMode == WindowMode.Accounting) {
+                       if(SelectedSubordinate != null) {
+                           await Initialize();
+                           await UpdateDataForSubordinateAsync();
+                       } else {
+                           ShowAlert("Сначала выберете сотрудника");
+                       }
+                   } else if(App.SelectedMode == WindowMode.Personal) {
+                       await Initialize();
+                       UpdateDataForPerson();
+                   }
+               });
+
 
             _initializeLazy = new Lazy<Task>(async () => await Initialize());
             LoadModel.Execute(new object());
@@ -571,24 +594,24 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             Calendar = Calendars[0];
         }
 
-        public void UpdateDataForSubordinate() {
+        public async Task UpdateDataForSubordinateAsync() {
             VacationAllowancesForSubordinate = new ObservableCollection<VacationAllowanceViewModel>(SelectedSubordinate.Subordinate_Vacation_Allowances.Where(f => f.Vacation_Year == CurrentYear));
             if(VacationAllowancesForSubordinate.Count == 0) {
                 VacationAllowancesForSubordinate = Clone(DefaultVacationAllowances);
             }
 
-            VacationsToAprovalForSubordinate = new ObservableCollection<Vacation>(SelectedSubordinate.Subordinate_Vacations.Where(f => f.Date_Start.Year == CurrentYear));
-            Calendar.UpdateColor(VacationsToAprovalForSubordinate);
+            VacationsToAprovalForSubordinate = new ObservableCollection<Vacation>(SelectedSubordinate.Subordinate_Vacations.Where(f => f.Date_Start.Year == CurrentYear).OrderBy(f => f.Date_Start));
+            await Calendar.UpdateColorAsync(VacationsToAprovalForSubordinate);
         }
 
         public void UpdateDataForPerson() {
             VacationAllowancesForPerson = new ObservableCollection<VacationAllowanceViewModel>(
                                                     App.API.Person.User_Vacation_Allowances.Where(f => f.Vacation_Year == CurrentYear));
-            if(VacationAllowancesForPerson.Count == 0) {
+            if(VacationAllowancesForPerson.Count == 0 || VacationAllowancesForPerson.Count < 4) {
                 VacationAllowancesForPerson = Clone(DefaultVacationAllowances);
             }
             VacationsToAprovalForPerson = new ObservableCollection<Vacation>(
-                                                    App.API.Person.User_Vacations.Where(f => f.Date_Start.Year == CurrentYear));
+                                                    App.API.Person.User_Vacations.Where(f => f.Date_Start.Year == CurrentYear).OrderBy(f => f.Date_Start));
         }
         private void UpdatePositionNames() {
             FilteredPositionNames.Clear();
@@ -635,10 +658,13 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 MyEnumExtensions.ToDescriptionString(VacationName.Irregularity),
                 MyEnumExtensions.ToDescriptionString(VacationName.Experience)
             };
-            foreach(string vacationName in VacationNames) {
+
+            VacationNames.ForEach(vacationName => {
                 VacationAllowanceViewModel defaultAllowance = new VacationAllowanceViewModel(0, vacationName, 0, 0, 0, null);
-                DefaultVacationAllowances.Add(defaultAllowance);
-            }
+                if(!DefaultVacationAllowances.Any(da => da.Vacation_Name == vacationName)) {
+                    DefaultVacationAllowances.Add(defaultAllowance);
+                }
+            });
             VacationAllowancesForSubordinate = Clone(DefaultVacationAllowances);
         }
         public async Task Load() {

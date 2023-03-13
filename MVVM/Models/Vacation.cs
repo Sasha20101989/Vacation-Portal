@@ -6,8 +6,7 @@ using System.Windows.Media;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.Models {
-    public class Vacation : ViewModelBase, ICloneable
-    {
+    public class Vacation : ViewModelBase, ICloneable {
         private int _id;
         public int Id {
             get => _id;
@@ -39,8 +38,7 @@ namespace Vacation_Portal.MVVM.Models {
         public IEnumerable<DateTime> DateRange => GetDateRange(Date_Start, Date_end);
         public string Vacation_Status_Name {
             get => _vacation_Status_Name;
-            set
-            {
+            set {
                 _vacation_Status_Name = value;
                 OnPropertyChanged(nameof(Vacation_Status_Name));
             }
@@ -48,11 +46,9 @@ namespace Vacation_Portal.MVVM.Models {
 
         private int _vacation_Status_Id;
 
-        public int Vacation_Status_Id
-        {
+        public int Vacation_Status_Id {
             get => _vacation_Status_Id;
-            set
-            {
+            set {
                 _vacation_Status_Id = value;
                 OnPropertyChanged(nameof(Vacation_Status_Name));
                 Status status = App.API.AllStatuses.FirstOrDefault(s => s.Id == _vacation_Status_Id);
@@ -86,8 +82,7 @@ namespace Vacation_Portal.MVVM.Models {
             }
         }
 
-        public Vacation(int id, string name, int user_Id_SAP, string userName, string userSurname, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, int statusId, string creator_Id)
-        {
+        public Vacation(int id, string name, int user_Id_SAP, string userName, string userSurname, int vacation_Id, int count, Brush color, DateTime date_Start, DateTime date_end, int statusId, string creator_Id) {
             Id = id;
             Name = name;
             User_Id_SAP = user_Id_SAP;
@@ -102,8 +97,7 @@ namespace Vacation_Portal.MVVM.Models {
             User_Surname = userSurname;
         }
 
-        public Vacation(int vacation_Id, DateTime date_Start, DateTime date_end, int vacation_Status_Id)
-        {
+        public Vacation(int vacation_Id, DateTime date_Start, DateTime date_end, int vacation_Status_Id) {
             Vacation_Id = vacation_Id;
             Date_Start = date_Start;
             Date_end = date_end;

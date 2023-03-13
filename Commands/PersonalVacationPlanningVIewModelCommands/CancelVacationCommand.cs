@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Vacation_Portal.Commands.BaseCommands;
-using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
@@ -54,10 +53,10 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
 
                 if(App.SelectedMode == WindowMode.Personal) {
                     _viewModel.UpdateDataForPerson();
-                    _viewModel.Calendar.UpdateColor(App.API.Person.User_Vacations);
+                    await _viewModel.Calendar.UpdateColorAsync(App.API.Person.User_Vacations);
                 } else if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
-                    _viewModel.UpdateDataForSubordinate();
-                    _viewModel.Calendar.UpdateColor(_viewModel.SelectedSubordinate.Subordinate_Vacations);
+                    await _viewModel.UpdateDataForSubordinateAsync();
+                    await _viewModel.Calendar.UpdateColorAsync(_viewModel.SelectedSubordinate.Subordinate_Vacations);
                 }
             }
         }

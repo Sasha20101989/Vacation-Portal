@@ -2,8 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using System.Windows.Media;
-using System.Windows.Xps;
 
 namespace Vacation_Portal.MVVM.Views {
     /// <summary>

@@ -169,13 +169,15 @@ namespace Vacation_Portal.Services.Providers {
                 };
 
                 BrushConverter converter = new System.Windows.Media.BrushConverter();
+                App.SplashScreen.status.Text = "Загрузка данных...";
                 IEnumerable<PersonDTO> fullPersonDTOs = await database.QueryAsync<PersonDTO>("usp_Get_Users", parametersPerson, commandType: CommandType.StoredProcedure);
-
+                App.SplashScreen.progressBar.Value = 25;
                 App.SplashScreen.status.Text = "В поисках ваших отпусков";
                 App.SplashScreen.status.Foreground = Brushes.Black;
 
                 foreach(PersonDTO personDTO in fullPersonDTOs) {
                     await foreach(Vacation vacation in FetchVacationsAsync(personDTO.User_Id_SAP)) {
+                        App.SplashScreen.progressBar.Value += 1;
                         Brush brushColor;
                         if(vacation.Color == null) {
                             brushColor = Brushes.Gray;
@@ -272,6 +274,7 @@ namespace Vacation_Portal.Services.Providers {
                     }
                 }
                 GetPersonsWithVacationsOnApproval();
+
                 OnLoginSuccess?.Invoke(Person);
                 return Person;
             } catch(Exception ex) {
@@ -397,8 +400,7 @@ namespace Vacation_Portal.Services.Providers {
                 MessageBox.Show(ex.Message);
             }
         }
-        public async Task<Vacation> AddVacationAsync(Vacation vacation)
-        {
+        public async Task<Vacation> AddVacationAsync(Vacation vacation) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
 
             var parameters = new DynamicParameters();
@@ -499,14 +501,12 @@ namespace Vacation_Portal.Services.Providers {
         }
 
         #region ToObj
-        private Vacation ToVacation(VacationDTO dto)
-        {
+        private Vacation ToVacation(VacationDTO dto) {
             BrushConverter converter = new BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
             return new Vacation(dto.Id, dto.Vacation_Name, dto.User_Id_SAP, ReturnUserName(dto.User_Id_SAP), ReturnUserSurname(dto.User_Id_SAP), dto.Vacation_Id, dto.Count, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status_Id, dto.Creator_Id);
         }
-        private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto) 
-        {
+        private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto) {
             BrushConverter converter = new System.Windows.Media.BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
             return new VacationAllowanceViewModel(dto.User_Id_SAP, dto.Vacation_Name, dto.Vacation_Id, dto.Vacation_Year, dto.Vacation_Days_Quantity, brushColor);

@@ -11,6 +11,9 @@
              d:DesignWidth="800" 
              xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages" 
              d:DataContext="{d:DesignInstance vm:ResponsePanelViewModel}">
+    <UserControl.Resources>
+        <vm:ResponsePanelViewModel x:Key="ResponsePanelViewModel" />
+    </UserControl.Resources>
     <Grid Height="90">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>

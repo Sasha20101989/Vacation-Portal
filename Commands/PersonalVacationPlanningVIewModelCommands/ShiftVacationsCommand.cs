@@ -8,7 +8,6 @@ using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 using Vacation_Portal.MVVM.Views;
-using Vacation_Portal.MVVM.Views.Controls;
 
 namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
     public class ShiftVacationsCommand : CommandBase {
@@ -21,7 +20,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
 
         public override void Execute(object parameter) {
             PrintPreViewModel printPreViewModel = null;
-             
+
             IEnumerable<Vacation> allAvailableToShiftVacations = null;
 
             if(App.SelectedMode == WindowMode.Personal) {

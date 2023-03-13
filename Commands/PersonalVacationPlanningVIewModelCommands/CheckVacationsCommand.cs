@@ -39,7 +39,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
             bool isSecondCheckDaysPlaned = false;
             int countFirstPeriod = 0;
             for(int i = 0; i < VacationsToAproval.Count; i++) {
-                
+
                 if(VacationsToAproval[i].Name == MyEnumExtensions.ToDescriptionString(VacationName.Principal)) {
                     foreach(DateTime planedDate in VacationsToAproval[i].DateRange) {
                         countFirstPeriod++;

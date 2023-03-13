@@ -220,6 +220,13 @@
                                             <ColumnDefinition/>
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
+                                            <Button Style="{StaticResource MaterialDesignToolButton}"
+                                                    Content="{md:PackIcon Kind=Update, Size=15}"
+                                                    Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                                    Command="{Binding UpdateData}"
+                                                    ToolTip="Обновить страницу"/>
+                                        </StackPanel>
                                         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
                                             <TextBlock Margin="20 0 0 0" Text="1" Foreground="Red" VerticalAlignment="Center"/>
                                             <TextBlock Text=" - выходной день" VerticalAlignment="Center"/>

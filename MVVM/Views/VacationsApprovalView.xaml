@@ -19,6 +19,7 @@
         <ext:IsHolidayToColorConverter x:Key="IsHolidayToColorConverter" />
         <ext:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
         <ext:DateConverter x:Key="DateConverter" />
+        <ext:DayListsToMonthNamesConverter x:Key="DayListsToMonthNamesConverter" />
     </UserControl.Resources>
     <StackPanel>
         <ListView ItemsSource="{Binding PersonsWithVacationsOnApproval, UpdateSourceTrigger=PropertyChanged}" 
@@ -275,6 +276,13 @@
                             Grid.ColumnSpan="2" 
                             VerticalAlignment="Top" HorizontalAlignment="Center">
                         <StackPanel>
+                            <TextBlock HorizontalAlignment="Center" Margin="0 0 0 10" FontSize="19">
+                                <TextBlock.Text>
+                                    <MultiBinding Converter="{StaticResource DayListsToMonthNamesConverter}">
+                                        <Binding Path="Weeks" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Пн" Width="40" HorizontalAlignment="Center" Margin="5 0 0 0"/>
                                 <TextBlock Text="Вт" Width="40" HorizontalAlignment="Center" Margin="5 0 0 0"/>
