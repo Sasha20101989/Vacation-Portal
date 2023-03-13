@@ -113,11 +113,11 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             set {
 
                 SetProperty(ref _selectedItem, value);
+                OnPropertyChanged(nameof(SelectedItem));
                 if(_selectedItem != null) {
                     Title = _selectedItem.Name;
+                    App.SelectedMode = SelectedItem.Name;
                 }
-                OnPropertyChanged(nameof(SelectedItem));
-                App.SelectedMode = SelectedItem.Name;
             }
         }
 
