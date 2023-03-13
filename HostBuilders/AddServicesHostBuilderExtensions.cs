@@ -5,11 +5,15 @@ using Vacation_Portal.DbContext;
 using Vacation_Portal.MVVM.ViewModels.For_Pages;
 using Vacation_Portal.MVVM.Views;
 
-namespace Vacation_Portal.HostBuilders {
-    public static class AddServicesHostBuilderExtensions {
-        public static IHostBuilder CreateDbConnectionFactory(this IHostBuilder hostBuilder) {
-            hostBuilder.ConfigureServices((hostContext, services) => {
-                services.AddSingleton(new SqlDbConnectionFactory(hostContext.Configuration.GetConnectionString("HomeSasha")));
+namespace Vacation_Portal.HostBuilders
+{
+    public static class AddServicesHostBuilderExtensions
+    {
+        public static IHostBuilder CreateDbConnectionFactory(this IHostBuilder hostBuilder)
+        {
+            hostBuilder.ConfigureServices((hostContext, services) =>
+            {
+                services.AddSingleton(new SqlDbConnectionFactory(hostContext.Configuration.GetConnectionString("Default")));
             });
             return hostBuilder;
         }

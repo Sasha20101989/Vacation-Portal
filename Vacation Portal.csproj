@@ -15,21 +15,12 @@
 		<!--<PublishReadyToRun>true</PublishReadyToRun>-->
 		<!--<SignAssembly>false</SignAssembly>-->
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <Compile Remove="Roles.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Remove="SplashIllustration.png" />
-	  <None Remove="нами.png" />
-	</ItemGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.0.123" />
 		<PackageReference Include="iTextSharp" Version="5.5.13.3" />
-		<PackageReference Include="MaterialDesignColors" Version="2.1.1" />
-		<PackageReference Include="MaterialDesignThemes" Version="4.7.1" />
+		<PackageReference Include="MaterialDesignColors" Version="2.1.2" />
+		<PackageReference Include="MaterialDesignThemes" Version="4.8.0" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
 		<PackageReference Include="SqlTableDependency" Version="8.5.8" />
