@@ -159,7 +159,11 @@ namespace Vacation_Portal.MVVM.Models {
                                     _viewModel.PlannedItem.Count--;
                                     CountSelectedDays--;
                                     DayAddition = GetDayAddition(CountSelectedDays);
-                                    _viewModel.PlannedVacationString = $"{DayAddition}: {SecondSelectedDate:dd.MM.yyyy} - {FirstSelectedDate:dd.MM.yyyy}";
+                                    if(SecondSelectedDate < FirstSelectedDate) {
+                                        _viewModel.PlannedVacationString = $"{DayAddition}: {SecondSelectedDate:dd.MM.yyyy} - {FirstSelectedDate:dd.MM.yyyy}";
+                                    } else {
+                                        _viewModel.PlannedVacationString = $"{DayAddition}: {FirstSelectedDate:dd.MM.yyyy} - {SecondSelectedDate:dd.MM.yyyy}";
+                                    }
                                 }
 
                                 button.Background = _viewModel.PlannedItem.Color;
@@ -196,34 +200,27 @@ namespace Vacation_Portal.MVVM.Models {
             ClicksOnCalendar = 0;
             await UpdateColorAsync(VacationsToApproval);
         }
-        public void HandleDayClick(object sender, MouseButtonEventArgs e) {
-            if(e.OriginalSource is Grid) {
-                Grid source = e.OriginalSource as Grid;
-                UIElementCollection elements = source.Children as UIElementCollection;
-                foreach(object element in elements) {
-                    if(element is ContentPresenter) {
-                        ContentPresenter presenter = element as ContentPresenter;
-                        TextBlock obj = presenter.Content as TextBlock;
-                        SelectedDay = Convert.ToInt32(obj.Text);
-                        SelectedMonth = Convert.ToInt32(obj.Tag.ToString().Split(".")[0]);
-                        SelectedYear = Convert.ToInt32(obj.Tag.ToString().Split(".")[1]);
-                        SelectedNameDay = obj.ToolTip.ToString();
-                    }
-                }
-            } else if(e.OriginalSource is TextBlock) {
-                TextBlock obj = e.OriginalSource as TextBlock;
+        private void HandleDayClick(object sender, MouseButtonEventArgs e) {
+            if(e.OriginalSource is Grid grid) {
+                var textBlock = grid.Children.OfType<ContentPresenter>()
+                                             .Select(cp => cp.Content as TextBlock)
+                                             .FirstOrDefault(tb => tb != null);
 
-                SelectedDay = Convert.ToInt32(obj.Text);
-                SelectedMonth = Convert.ToInt32(obj.Tag.ToString().Split(".")[0]);
-                SelectedYear = Convert.ToInt32(obj.Tag.ToString().Split(".")[1]);
-                SelectedNameDay = obj.ToolTip.ToString();
+                if(textBlock == null) return;
+
+                SelectedDay = Convert.ToInt32(textBlock.Text);
+                SelectedMonth = Convert.ToInt32(textBlock.Tag.ToString().Split(".")[0]);
+                SelectedYear = Convert.ToInt32(textBlock.Tag.ToString().Split(".")[1]);
+                SelectedNameDay = textBlock.ToolTip.ToString();
+            } else if(e.OriginalSource is TextBlock textBlock) {
+                SelectedDay = Convert.ToInt32(textBlock.Text);
+                SelectedMonth = Convert.ToInt32(textBlock.Tag.ToString().Split(".")[0]);
+                SelectedYear = Convert.ToInt32(textBlock.Tag.ToString().Split(".")[1]);
+                SelectedNameDay = textBlock.ToolTip.ToString();
             }
+
             ICommand command = new DayClickCommand(_viewModel, this);
-
-            // выполнить команду
-            if(command.CanExecute(null)) {
-                command.Execute(null);
-            }
+            command?.Execute(null);
         }
     }
 }
