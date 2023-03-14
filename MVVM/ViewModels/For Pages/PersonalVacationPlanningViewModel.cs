@@ -54,8 +54,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             }
         }
 
-        private List<Subordinate> _filteredSubordinates = new List<Subordinate>();
-        public List<Subordinate> FilteredSubordinates {
+        private ObservableCollection<Subordinate> _filteredSubordinates = new ObservableCollection<Subordinate>();
+        public ObservableCollection<Subordinate> FilteredSubordinates {
             get => _filteredSubordinates;
             set {
                 _filteredSubordinates = value;
@@ -111,7 +111,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                     FilteredSubordinates = App.API.Person.Subordinates;
                     FilteredPositionNames = PositionNames;
                 } else {
-                    FilteredSubordinates = App.API.Person.Subordinates.FindAll(x => x.Department_Name == SelectedDepartmentName);
+                    FilteredSubordinates = new ObservableCollection<Subordinate>( App.API.Person.Subordinates.Where(x => x.Department_Name == SelectedDepartmentName));
                     UpdatePositionNames();
                 }
             }
@@ -131,7 +131,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                     FilteredSubordinates = App.API.Person.Subordinates;
                     FilteredPositionNames = PositionNames;
                 } else {
-                    FilteredSubordinates = App.API.Person.Subordinates.FindAll(x => x.Virtual_Department_Name == SelectedVirtualDepartmentName);
+                    FilteredSubordinates = new ObservableCollection<Subordinate>(App.API.Person.Subordinates.Where(x => x.Virtual_Department_Name == SelectedVirtualDepartmentName));
                     UpdatePositionNames();
                 }
             }
@@ -148,12 +148,13 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                     FilteredSubordinates = App.API.Person.Subordinates;
                 } else {
                     if(SelectedDepartmentName != null) {
-                        FilteredSubordinates = App.API.Person.Subordinates.FindAll(x => x.Position == SelectedPositionName && x.Department_Name == SelectedDepartmentName);
+                        FilteredSubordinates = new ObservableCollection<Subordinate>(App.API.Person.Subordinates.Where(x => x.Position == SelectedPositionName && x.Department_Name == SelectedDepartmentName));
+
                     } else if(SelectedVirtualDepartmentName != null) {
-                        FilteredSubordinates = App.API.Person.Subordinates.FindAll(x => x.Position == SelectedPositionName && x.Virtual_Department_Name == SelectedVirtualDepartmentName);
+                        FilteredSubordinates = new ObservableCollection<Subordinate>(App.API.Person.Subordinates.Where(x => x.Position == SelectedPositionName && x.Virtual_Department_Name == SelectedVirtualDepartmentName));
 
                     } else {
-                        FilteredSubordinates = App.API.Person.Subordinates.FindAll(x => x.Position == SelectedPositionName);
+                        FilteredSubordinates = new ObservableCollection<Subordinate>(App.API.Person.Subordinates.Where(x => x.Position == SelectedPositionName));
                     }
                 }
             }

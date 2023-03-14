@@ -18,6 +18,7 @@ namespace Vacation_Portal.MVVM.Models {
         private static readonly string _hrGodPage = "Страница HR бога";
         private static readonly string _hrAdminPage = "Настройки календаря";
         private static readonly string _accounting = "Страница табельщика";
+        private static readonly string _horizontalCalendar = "Горизонтальный календарь";
         private static readonly string _personalVacationPlanning = "Страница персонального планирования отпуска";
         #endregion
         public int Id_SAP { get; set; }
@@ -46,7 +47,7 @@ namespace Vacation_Portal.MVVM.Models {
             return $"{Surname} {Name} {Patronymic}";
         }
 
-        public List<Subordinate> Subordinates { get; set; } = new List<Subordinate>();
+        public ObservableCollection<Subordinate> Subordinates { get; set; } = new ObservableCollection<Subordinate>();
 
         public event Action<ObservableCollection<MenuItem>> MenuItemsChanged;
 
@@ -86,7 +87,9 @@ namespace Vacation_Portal.MVVM.Models {
                     _viewModel.AdminString = "Аккаунт руководителя";
                     MenuItem supervisorItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _supervisorPage);
                     MenuItem supervisorItem_1 = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _approvalPage);
+                    MenuItem supervisorItem_2 = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _horizontalCalendar);
                     _viewModel.MainMenuItems = CreateMainMenuItems(supervisorItem, _viewModel);
+                    _viewModel.MainMenuItems = CreateMainMenuItems(supervisorItem_2, _viewModel);
                 }
                 if(Is_HR_GOD) {
                     _viewModel.AdminString = "Аккаунт HR сотрудника";
@@ -136,6 +139,13 @@ namespace Vacation_Portal.MVVM.Models {
                 selectedIcon: PackIconKind.AccountTie,
                 unselectedIcon: PackIconKind.AccountTieOutline,
                 new ResponsePanelViewModel());
+
+                yield return new MenuItem(
+                _horizontalCalendar,
+                typeof(HorizontalCalendarView),
+                selectedIcon: PackIconKind.CalendarMinus,
+                unselectedIcon: PackIconKind.CalendarMinusOutline,
+                new HorizontalCalendarViewModel());
             }
 
             if(Is_HR_GOD) {

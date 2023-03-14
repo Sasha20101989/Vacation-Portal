@@ -129,8 +129,8 @@ namespace Vacation_Portal.Services.Providers {
         private readonly ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
         public Action<List<VacationViewModel>> OnVacationsChanged { get; set; }
         public Action<Person> OnLoginSuccess { get; set; }
-        public List<PersonDTO> Persons { get; set; } = new List<PersonDTO>();
-        public List<Person> FullPersons { get; set; } = new List<Person>();
+        public ObservableCollection<PersonDTO> Persons { get; set; } = new ObservableCollection<PersonDTO>();
+        public ObservableCollection<Person> FullPersons { get; set; } = new ObservableCollection<Person>();
 
         public List<Status> AllStatuses { get; set; }
 
@@ -169,15 +169,16 @@ namespace Vacation_Portal.Services.Providers {
                 };
 
                 BrushConverter converter = new System.Windows.Media.BrushConverter();
-                App.SplashScreen.status.Text = "Загрузка данных...";
+                App.SplashScreen.status.Text = "В поисках сотрудников";
                 IEnumerable<PersonDTO> fullPersonDTOs = await database.QueryAsync<PersonDTO>("usp_Get_Users", parametersPerson, commandType: CommandType.StoredProcedure);
-                App.SplashScreen.progressBar.Value = 25;
-                App.SplashScreen.status.Text = "В поисках ваших отпусков";
-                App.SplashScreen.status.Foreground = Brushes.Black;
 
+                
+                App.SplashScreen.status.Foreground = Brushes.Black;
+                App.SplashScreen.progressBar.Value = 10;
+                App.SplashScreen.status.Text = "В поисках отпусков";
                 foreach(PersonDTO personDTO in fullPersonDTOs) {
                     await foreach(Vacation vacation in FetchVacationsAsync(personDTO.User_Id_SAP)) {
-                        App.SplashScreen.progressBar.Value += 1;
+                        
                         Brush brushColor;
                         if(vacation.Color == null) {
                             brushColor = Brushes.Gray;
@@ -200,6 +201,7 @@ namespace Vacation_Portal.Services.Providers {
                     }
 
                 }
+                App.SplashScreen.status.Text = "собираю общий список с персонами и их отпусками";
                 //собираю общий список с персонами и их отпусками
                 foreach(PersonDTO item in fullPersonDTOs) {
                     ObservableCollection<Vacation> VacationsForPerson = new ObservableCollection<Vacation>();
@@ -233,7 +235,7 @@ namespace Vacation_Portal.Services.Providers {
                     }
                 }
 
-                FullPersons = new List<Person>(FullPersons.OrderBy(i => i.Surname));
+                FullPersons = new ObservableCollection<Person>(FullPersons.OrderBy(i => i.Surname));
 
                 for(int i = 0; i < FullPersons.Count; i++) {
                     if(FullPersons[i].Id_Account == Environment.UserName) {
@@ -258,6 +260,7 @@ namespace Vacation_Portal.Services.Providers {
                         break;
                     }
                 }
+
                 // выделяю подчиненных из общего списка персон, если имя компьютера не равен итерируемому id то подчинённый
                 for(int i = 0; i < FullPersons.Count; i++) {
                     if(FullPersons[i].Id_Account != Environment.UserName) {

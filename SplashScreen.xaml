@@ -37,7 +37,7 @@
                 </WrapPanel>
                 <TextBlock x:Name="status" FontWeight="SemiBold"
                            HorizontalAlignment="Left" Margin="0 30 0 15"/>
-                <ProgressBar x:Name="progressBar" Value="0" Height="5" Width="320"/>
+                <ProgressBar x:Name="progressBar" Value="0" Height="5" Width="320" IsIndeterminate="false"/>
             </StackPanel>
             <StackPanel Grid.Column="1" HorizontalAlignment="Left"
                             VerticalAlignment="Center" Height="320" Width="320" Grid.RowSpan="3">

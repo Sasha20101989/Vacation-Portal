@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Vacation_Portal.MVVM.Models;
 
@@ -15,41 +16,71 @@ namespace Vacation_Portal {
             InitializeComponent();
             _mainWindow = mainWindow;
         }
-        private void Window_ContentRendered(object sender, EventArgs e) {
-            BackgroundWorker worker = new BackgroundWorker {
-                WorkerReportsProgress = true
-            };
-            worker.DoWork += Worker_DoWork;
-            worker.ProgressChanged += Worker_ProgressChanged;
-            worker.RunWorkerAsync();
-        }
-
-        private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
-            progressBar.Value = e.ProgressPercentage;
-            if(progressBar.Value == 100) {
-                if(_person != null) {
-                    Close();
-                    _mainWindow.Show();
-                } else {
-                    status.Text = "Вас нет в базе данных";
-                }
-            }
-        }
-        private void Worker_DoWork(object sender, DoWorkEventArgs e) {
-            App.Current.Dispatcher.Invoke((Action) async delegate {
-                _person = await App.API.LoginAsync(Environment.UserName);
-            });
-
-            for(int i = 0; i <= 100; i++) {
-                if(_person != null && i < 80) {
-                    (sender as BackgroundWorker).ReportProgress(80);
-                    i = 80;
-                } else {
-                    (sender as BackgroundWorker).ReportProgress(i);
-                }
-
-                Thread.Sleep(100);
-            }
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
+            // Запускаем асинхронную операцию в фоновом потоке
+            _ = Task.Run(async () =>
+              {
+                // Получаем персону из API
+                App.Current.Dispatcher.Invoke((Action) async delegate
+                  {
+                      _person = await App.API.LoginAsync(Environment.UserName);
+                  });
+                // Инициализируем таймер
+                var timer = new System.Diagnostics.Stopwatch();
+                  timer.Start();
+                // Обновляем прогресс бар до тех пор, пока персона не будет получена
+                while(_person == null)
+                  {
+                    // Рассчитываем прогресс на основе времени, прошедшего с начала операции
+                    var progress = (int) (timer.ElapsedMilliseconds / 400);
+                    // Обновляем прогресс бар
+                    progressBar.Dispatcher.Invoke(() => {
+                        progressBar.Value = progress;
+                        if(progress > 100)
+                        {
+                            progressBar.IsIndeterminate = true;
+                            status.Dispatcher.Invoke(() =>
+                            {
+                                status.Text = "Не волнуйтесь, всё еще в процессе.";
+                            });
+                        }else if(progress > 120)
+                        {
+                            status.Dispatcher.Invoke(() =>
+                            {
+                                status.Text = "Это всё из-за слабого соединения.";
+                            });
+                        } else if(progress > 130)
+                        {
+                            status.Dispatcher.Invoke(() =>
+                            {
+                                status.Text = "Потерпите еще не много.";
+                            });
+                        }
+                    });
+                    // Ждем некоторое время перед следующим обновлением
+                    
+                    await Task.Delay(10);
+                  }
+                // Останавливаем таймер
+                timer.Stop();
+                  // Если персона получена, закрываем окно и открываем главное окно приложения
+                  _ = status.Dispatcher.Invoke(async () =>
+                      {
+                          if(_person != null)
+                          {
+                              App.SplashScreenService.AccessSetting(_person.User_Role, _person.Name);
+                              progressBar.Value = 100;
+                              progressBar.IsIndeterminate = false;
+                              await Task.Delay(3000);
+                              Close();
+                              _mainWindow.Show();
+                          } else
+                          {
+                              status.Text = "Вас нет в базе данных";
+                          }
+                      });
+              });
         }
     }
 }
