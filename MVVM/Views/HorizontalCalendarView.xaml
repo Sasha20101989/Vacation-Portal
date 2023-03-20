@@ -6,12 +6,17 @@
              xmlns:local="clr-namespace:Vacation_Portal.MVVM.Views"
              xmlns:models="clr-namespace:Vacation_Portal.MVVM.Models"
              xmlns:vm="clr-namespace:Vacation_Portal.MVVM.ViewModels.For_Pages" 
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:ext="clr-namespace:Vacation_Portal.Extensions"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              d:DataContext="{d:DesignInstance vm:HorizontalCalendarViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
+        <ext:IntersectionsCountVisibilityConverter x:Key="IntersectionsCountVisibilityConverter" />
+        <ext:IntersectionsCountToColorConverter x:Key="IntersectionsCountToColorConverter" />
         <ext:DayInVacationConverter x:Key="DayInVacationConverter"/>
+        <ext:FirstPersonIntersectionCountConverter x:Key="FirstPersonIntersectionCountConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -28,26 +33,84 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Сотрудник" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Column="1" Text="Каледнарь" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="Календарь" HorizontalAlignment="Center"/>
         </Grid>
-            <DataGrid Grid.Row="1" Grid.ColumnSpan="2" AutoGenerateColumns="False" FrozenColumnCount="1" CanUserAddRows="False" ItemsSource="{Binding Persons}">
+        
+            <DataGrid Grid.Row="1" Grid.ColumnSpan="2" x:Name="myDataGrid" AutoGenerateColumns="False" FrozenColumnCount="1" CanUserAddRows="False" ItemsSource="{Binding Persons}"
+                      ScrollViewer.ScrollChanged="OnScrollChanged">
 
-            <DataGrid.Columns>
+                <DataGrid.Columns>
 
-                <DataGridTextColumn Width="150" Binding="{Binding Name}">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="{x:Type TextBlock}">
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                    <DataGridTextColumn IsReadOnly="True" Width="auto" Binding="{Binding FullName}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                <DataGridTemplateColumn>
+                <DataGridTemplateColumn Width="auto">
+                        <DataGridTemplateColumn.Header>
+                            <ItemsControl x:Name="myItemsControl" ItemsSource="{Binding DataContext.YearDays, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}">
 
-                    <DataGridTemplateColumn.CellTemplate>
+                                <ItemsControl.ItemsPanel>
 
-                        <DataTemplate>
-                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" CanContentScroll="True">
+                                    <ItemsPanelTemplate>
+
+                                        <VirtualizingStackPanel x:Name="myPanel" Orientation="Horizontal"/>
+
+                                    </ItemsPanelTemplate>
+
+                                </ItemsControl.ItemsPanel>
+
+                                <ItemsControl.ItemTemplate>
+
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="auto"/>
+                                                <RowDefinition Height="auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Border Grid.Row="1" Margin="0 0 1 0" Width="28">
+                                                <Grid>
+                                                    <Border Width="18" Height="18" Background="{DynamicResource PrimaryHueMidBrush}" CornerRadius="15"
+                                                        HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 -3 -3 0"
+                                                        Visibility="{Binding IntersectionsCount, Converter={StaticResource IntersectionsCountVisibilityConverter}}">
+                                                        <TextBlock Padding="3" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Text="{Binding IntersectionsCount}">
+                                                        </TextBlock>
+                                                    </Border>
+                                                    <TextBlock Margin="5" Padding="5" HorizontalAlignment="Center" FontSize="16">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding StringFormat="{}{0:d}">
+                                                                <Binding Path="Date.Day"/>
+                                                                <Binding Path="Date"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Date.Day}" Value="1">
+                                                                        <Setter Property="Margin" Value="10,0,0,0"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Grid>
+                                            </Border>
+                                            <!--</md:Badged>-->
+                                        </Grid>
+                                    </DataTemplate>
+
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataGridTemplateColumn.Header>
+
+                        <DataGridTemplateColumn.CellTemplate>
+
+                            <DataTemplate>
 
                                 <ItemsControl ItemsSource="{Binding DataContext.YearDays, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}">
 
@@ -55,7 +118,7 @@
 
                                         <ItemsPanelTemplate>
 
-                                            <StackPanel Orientation="Horizontal"/>
+                                            <VirtualizingStackPanel Orientation="Horizontal"/>
 
                                         </ItemsPanelTemplate>
 
@@ -64,44 +127,47 @@
                                     <ItemsControl.ItemTemplate>
 
                                         <DataTemplate>
-
-                                            <TextBlock Text="{Binding Date}" Margin="2">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="{x:Type TextBlock}">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Value="True">
-                                                                <DataTrigger.Binding>
-                                                                    <MultiBinding Converter="{StaticResource DayInVacationConverter}">
-                                                                        <Binding Path="Subordinate_Vacations">
-                                                                            <!--<Binding.Converter>
-                                                                                <ext: ObservableCollectionConverter x:TypeArguments=""
-                                                                            </Binding.Converter>-->
-                                                                        </Binding>
-                                                                    </MultiBinding>
-                                                                </DataTrigger.Binding>
-                                                                <Setter Property="Background" Value="Red"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-
+                                            <Border Margin="0 0 1 0" Width="28" CornerRadius="5">
+                                                <Border.Background>
+                                                    <MultiBinding Converter="{StaticResource DayInVacationConverter}" UpdateSourceTrigger="PropertyChanged">
+                                                        <Binding />
+                                                        <Binding Path="DataContext.Subordinate_Vacations" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" Mode="OneWay"/>
+                                                        <Binding Path="DataContext.Persons" RelativeSource="{RelativeSource AncestorType={x:Type DataGrid}}" Mode="OneWay"/>
+                                                    </MultiBinding>
+                                                </Border.Background>
+                                                <TextBlock Padding="5" HorizontalAlignment="Center" Foreground="Transparent">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0:d}">
+                                                            <Binding Path="Date.Day"/>
+                                                            <Binding Path="Date"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Date.Day}" Value="1">
+                                                                    <Setter Property="Margin" Value="10,0,0,0"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
                                         </DataTemplate>
 
                                     </ItemsControl.ItemTemplate>
 
                                 </ItemsControl>
 
-                            </ScrollViewer>
-                        </DataTemplate>
+                            </DataTemplate>
 
-                    </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
 
-                </DataGridTemplateColumn>
+            </DataGrid>
 
-            </DataGrid.Columns>
-
-        </DataGrid>
+     
     </Grid>
     
 </UserControl>

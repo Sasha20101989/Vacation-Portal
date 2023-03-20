@@ -301,6 +301,26 @@ namespace Vacation_Portal.Services.Providers {
                     }
                 }
             }
+            //TODO: когда PersonsWithVacationsOnApproval.Count == 0
+            //идем в таблицу SV_approval_state
+            //ищем все записи со своим SAP ID 
+            //удаляем эти записи в таблицу SV_approval_state
+
+            //TODO: если PersonsWithVacationsOnApproval.Count > 0
+            //добавляем эти записи в таблицу SV_approval_state
+
+
+
+
+            //отображение кнопки когда в state table нет states со статусом 2
+            //при старте проги из draft отпуска со статусом 2 для текущего SV переносятся в SV_approval_state только те которых нет
+            //SV при изменении статуса меняет статус только в state table
+            //regected: поменяли статус в state table
+            //approval: меняется только в state table 
+            //взаимодействие пользователя с кнопкой из state меняет статусы отпускам
+            //после этого удаляет этот state
+            //уведомление рядом с кнопкой что прибриближается закрытие планирования и в случае если вы не нажмете ее сами мы нажмем ее за вас, при этом заапрувятся тке которые были отменены
+            //добавить dateTimeStamp в драфт таблицу
         }
         public IEnumerable<CalendarSettings> GetSettingsForCalendar() {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();

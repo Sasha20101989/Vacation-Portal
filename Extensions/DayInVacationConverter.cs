@@ -7,36 +7,68 @@ using System.Text;
 using System.Windows.Data;
 using System.Windows.Media;
 using Vacation_Portal.MVVM.Models;
+using Vacation_Portal.MVVM.Models.HorizontalCalendar;
 
 namespace Vacation_Portal.Extensions
 {
     public class DayInVacationConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-
         {
+            if(values.Length < 2 ||
+                !(values[0] is HorizontalDay date) ||
+                !(values[1] is ObservableCollection<Vacation> currentPersonVacations) ||
+                !(values[2] is ObservableCollection<Subordinate> subordinates))
+            {
+                return Brushes.Transparent;
+            }
+            if(currentPersonVacations.Count == 0)
+            {
+                return Brushes.Transparent;
+            }
 
-            //if(values.Length < 2 || !(values[1] is DateTime))
-            //{
-            //    return false;
-            //}
+            IEnumerable<DateTime> grayDaysList = currentPersonVacations.SelectMany(v => v.DateRange);
 
-                
+            int currentPersonid = 0;
 
-            //var date = (DateTime) values[1];
+            List<DateTime> grayDays = new List<DateTime>();
 
-            //var vacations = (ObservableCollection<Vacation>) values[0];
+            foreach(var vacation in currentPersonVacations)
+            {
+                currentPersonid = vacation.User_Id_SAP;
+            }
+            
+            if(currentPersonid != 0)
+            {
+                foreach(Subordinate subordinate in subordinates)
+                {
+                    if(subordinate.Id_SAP == currentPersonid)
+                    {
+                        continue;
+                    }
 
-            return true;
+                    foreach(DateTime grayDay in grayDaysList)
+                    {
+                        foreach(Vacation subordinateVacation in subordinate.Subordinate_Vacations)
+                        {
+                            if(subordinateVacation.DateRange.Any(d => d == date.Date && grayDay == date.Date))
+                            {
+                                return Brushes.Red;
+                            }
+                        }
+                    }
+                }
+                if(grayDaysList.Any(d => d == date.Date))
+                {
+                    return Brushes.LightGray;
+                }
+            }
 
+            return Brushes.Transparent;
         }
-
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-
         {
-
             throw new NotImplementedException();
-
         }
     }
 }

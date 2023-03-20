@@ -724,7 +724,6 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             }
 
             eventArgs.Cancel();
-            //TODO: проверить
             Task.Delay(TimeSpan.FromSeconds(0.3))
                 .ContinueWith((t, _) => eventArgs.Session.Close(false), null,
                     TaskScheduler.FromCurrentSynchronizationContext());

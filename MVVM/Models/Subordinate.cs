@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Vacation_Portal.MVVM.ViewModels;
 
 namespace Vacation_Portal.MVVM.Models {
@@ -28,6 +30,11 @@ namespace Vacation_Portal.MVVM.Models {
             Subordinate_Vacation_Allowances = subordinateVacationAllowances;
             Department_Name = departmentName;
             Virtual_Department_Name = virtualDepartmentName;
+        }
+
+        internal IEnumerable<DateTime> SelectMany(Func<object, object> p)
+        {
+            throw new NotImplementedException();
         }
     }
 }
