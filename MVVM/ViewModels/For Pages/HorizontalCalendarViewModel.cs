@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Vacation_Portal.Commands.HorizontalCalendarCommands;
+using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.Models.HorizontalCalendar;
 using Vacation_Portal.MVVM.ViewModels.Base;
@@ -48,8 +49,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        private ObservableCollection<PersonStateViewModel> _personStates;
-        public ObservableCollection<PersonStateViewModel> PersonStates
+        private ObservableCollection<SvApprovalStateViewModel> _personStates;
+        public ObservableCollection<SvApprovalStateViewModel> PersonStates
         {
             get => _personStates;
             set
@@ -58,16 +59,25 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                 OnPropertyChanged(nameof(PersonStates));
             }
         }
-        
-        public ICommand SelectedSubordinateCommand { get; }
+        private VacationListViewModel _vacationListViewModel = new VacationListViewModel();
+        public VacationListViewModel VacationListViewModel
+        {
+            get => _vacationListViewModel;
+            set
+            {
+                _vacationListViewModel = value;
+                OnPropertyChanged(nameof(VacationListViewModel));
+    }
+}
+
+public ICommand SelectedSubordinateCommand { get; }
         public HorizontalCalendarViewModel()
         {
             SelectedSubordinateCommand = new SelectedSubordinateCommand(this);
             PersonStates = App.API.PersonStates;
             Persons = App.API.Person.Subordinates;
-            YearDays = new ObservableCollection<HorizontalDay>(Enumerable.Range(1, 365).Select(day => new HorizontalDay(new DateTime(DateTime.Now.Year, 1, 1).AddDays(day - 1), false, false, 0, 0)));
 
-            // Создаем временную коллекцию дней отпуска
+            YearDays = new ObservableCollection<HorizontalDay>(Enumerable.Range(1, 365).Select(day => new HorizontalDay(new DateTime(DateTime.Now.Year, 1, 1).AddDays(day - 1), false, false, 0, 0)));
 
             List<DateTime> vacationDays = new List<DateTime>();
 
@@ -100,6 +110,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
                         if(days.Contains(day.Date))
                         {
                             day.IntersectionsCount++;
+                            day.HasOnApprovalStatus = vacation.Vacation_Status_Name == MyEnumExtensions.ToDescriptionString(Statuses.OnApproval);
                         }
                         day.HasIntersection = day.IntersectionsCount > 0;
                     }
@@ -107,6 +118,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
 
         }
+
         public void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
         {
             if(eventArgs.Parameter is bool parameter &&
@@ -116,7 +128,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
 
             eventArgs.Cancel();
-            Task.Delay(TimeSpan.FromSeconds(0.3))
+            Task.Delay(TimeSpan.FromSeconds(0.2))
                 .ContinueWith((t, _) => eventArgs.Session.Close(false), null,
                     TaskScheduler.FromCurrentSynchronizationContext());
             //Task.Delay(TimeSpan.FromSeconds(0.1))

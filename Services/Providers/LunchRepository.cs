@@ -133,7 +133,7 @@ namespace Vacation_Portal.Services.Providers {
         public ObservableCollection<Person> FullPersons { get; set; } = new ObservableCollection<Person>();
 
         public List<Status> AllStatuses { get; set; }
-        public ObservableCollection<PersonStateViewModel> PersonStates { get; set; } = new ObservableCollection<PersonStateViewModel>();
+        public ObservableCollection<SvApprovalStateViewModel> PersonStates { get; set; } = new ObservableCollection<SvApprovalStateViewModel>();
 
         #endregion
         public List<Status> GetStatuses() {
@@ -382,9 +382,9 @@ namespace Vacation_Portal.Services.Providers {
         #endregion
 
         #region Vacations
-        public async Task<ObservableCollection<PersonStateViewModel>> GetStateVacationsOnApproval(int UserIdSAP)
+        public async Task<ObservableCollection<SvApprovalStateViewModel>> GetStateVacationsOnApproval(int UserIdSAP)
         {
-            ObservableCollection<PersonStateViewModel> personStateViewModels = new ObservableCollection<PersonStateViewModel>(); 
+            
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             object parameters = new
             {
@@ -392,8 +392,10 @@ namespace Vacation_Portal.Services.Providers {
             };
             try
             {
+                ObservableCollection<SvApprovalStateViewModel> personStateViewModels = new ObservableCollection<SvApprovalStateViewModel>();
 
                 IEnumerable<SvApprovalStateDTO> svApprovalStateViewModelsDTOs = await database.QueryAsync<SvApprovalStateDTO>("usp_Get_Sv_Approval_State_By_Sv", parameters, commandType: CommandType.StoredProcedure);
+                
                 foreach(SvApprovalStateDTO state in svApprovalStateViewModelsDTOs)
                 {
                     var vacations = Person.Subordinates.Select(s => s.Subordinate_Vacations);
@@ -404,7 +406,14 @@ namespace Vacation_Portal.Services.Providers {
                         {
                             if(vacation.Id == state.Vacation_Record_Id)
                             {
-                                personStateViewModels.Add(new PersonStateViewModel(subordinate, new SvApprovalStateViewModel(state.Id, state.Vacation_Record_Id, state.Supervisor_Id, state.Status_Id, vacation)));
+                                personStateViewModels.Add(
+                                    new SvApprovalStateViewModel(
+                                        state.Id, 
+                                        state.Vacation_Record_Id, 
+                                        state.Supervisor_Id, 
+                                        state.Status_Id, 
+                                        vacation)
+                                    );
                             }
                         }
                     }

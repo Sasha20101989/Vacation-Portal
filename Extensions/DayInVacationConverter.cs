@@ -29,9 +29,12 @@ namespace Vacation_Portal.Extensions
 
             IEnumerable<DateTime> grayDaysList = currentPersonVacations.SelectMany(v => v.DateRange);
 
-            int currentPersonid = 0;
+            if(date.HasOnApprovalStatus && grayDaysList.Any(d => d == date.Date))
+            {
+                return System.Windows.Application.Current.FindResource("PrimaryHueMidBrush");
+            }
 
-            List<DateTime> grayDays = new List<DateTime>();
+            int currentPersonid = 0;
 
             foreach(var vacation in currentPersonVacations)
             {
@@ -53,11 +56,12 @@ namespace Vacation_Portal.Extensions
                         {
                             if(subordinateVacation.DateRange.Any(d => d == date.Date && grayDay == date.Date))
                             {
-                                return Brushes.Red;
+                                return Brushes.IndianRed;
                             }
                         }
                     }
                 }
+
                 if(grayDaysList.Any(d => d == date.Date))
                 {
                     return Brushes.LightGray;

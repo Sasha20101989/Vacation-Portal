@@ -12,6 +12,9 @@ namespace Vacation_Portal.MVVM.Models.HorizontalCalendar
         public int IntersectionsCount { get; set; }
         public int VacationsCount { get; set; }
 
+        public bool HasOnApprovalStatus { get; 
+            set; }
+
         public HorizontalDay(DateTime dateTime, bool hasIntersection, bool hasVacation, int intersectionsCount, int vacationsCount)
         {
             Date = dateTime;

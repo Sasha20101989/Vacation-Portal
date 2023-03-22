@@ -34,11 +34,12 @@ namespace Vacation_Portal.Commands.HorizontalCalendarCommands
             if(isSubordinate)
             {
                 var selectedSubordinate = parameter as Subordinate;
-                var countVacations = selectedSubordinate.Subordinate_Vacations.Count;
+                var countVacations = selectedSubordinate.SubordinateVacationsWithOnApprovalStatus.Count;
                 if(countVacations > 0)
                 {
                     _view.DataContext = _viewModel;
-                    await _vacationListViewModel.LoadVacationsAsync(selectedSubordinate);
+                    _vacationListViewModel.LoadStates(selectedSubordinate);
+                    _viewModel.VacationListViewModel = _vacationListViewModel;
                     Task<object> openCheck = DialogHost.Show(_view, "RootDialog", _viewModel.ExtendedClosingEventHandler);
                 }
             }

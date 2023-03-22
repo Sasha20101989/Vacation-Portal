@@ -29,12 +29,11 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid  Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Сотрудник" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Column="1" x:Name="CurrentMonth" HorizontalAlignment="Center"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="1" x:Name="CurrentMonth" HorizontalAlignment="Center"/>
         </Grid>
 
         <DataGrid Grid.Row="1" Grid.ColumnSpan="2" AutoGenerateColumns="False" FrozenColumnCount="1" CanUserAddRows="False" ItemsSource="{Binding Persons}"
@@ -48,13 +47,30 @@
             </i:Interaction.Triggers>
             <DataGrid.Columns>
 
-                    <DataGridTextColumn IsReadOnly="True" Width="auto" Binding="{Binding FullName}">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="{x:Type TextBlock}">
-                                <Setter Property="VerticalAlignment" Value="Center"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
+                <DataGridTemplateColumn Header="Сотрудники">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding FullName}" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                                <md:Badged BadgePlacementMode="TopRight" Margin="0 2 0 0">
+                                    
+                                    <md:Badged.Style>
+                                        <Style TargetType="md:Badged">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SubordinateVacationsWithOnApprovalStatus.Count}" Value="0">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </md:Badged.Style>
+                                    <md:Badged.Badge>
+                                        <TextBlock Text="{Binding SubordinateVacationsWithOnApprovalStatus.Count}"/>
+                                    </md:Badged.Badge>
+                                </md:Badged>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
                 <DataGridTemplateColumn Width="auto">
                         <DataGridTemplateColumn.Header>
