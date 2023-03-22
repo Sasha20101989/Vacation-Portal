@@ -11,6 +11,7 @@ namespace Vacation_Portal.Services.Providers.Interfaces {
     public interface ILunchRepository {
         Person Person { get; set; }
         ObservableCollection<Subordinate> PersonsWithVacationsOnApproval { get; set; }
+        ObservableCollection<PersonStateViewModel> PersonStates { get; set; }
         List<Status> AllStatuses { get; set; }
         DateTime DateUnblockNextCalendar { get; set; }
         DateTime DateUnblockPlanning { get; set; }

@@ -133,6 +133,7 @@ namespace Vacation_Portal.Services.Providers {
         public ObservableCollection<Person> FullPersons { get; set; } = new ObservableCollection<Person>();
 
         public List<Status> AllStatuses { get; set; }
+        public ObservableCollection<PersonStateViewModel> PersonStates { get; set; } = new ObservableCollection<PersonStateViewModel>();
 
         #endregion
         public List<Status> GetStatuses() {
@@ -276,7 +277,8 @@ namespace Vacation_Portal.Services.Providers {
                             FullPersons[i].User_Vacation_Allowances));
                     }
                 }
-                GetPersonsWithVacationsOnApproval();
+
+                PersonStates = await GetStateVacationsOnApproval(Person.Id_SAP);
 
                 OnLoginSuccess?.Invoke(Person);
                 return Person;
@@ -301,6 +303,7 @@ namespace Vacation_Portal.Services.Providers {
                     }
                 }
             }
+
             //TODO: когда PersonsWithVacationsOnApproval.Count == 0
             //идем в таблицу SV_approval_state
             //ищем все записи со своим SAP ID 
@@ -379,6 +382,40 @@ namespace Vacation_Portal.Services.Providers {
         #endregion
 
         #region Vacations
+        public async Task<ObservableCollection<PersonStateViewModel>> GetStateVacationsOnApproval(int UserIdSAP)
+        {
+            ObservableCollection<PersonStateViewModel> personStateViewModels = new ObservableCollection<PersonStateViewModel>(); 
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            object parameters = new
+            {
+                User_Id_SAP = UserIdSAP
+            };
+            try
+            {
+
+                IEnumerable<SvApprovalStateDTO> svApprovalStateViewModelsDTOs = await database.QueryAsync<SvApprovalStateDTO>("usp_Get_Sv_Approval_State_By_Sv", parameters, commandType: CommandType.StoredProcedure);
+                foreach(SvApprovalStateDTO state in svApprovalStateViewModelsDTOs)
+                {
+                    var vacations = Person.Subordinates.Select(s => s.Subordinate_Vacations);
+
+                    foreach(Subordinate subordinate in Person.Subordinates)
+                    {
+                        foreach(Vacation vacation in subordinate.Subordinate_Vacations)
+                        {
+                            if(vacation.Id == state.Vacation_Record_Id)
+                            {
+                                personStateViewModels.Add(new PersonStateViewModel(subordinate, new SvApprovalStateViewModel(state.Id, state.Vacation_Record_Id, state.Supervisor_Id, state.Status_Id, vacation)));
+                            }
+                        }
+                    }
+                }
+                return personStateViewModels;
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
         public async Task<IEnumerable<VacationAllowanceViewModel>> GetVacationAllowanceAsync(int UserIdSAP) {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
             object parameters = new {

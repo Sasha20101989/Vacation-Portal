@@ -9,6 +9,7 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:ext="clr-namespace:Vacation_Portal.Extensions"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              d:DataContext="{d:DesignInstance vm:HorizontalCalendarViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -33,13 +34,19 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Сотрудник" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Column="1" Text="Календарь" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="1" x:Name="CurrentMonth" HorizontalAlignment="Center"/>
         </Grid>
-        
-            <DataGrid Grid.Row="1" Grid.ColumnSpan="2" x:Name="myDataGrid" AutoGenerateColumns="False" FrozenColumnCount="1" CanUserAddRows="False" ItemsSource="{Binding Persons}"
-                      ScrollViewer.ScrollChanged="OnScrollChanged">
 
-                <DataGrid.Columns>
+        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" AutoGenerateColumns="False" FrozenColumnCount="1" CanUserAddRows="False" ItemsSource="{Binding Persons}"
+                      ScrollViewer.ScrollChanged="OnScrollChanged"
+                      SelectedItem="{Binding SelectedSubordinate}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding SelectedSubordinateCommand}"
+                                           CommandParameter="{Binding SelectedSubordinate}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <DataGrid.Columns>
 
                     <DataGridTextColumn IsReadOnly="True" Width="auto" Binding="{Binding FullName}">
                         <DataGridTextColumn.ElementStyle>
@@ -57,7 +64,7 @@
 
                                     <ItemsPanelTemplate>
 
-                                        <VirtualizingStackPanel x:Name="myPanel" Orientation="Horizontal"/>
+                                        <VirtualizingStackPanel Orientation="Horizontal"/>
 
                                     </ItemsPanelTemplate>
 
@@ -100,7 +107,6 @@
                                                     </TextBlock>
                                                 </Grid>
                                             </Border>
-                                            <!--</md:Badged>-->
                                         </Grid>
                                     </DataTemplate>
 

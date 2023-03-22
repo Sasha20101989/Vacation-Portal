@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
-namespace Vacation_Portal.MVVM.Models
+namespace Vacation_Portal.MVVM.ViewModels
 {
-    public class SvApprovalState : ViewModelBase
+    public class SvApprovalStateViewModel : ViewModelBase
     {
         public int Id { get; set; }
         public int VacationRecordId { get; set; }
@@ -22,7 +23,7 @@ namespace Vacation_Portal.MVVM.Models
             }
         }
 
-        public SvApprovalState(int id, int vacationRecordId, int supervisorId, int statusId, Vacation vacation)
+        public SvApprovalStateViewModel(int id, int vacationRecordId, int supervisorId, int statusId, Vacation vacation)
         {
             Id = id;
             VacationRecordId = vacationRecordId;
