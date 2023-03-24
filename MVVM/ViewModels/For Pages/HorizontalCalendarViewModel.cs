@@ -14,7 +14,7 @@ using Vacation_Portal.MVVM.ViewModels.Base;
 
 namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 {
-   public class HorizontalCalendarViewModel : ViewModelBase
+    public class HorizontalCalendarViewModel : ViewModelBase
     {
         private ObservableCollection<Subordinate> _persons = new ObservableCollection<Subordinate>();
         public ObservableCollection<Subordinate> Persons
@@ -67,13 +67,17 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 _vacationListViewModel = value;
                 OnPropertyChanged(nameof(VacationListViewModel));
-    }
-}
+            }
+        }
 
-public ICommand SelectedSubordinateCommand { get; }
+        public ICommand SelectedSubordinateCommand { get; }
+        public ICommand ApproveVacationCommand { get; }
+        public ICommand DeclineVacationCommand { get; }
         public HorizontalCalendarViewModel()
         {
             SelectedSubordinateCommand = new SelectedSubordinateCommand(this);
+            ApproveVacationCommand = new ApproveVacationCommand(this);
+            DeclineVacationCommand = new DeclineVacationCommand(this);
             PersonStates = App.API.PersonStates;
             Persons = App.API.Person.Subordinates;
 

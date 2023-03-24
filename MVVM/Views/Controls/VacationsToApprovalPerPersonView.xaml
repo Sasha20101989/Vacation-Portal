@@ -21,14 +21,57 @@
         </Grid.ColumnDefinitions>
         <ListView Grid.Row="0" Margin="3" Name="ListView" SelectionMode="Single" MaxWidth="700"
                                       ItemsSource="{Binding VacationListViewModel.States, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
+                  SelectedItem="{Binding VacationListViewModel.SelectedState, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                       ScrollViewer.VerticalScrollBarVisibility="Auto" FontSize="12"
                                       ScrollViewer.CanContentScroll="False" Style="{StaticResource MaterialDesignListView}">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem" BasedOn="{StaticResource MaterialDesignGridViewItem}">
+                    <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                    <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="IsSelected" Value="True"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="95" DisplayMemberBinding="{Binding Vacation.Count}" Header="Дней"></GridViewColumn>
                     <GridViewColumn Width="110" DisplayMemberBinding="{Binding Vacation.Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
                     <GridViewColumn Width="110" DisplayMemberBinding="{Binding Vacation.Date_end,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
                     <GridViewColumn Width="115" DisplayMemberBinding="{Binding Vacation.Vacation_Status_Name}" Header="Статус"></GridViewColumn>
+                    <GridViewColumn>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                        Content="Отклонить" Foreground="IndianRed"
+                                                            Command="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=DataContext.DeclineVacationCommand}"
+                                                            CommandParameter="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=SelectedItem}"
+                                            Padding="5">
+                                        <!--<md:PackIcon Kind="Close"  Width="20" Height="20"></md:PackIcon>-->
+                                    </Button>
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                        Content="Подтвердить" Foreground="Green"
+                                                            Command="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=DataContext.ApproveVacationCommand}"
+                                                            CommandParameter="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=SelectedItem}"
+                                            Padding="5" Margin="5 0 0 0">
+                                        <!--<md:PackIcon Kind="Close"  Width="20" Height="20"></md:PackIcon>-->
+                                    </Button>
+                                </StackPanel>
+
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>

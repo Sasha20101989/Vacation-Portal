@@ -11,7 +11,7 @@ using Vacation_Portal.MVVM.Models.HorizontalCalendar;
 
 namespace Vacation_Portal.Extensions
 {
-    public class DayInVacationConverter : IMultiValueConverter
+    public class DayIsIntersectConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
@@ -27,12 +27,7 @@ namespace Vacation_Portal.Extensions
                 return Brushes.Transparent;
             }
 
-            IEnumerable<DateTime> grayDaysList = currentPersonVacations.SelectMany(v => v.DateRange);
-
-            if(date.HasOnApprovalStatus && grayDaysList.Any(d => d == date.Date))
-            {
-                return System.Windows.Application.Current.FindResource("PrimaryHueMidBrush");
-            }
+            IEnumerable<DateTime> grayDaysList = currentPersonVacations.SelectMany(v => v.DateRange);          
 
             int currentPersonid = 0;
 
@@ -40,7 +35,7 @@ namespace Vacation_Portal.Extensions
             {
                 currentPersonid = vacation.User_Id_SAP;
             }
-            
+
             if(currentPersonid != 0)
             {
                 foreach(Subordinate subordinate in subordinates)
@@ -54,18 +49,12 @@ namespace Vacation_Portal.Extensions
                     {
                         foreach(Vacation subordinateVacation in subordinate.Subordinate_Vacations)
                         {
-                            
                             if(subordinateVacation.DateRange.Any(d => d == date.Date && grayDay == date.Date))
                             {
-                                return Brushes.SlateGray;
+                                return System.Windows.Application.Current.Resources["MyVisualBrush"];
                             }
                         }
                     }
-                }
-
-                if(grayDaysList.Any(d => d == date.Date))
-                {
-                    return Brushes.SlateGray;
                 }
             }
 

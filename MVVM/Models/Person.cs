@@ -72,8 +72,6 @@ namespace Vacation_Portal.MVVM.Models {
 
         public void AddPages(MainWindowViewModel _viewModel) {
             App.Current.Dispatcher.Invoke((Action) delegate {
-                //App.SplashScreen.status.Text = "Добавляю доступные вам страницы...";
-                //App.SplashScreen.status.Foreground = Brushes.Black;
                 foreach(MenuItem menuItem in GenerateMenuItems(_viewModel)) {
                     if(!_viewModel.MenuItems.Contains(menuItem)) {
                         _viewModel.MenuItems.Add(menuItem);
@@ -118,6 +116,7 @@ namespace Vacation_Portal.MVVM.Models {
         }
         private IEnumerable<MenuItem> GenerateMenuItems(MainWindowViewModel viewModel) {
 
+            //TODO: 4 раза создается new PersonalVacationPlanningViewModel()
             yield return new MenuItem(
             _personalVacationPlanning,
             typeof(PersonalVacationPlanningView),

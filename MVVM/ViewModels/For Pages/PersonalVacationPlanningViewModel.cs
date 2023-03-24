@@ -574,7 +574,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                });
 
 
-            _initializeLazy = new Lazy<Task>(async () => await Initialize());
+            _initializeLazy = new Lazy<Task>(() => Initialize());
             LoadModel.Execute(new object());
         }
         #endregion Constructor
@@ -672,7 +672,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             try {
                 await _initializeLazy.Value;
             } catch(Exception) {
-                _initializeLazy = new Lazy<Task>(async () => await Initialize());
+                _initializeLazy = new Lazy<Task>(() => Initialize());
                 throw;
             }
         }

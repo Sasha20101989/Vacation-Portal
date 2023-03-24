@@ -17,6 +17,7 @@
         <ext:IntersectionsCountVisibilityConverter x:Key="IntersectionsCountVisibilityConverter" />
         <ext:IntersectionsCountToColorConverter x:Key="IntersectionsCountToColorConverter" />
         <ext:DayInVacationConverter x:Key="DayInVacationConverter"/>
+        <ext:DayIsIntersectConverter x:Key="DayIsIntersectConverter"/>
         <ext:FirstPersonIntersectionCountConverter x:Key="FirstPersonIntersectionCountConverter"/>
     </UserControl.Resources>
     <Grid>
@@ -35,7 +36,6 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="1" x:Name="CurrentMonth" HorizontalAlignment="Center"/>
         </Grid>
-
         <DataGrid Grid.Row="1" Grid.ColumnSpan="2" AutoGenerateColumns="False" FrozenColumnCount="1" CanUserAddRows="False" ItemsSource="{Binding Persons}"
                       ScrollViewer.ScrollChanged="OnScrollChanged"
                       SelectedItem="{Binding SelectedSubordinate}">
@@ -53,7 +53,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding FullName}" VerticalAlignment="Center" Margin="0 0 10 0"/>
                                 <md:Badged BadgePlacementMode="TopRight" Margin="0 2 0 0">
-                                    
+
                                     <md:Badged.Style>
                                         <Style TargetType="md:Badged">
                                             <Style.Triggers>
@@ -73,8 +73,61 @@
                 </DataGridTemplateColumn>
 
                 <DataGridTemplateColumn Width="auto">
-                        <DataGridTemplateColumn.Header>
-                            <ItemsControl x:Name="myItemsControl" ItemsSource="{Binding DataContext.YearDays, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}">
+                    <DataGridTemplateColumn.Header>
+                        <ItemsControl x:Name="myItemsControl" ItemsSource="{Binding DataContext.YearDays, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Border Grid.Row="1" Margin="0 0 1 0" Width="28">
+                                            <Grid>
+                                                <Border Width="18" Height="18" Background="{DynamicResource PrimaryHueMidBrush}" CornerRadius="15"
+                                                        HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 -3 -3 0"
+                                                        Visibility="{Binding IntersectionsCount, Converter={StaticResource IntersectionsCountVisibilityConverter}}">
+                                                    <TextBlock Padding="3" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Text="{Binding IntersectionsCount}">
+                                                    </TextBlock>
+                                                </Border>
+                                                <TextBlock Margin="5" Padding="5" HorizontalAlignment="Center" FontSize="16">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0:d}">
+                                                            <Binding Path="Date.Day"/>
+                                                            <Binding Path="Date"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Date.Day}" Value="1">
+                                                                    <Setter Property="Margin" Value="10,0,0,0"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </DataGridTemplateColumn.Header>
+
+                    <DataGridTemplateColumn.CellTemplate>
+
+                        <DataTemplate>
+
+                            <ItemsControl ItemsSource="{Binding DataContext.YearDays, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}">
 
                                 <ItemsControl.ItemsPanel>
 
@@ -90,21 +143,17 @@
 
                                     <DataTemplate>
                                         <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="*"/>
-                                                <RowDefinition Height="auto"/>
-                                                <RowDefinition Height="auto"/>
-                                            </Grid.RowDefinitions>
-                                            <Border Grid.Row="1" Margin="0 0 1 0" Width="28">
+
+                                            <Border Margin="0 0 1 0" Width="28" CornerRadius="5">
+                                                <Border.Background>
+                                                    <MultiBinding Converter="{StaticResource DayInVacationConverter}" UpdateSourceTrigger="PropertyChanged">
+                                                        <Binding />
+                                                        <Binding Path="DataContext.Subordinate_Vacations" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" Mode="OneWay"/>
+                                                        <Binding Path="DataContext.Persons" RelativeSource="{RelativeSource AncestorType={x:Type DataGrid}}" Mode="OneWay"/>
+                                                    </MultiBinding>
+                                                </Border.Background>
                                                 <Grid>
-                                                    <Border Width="18" Height="18" Background="{DynamicResource PrimaryHueMidBrush}" CornerRadius="15"
-                                                        HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 -3 -3 0"
-                                                        Visibility="{Binding IntersectionsCount, Converter={StaticResource IntersectionsCountVisibilityConverter}}">
-                                                        <TextBlock Padding="3" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                               Text="{Binding IntersectionsCount}">
-                                                        </TextBlock>
-                                                    </Border>
-                                                    <TextBlock Margin="5" Padding="5" HorizontalAlignment="Center" FontSize="16">
+                                                    <TextBlock Padding="5" HorizontalAlignment="Center" Foreground="Transparent">
                                                         <TextBlock.Text>
                                                             <MultiBinding StringFormat="{}{0:d}">
                                                                 <Binding Path="Date.Day"/>
@@ -122,74 +171,34 @@
                                                         </TextBlock.Style>
                                                     </TextBlock>
                                                 </Grid>
+
                                             </Border>
-                                        </Grid>
-                                    </DataTemplate>
-
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </DataGridTemplateColumn.Header>
-
-                        <DataGridTemplateColumn.CellTemplate>
-
-                            <DataTemplate>
-
-                                <ItemsControl ItemsSource="{Binding DataContext.YearDays, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}">
-
-                                    <ItemsControl.ItemsPanel>
-
-                                        <ItemsPanelTemplate>
-
-                                            <VirtualizingStackPanel Orientation="Horizontal"/>
-
-                                        </ItemsPanelTemplate>
-
-                                    </ItemsControl.ItemsPanel>
-
-                                    <ItemsControl.ItemTemplate>
-
-                                        <DataTemplate>
                                             <Border Margin="0 0 1 0" Width="28" CornerRadius="5">
                                                 <Border.Background>
-                                                    <MultiBinding Converter="{StaticResource DayInVacationConverter}" UpdateSourceTrigger="PropertyChanged">
+                                                    <MultiBinding Converter="{StaticResource DayIsIntersectConverter}" UpdateSourceTrigger="PropertyChanged">
                                                         <Binding />
                                                         <Binding Path="DataContext.Subordinate_Vacations" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" Mode="OneWay"/>
                                                         <Binding Path="DataContext.Persons" RelativeSource="{RelativeSource AncestorType={x:Type DataGrid}}" Mode="OneWay"/>
                                                     </MultiBinding>
                                                 </Border.Background>
-                                                <TextBlock Padding="5" HorizontalAlignment="Center" Foreground="Transparent">
-                                                    <TextBlock.Text>
-                                                        <MultiBinding StringFormat="{}{0:d}">
-                                                            <Binding Path="Date.Day"/>
-                                                            <Binding Path="Date"/>
-                                                        </MultiBinding>
-                                                    </TextBlock.Text>
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Date.Day}" Value="1">
-                                                                    <Setter Property="Margin" Value="10,0,0,0"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
                                             </Border>
-                                        </DataTemplate>
+                                        </Grid>
+                                        
+                                    </DataTemplate>
 
-                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl.ItemTemplate>
 
-                                </ItemsControl>
+                            </ItemsControl>
 
-                            </DataTemplate>
+                        </DataTemplate>
 
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
 
-            </DataGrid>
+        </DataGrid>
 
-     
+
     </Grid>
-    
+
 </UserControl>
