@@ -117,6 +117,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 if(_selectedItem != null) {
                     Title = _selectedItem.Name;
                     App.SelectedMode = SelectedItem.Name;
+                } else
+                {
+                    IsLoading = true;
                 }
             }
         }

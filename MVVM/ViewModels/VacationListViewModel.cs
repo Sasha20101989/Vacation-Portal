@@ -12,8 +12,17 @@ namespace Vacation_Portal.Commands.HorizontalCalendarCommands
     public class VacationListViewModel : ViewModelBase
     {
         public Subordinate Subordinate { get; internal set; }
-        public ObservableCollection<SvApprovalStateViewModel> States { get; set; }
 
+        private ObservableCollection<SvApprovalStateViewModel> _states;
+        public ObservableCollection<SvApprovalStateViewModel> States
+        {
+            get => _states;
+            set
+            {
+                _states = value;
+                OnPropertyChanged(nameof(States));
+            }
+        }
         private SvApprovalStateViewModel _selectedState;
         public SvApprovalStateViewModel SelectedState
         {
@@ -25,14 +34,12 @@ namespace Vacation_Portal.Commands.HorizontalCalendarCommands
             }
         }
 
-        public ObservableCollection<SvApprovalStateViewModel> LoadStates(Subordinate selectedSubordinate)
+        public async Task<ObservableCollection<SvApprovalStateViewModel>> LoadStatesAsync(Subordinate selectedSubordinate)
         {
             Subordinate = selectedSubordinate;
+            App.API.PersonStates = await App.API.GetStateVacationsOnApproval(App.API.Person.Id_SAP);
 
-            ObservableCollection<SvApprovalStateViewModel> svApprovalStateViewModels =
-                new ObservableCollection<SvApprovalStateViewModel>(App.API.PersonStates.Where(s => s.Vacation.User_Id_SAP == Subordinate.Id_SAP));
-
-            States = svApprovalStateViewModels;
+            States = new ObservableCollection<SvApprovalStateViewModel>(App.API.PersonStates.Where(s => s.Vacation.User_Id_SAP == Subordinate.Id_SAP).OrderBy(state => state.Vacation.Date_Start));
             return States;
         }
     }

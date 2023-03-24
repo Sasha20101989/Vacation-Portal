@@ -75,6 +75,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public ICommand DeclineVacationCommand { get; }
         public HorizontalCalendarViewModel()
         {
+            IsLoading = true;
             SelectedSubordinateCommand = new SelectedSubordinateCommand(this);
             ApproveVacationCommand = new ApproveVacationCommand(this);
             DeclineVacationCommand = new DeclineVacationCommand(this);
@@ -135,6 +136,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             Task.Delay(TimeSpan.FromSeconds(0.2))
                 .ContinueWith((t, _) => eventArgs.Session.Close(false), null,
                     TaskScheduler.FromCurrentSynchronizationContext());
+            IsLoading = false;
             //Task.Delay(TimeSpan.FromSeconds(0.1))
             //    .ContinueWith((t, _) => eventArgs.Session.UpdateContent(new SampleError()), null,
             //        TaskScheduler.FromCurrentSynchronizationContext());

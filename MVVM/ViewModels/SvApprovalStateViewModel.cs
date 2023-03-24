@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Vacation_Portal.MVVM.Models;
 using Vacation_Portal.MVVM.ViewModels.Base;
@@ -11,7 +12,32 @@ namespace Vacation_Portal.MVVM.ViewModels
         public int Id { get; set; }
         public int VacationRecordId { get; set; }
         public int SupervisorId { get; set; }
-        public int StatusId { get; set; }
+
+        private int _statusId;
+        public int StatusId
+        {
+            get => _statusId;
+            set
+            {
+                _statusId = value;
+                OnPropertyChanged(nameof(StatusName));
+                Status status = App.API.AllStatuses.FirstOrDefault(s => s.Id == _statusId);
+                if(status != null)
+                {
+                    StatusName = status.Status_Name;
+                }
+            }
+        }
+        private string _statusName;
+        public string StatusName
+        {
+            get => _statusName;
+            set
+            {
+                _statusName = value;
+                OnPropertyChanged(nameof(StatusName));
+            }
+        }
         private Vacation _vacation;
         public Vacation Vacation
         {

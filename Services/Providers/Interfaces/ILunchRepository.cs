@@ -9,6 +9,7 @@ using Vacation_Portal.MVVM.ViewModels;
 
 namespace Vacation_Portal.Services.Providers.Interfaces {
     public interface ILunchRepository {
+        Task UpdateStateStatusAsync(SvApprovalStateViewModel state);
         Person Person { get; set; }
         ObservableCollection<Subordinate> PersonsWithVacationsOnApproval { get; set; }
         ObservableCollection<SvApprovalStateViewModel> PersonStates { get; set; }
@@ -49,6 +50,7 @@ namespace Vacation_Portal.Services.Providers.Interfaces {
         Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation);
         Task UpdateVacationStatusAsync(Vacation vacation);
         IEnumerable<CalendarSettings> GetSettingsForCalendar();
+        Task<ObservableCollection<SvApprovalStateViewModel>> GetStateVacationsOnApproval(int UserIdSAP);
 
     }
 }

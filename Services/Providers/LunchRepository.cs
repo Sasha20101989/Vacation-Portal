@@ -265,7 +265,7 @@ namespace Vacation_Portal.Services.Providers {
                 // выделяю подчиненных из общего списка персон, если имя компьютера не равен итерируемому id то подчинённый
                 for(int i = 0; i < FullPersons.Count; i++) {
                     if(FullPersons[i].Id_Account != Environment.UserName) {
-                        Person.Subordinates.Add(new Subordinate(
+                        Subordinate subordinate = new Subordinate(
                             FullPersons[i].Id_SAP,
                             FullPersons[i].Name,
                             FullPersons[i].Surname,
@@ -274,12 +274,14 @@ namespace Vacation_Portal.Services.Providers {
                             FullPersons[i].Department_Name,
                             FullPersons[i].Virtual_Department_Name,
                             FullPersons[i].User_Vacations,
-                            FullPersons[i].User_Vacation_Allowances));
+                            FullPersons[i].User_Vacation_Allowances);
+                        
+                        Person.Subordinates.Add(subordinate);
                     }
                 }
 
                 PersonStates = await GetStateVacationsOnApproval(Person.Id_SAP);
-
+                Person.Subordinates.ToList().ForEach(subordinate => subordinate.UpdateStatesCount());
                 OnLoginSuccess?.Invoke(Person);
                 return Person;
             } catch(Exception ex) {
@@ -382,6 +384,24 @@ namespace Vacation_Portal.Services.Providers {
         #endregion
 
         #region Vacations
+
+        public async Task UpdateStateStatusAsync(SvApprovalStateViewModel state)
+        {
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+
+            object parameters = new
+            {
+                Id = state.Id,
+                Status_Id = state.StatusId
+            };
+            try
+            {
+                await database.QueryAsync("usp_Update_Sv_Approval_State_By_Id", parameters, commandType: CommandType.StoredProcedure);
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
         public async Task<ObservableCollection<SvApprovalStateViewModel>> GetStateVacationsOnApproval(int UserIdSAP)
         {
             
@@ -408,9 +428,9 @@ namespace Vacation_Portal.Services.Providers {
                             {
                                 personStateViewModels.Add(
                                     new SvApprovalStateViewModel(
-                                        state.Id, 
-                                        state.Vacation_Record_Id, 
-                                        state.Supervisor_Id, 
+                                        state.Id,
+                                        state.Vacation_Record_Id,
+                                        state.Supervisor_Id,
                                         state.Status_Id, 
                                         vacation)
                                     );

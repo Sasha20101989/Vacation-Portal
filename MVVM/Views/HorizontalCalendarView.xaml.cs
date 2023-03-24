@@ -39,14 +39,11 @@ namespace Vacation_Portal.MVVM.Views
             var monthName = GetFirstVisibleMonth(myItemsControl);
             CurrentMonth.Text = monthName;
         }
-
         private void OnScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             _timer.Stop();
             _timer.Start();
         }
-
-
         private string GetFirstVisibleMonth(ItemsControl itemsControl)
         {
             var scroll = itemsControl.Parent;
@@ -71,7 +68,7 @@ namespace Vacation_Portal.MVVM.Views
             {
                 return null;
             }
-            double offset =  scrollViewer.HorizontalOffset;
+            double offset = scrollViewer.HorizontalOffset;
             double viewportWidth = scrollViewer.ViewportWidth;
             var container = (FrameworkElement) itemsControl.ItemContainerGenerator.ContainerFromIndex(0);
             if(container == null)
@@ -96,5 +93,15 @@ namespace Vacation_Portal.MVVM.Views
             return monthName;
         }
 
+        private void DataGridRow_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if(sender is DataGridRow row)
+            {
+                if(row.IsSelected)
+                {
+                    row.IsSelected = false;
+                }
+            }
+        }
     }
 }

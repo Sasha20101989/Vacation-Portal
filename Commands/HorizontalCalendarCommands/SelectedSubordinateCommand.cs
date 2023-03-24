@@ -29,16 +29,15 @@ namespace Vacation_Portal.Commands.HorizontalCalendarCommands
         }
         public override async void Execute(object parameter)
         {
-
-            var isSubordinate = parameter is Subordinate;
-            if(isSubordinate)
+            if(parameter is Subordinate)
             {
                 var selectedSubordinate = parameter as Subordinate;
-                var countVacations = selectedSubordinate.SubordinateVacationsWithOnApprovalStatus.Count;
-                if(countVacations > 0)
+                if(selectedSubordinate.CountStatesApproval > 0 ||
+                    selectedSubordinate.CountStatesOnApproval > 0 ||
+                    selectedSubordinate.CountStatesDecline > 0)
                 {
                     _view.DataContext = _viewModel;
-                    _vacationListViewModel.LoadStates(selectedSubordinate);
+                    await _vacationListViewModel.LoadStatesAsync(selectedSubordinate);
                     _viewModel.VacationListViewModel = _vacationListViewModel;
                     Task<object> openCheck = DialogHost.Show(_view, "RootDialog", _viewModel.ExtendedClosingEventHandler);
                 }
