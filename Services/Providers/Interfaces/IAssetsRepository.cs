@@ -7,7 +7,7 @@ namespace Vacation_Portal.Services.Providers.Interfaces
 {
     public interface IAssetsRepository
     {
-        List<Status> AllStatuses { get; set; }
+        List<Status> AllStatuses { get;}
         List<Status> GetStatuses();
     }
 }

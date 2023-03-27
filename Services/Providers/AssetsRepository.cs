@@ -15,11 +15,11 @@ namespace Vacation_Portal.Services.Providers
     {
         private readonly SqlDbConnectionFactory _sqlDbConnectionFactory;
 
-        public List<Status> AllStatuses { get; set; }
+        public List<Status> AllStatuses => GetStatuses();
+
         public AssetsRepository(SqlDbConnectionFactory sqlDbConnectionFactory)
         {
             _sqlDbConnectionFactory = sqlDbConnectionFactory;
-            AllStatuses = GetStatuses();
         }
 
         public List<Status> GetStatuses()

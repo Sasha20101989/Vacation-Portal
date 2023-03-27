@@ -52,10 +52,9 @@ namespace Vacation_Portal {
             HolidayAPI = new HolidayRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
             CalendarAPI = new CalendarRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
             AssetsAPI = new AssetsRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
+            DependencyDetector = new DependencyDetector(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
             SplashScreenService = new InformationSplashScreenService();
             HolidayAPI.LoadHolidays.Execute(new object());
-            DependencyDetector = new DependencyDetector(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
-
             //DependencyDetector.StartDependencyPerson();
             //DependencyDetector.StartDependencyPlannedHoliday();
             //DependencyDetector.StartDependencyPlannedVacation();
