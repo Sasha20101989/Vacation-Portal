@@ -6,8 +6,10 @@ using Vacation_Portal.Extensions;
 using Vacation_Portal.MVVM.ViewModels;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
-namespace Vacation_Portal.MVVM.Models {
-    public class Subordinate: ViewModelBase {
+namespace Vacation_Portal.MVVM.Models
+{
+    public class Subordinate : ViewModelBase
+    {
         public int Id_SAP { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
@@ -62,10 +64,12 @@ namespace Vacation_Portal.MVVM.Models {
                 .Where(v => v.Vacation_Status_Name == MyEnumExtensions.ToDescriptionString(Statuses.OnApproval)));
             return subordinateVacationsWithOnApprovalStatus;
         }
-        public override string ToString() {
+        public override string ToString()
+        {
             return $"{Surname} {Name} {Patronymic}";
         }
-        public Subordinate(int idSAP, string name, string surname, string patronymic, string position, string departmentName, string virtualDepartmentName, ObservableCollection<Vacation> subordinateVacations, ObservableCollection<VacationAllowanceViewModel> subordinateVacationAllowances) {
+        public Subordinate(int idSAP, string name, string surname, string patronymic, string position, string departmentName, string virtualDepartmentName, ObservableCollection<Vacation> subordinateVacations, ObservableCollection<VacationAllowanceViewModel> subordinateVacationAllowances)
+        {
             Id_SAP = idSAP;
             Name = name;
             Surname = surname;
@@ -84,12 +88,9 @@ namespace Vacation_Portal.MVVM.Models {
 
         public void UpdateStatesCount()
         {
-            if(App.StateAPI.PersonStates.Count > 0)
-            {
-                CountStatesOnApproval = App.StateAPI.PersonStates.Count(s => s.StatusId == (int) Statuses.OnApproval && s.Vacation.User_Id_SAP == Id_SAP);
-                CountStatesApproval = App.StateAPI.PersonStates.Count(s => s.StatusId == (int) Statuses.Approved && s.Vacation.User_Id_SAP == Id_SAP);
-                CountStatesDecline = App.StateAPI.PersonStates.Count(s => s.StatusId == (int) Statuses.NotAgreed && s.Vacation.User_Id_SAP == Id_SAP);
-            }
+            CountStatesOnApproval = App.StateAPI.PersonStates.Count(s => s.StatusId == (int) Statuses.OnApproval && s.Vacation.User_Id_SAP == Id_SAP);
+            CountStatesApproval = App.StateAPI.PersonStates.Count(s => s.StatusId == (int) Statuses.Approved && s.Vacation.User_Id_SAP == Id_SAP);
+            CountStatesDecline = App.StateAPI.PersonStates.Count(s => s.StatusId == (int) Statuses.NotAgreed && s.Vacation.User_Id_SAP == Id_SAP);
         }
     }
 }

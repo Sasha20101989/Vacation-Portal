@@ -26,7 +26,8 @@ namespace Vacation_Portal.Commands.HorizontalCalendarCommands
                 {
                     await App.VacationAPI.UpdateVacationStatusAsync(state.VacationRecordId, state.StatusId);
                 }
-                _horizontalCalendarViewModel.PersonStates = await App.StateAPI.GetStateVacationsOnApproval(App.API.Person.Id_SAP);
+                App.StateAPI.PersonStates = await App.StateAPI.GetStateVacationsOnApproval(App.API.Person.Id_SAP);
+                _horizontalCalendarViewModel.SelectedSubordinate.UpdateStatesCount();
             }
            
         }
