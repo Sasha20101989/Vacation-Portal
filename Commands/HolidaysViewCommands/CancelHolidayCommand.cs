@@ -14,15 +14,15 @@ namespace Vacation_Portal.Commands.HolidaysViewCommands {
             if(parameter is HolidayViewModel) {
                 HolidayViewModel holiday = parameter as HolidayViewModel;
                 if(holiday.Date.Year == DateTime.Now.Year) {
-                    App.API.DeleteHolidayAsync(_viewModel.SelectedCurrentYearHoliday);
-                    App.API.Holidays.Remove(_viewModel.SelectedCurrentYearHoliday);
+                    App.HolidayAPI.DeleteHolidayAsync(_viewModel.SelectedCurrentYearHoliday);
+                    App.HolidayAPI.Holidays.Remove(_viewModel.SelectedCurrentYearHoliday);
                     _viewModel.HolidaysCurrentYear.Remove(_viewModel.SelectedCurrentYearHoliday);
-                    App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
+                    App.HolidayAPI.OnHolidaysChanged?.Invoke(App.HolidayAPI.Holidays);
                 } else {
-                    App.API.DeleteHolidayAsync(_viewModel.SelectedNextYearHoliday);
-                    App.API.Holidays.Remove(_viewModel.SelectedNextYearHoliday);
+                    App.HolidayAPI.DeleteHolidayAsync(_viewModel.SelectedNextYearHoliday);
+                    App.HolidayAPI.Holidays.Remove(_viewModel.SelectedNextYearHoliday);
                     _viewModel.HolidaysNextYear.Remove(_viewModel.SelectedNextYearHoliday);
-                    App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
+                    App.HolidayAPI.OnHolidaysChanged?.Invoke(App.HolidayAPI.Holidays);
                 }
             }
         }

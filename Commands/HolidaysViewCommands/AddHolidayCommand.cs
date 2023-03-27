@@ -22,11 +22,11 @@ namespace Vacation_Portal.Commands.HolidaysViewCommands {
             } else {
                 if(_viewModel.CurrentDate.Year == DateTime.Now.Year) {
                     if(!_viewModel.HolidaysCurrentYear.Contains(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate, Convert.ToInt32(_viewModel.CurrentDate.Year)))) {
-                        App.API.Holidays.Add(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate, Convert.ToInt32(_viewModel.CurrentDate.Year)));
+                        App.HolidayAPI.Holidays.Add(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate, Convert.ToInt32(_viewModel.CurrentDate.Year)));
                         _viewModel.HolidaysCurrentYear.Add(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate, Convert.ToInt32(_viewModel.CurrentDate.Year)));
                         _viewModel.HolidaysCurrentYear = new ObservableCollection<HolidayViewModel>(_viewModel.HolidaysCurrentYear.OrderBy(i => i.Date));
-                        App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
-                        App.API.AddHolidayAsync(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate, Convert.ToInt32(_viewModel.CurrentDate.Year)));
+                        App.HolidayAPI.OnHolidaysChanged?.Invoke(App.HolidayAPI.Holidays);
+                        App.HolidayAPI.AddHolidayAsync(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate, Convert.ToInt32(_viewModel.CurrentDate.Year)));
                     } else {
                         foreach(HolidayViewModel item in _viewModel.HolidaysCurrentYear) {
                             if(item.Date == _viewModel.CurrentDate) {
@@ -37,11 +37,11 @@ namespace Vacation_Portal.Commands.HolidaysViewCommands {
                     }
                 } else if(_viewModel.CurrentDate.Year == _viewModel.NextDate.Year) {
                     if(!_viewModel.HolidaysNextYear.Contains(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate, Convert.ToInt32(_viewModel.CurrentDate.Year)))) {
-                        App.API.Holidays.Add(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate, Convert.ToInt32(_viewModel.CurrentDate.Year)));
+                        App.HolidayAPI.Holidays.Add(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate, Convert.ToInt32(_viewModel.CurrentDate.Year)));
                         _viewModel.HolidaysNextYear.Add(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate, Convert.ToInt32(_viewModel.CurrentDate.Year)));
                         _viewModel.HolidaysNextYear = new ObservableCollection<HolidayViewModel>(_viewModel.HolidaysNextYear.OrderBy(i => i.Date));
-                        App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
-                        App.API.AddHolidayAsync(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate, Convert.ToInt32(_viewModel.CurrentDate.Year)));
+                        App.HolidayAPI.OnHolidaysChanged?.Invoke(App.HolidayAPI.Holidays);
+                        App.HolidayAPI.AddHolidayAsync(new HolidayViewModel(_viewModel.SelectedItem.Id, _viewModel.SelectedItem.NameOfHoliday, _viewModel.CurrentDate, Convert.ToInt32(_viewModel.CurrentDate.Year)));
                     } else {
                         foreach(HolidayViewModel item in _viewModel.HolidaysNextYear) {
                             if(item.Date == _viewModel.CurrentDate) {

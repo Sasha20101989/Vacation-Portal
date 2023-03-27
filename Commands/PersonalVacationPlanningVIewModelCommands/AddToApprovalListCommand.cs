@@ -87,15 +87,15 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                     int countHolidays = 0;
 
                     foreach(DateTime date in lastVacation.DateRange) {
-                        for(int h = 0; h < App.API.Holidays.Count; h++) {
-                            if(date == App.API.Holidays[h].Date) {
+                        for(int h = 0; h < App.HolidayAPI.Holidays.Count; h++) {
+                            if(date == App.HolidayAPI.Holidays[h].Date) {
                                 countHolidays++;
                             }
                         }
                     }
                     lastVacation.Count += vacation.Count - countHolidays;
-                    await App.API.DeleteVacationAsync(lastVacation);
-                    await App.API.DeleteVacationAsync(vacation);
+                    await App.VacationAPI.DeleteVacationAsync(lastVacation);
+                    await App.VacationAPI.DeleteVacationAsync(vacation);
                     lastVacation.Date_end = vacation.Date_end;
                     lastVacation.Vacation_Status_Id = (int) Statuses.BeingPlanned;
                     _viewModel.ShowAlert("Несколько периодов объединены в один.");
@@ -110,7 +110,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 List<Vacation> conflictFreeVacations = new List<Vacation>();
                 foreach(Vacation item in VacationsToAprovalClone) {
                     Vacation plannedVacation = new Vacation(item.Id, item.Name, item.User_Id_SAP, item.User_Name, item.User_Surname, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Id, item.Creator_Id);
-                    IEnumerable<VacationDTO> conflictingVacations = await App.API.GetConflictingVacationAsync(plannedVacation);
+                    IEnumerable<VacationDTO> conflictingVacations = await App.VacationAPI.GetConflictingVacationAsync(plannedVacation);
                     if(!conflictingVacations.Any()) {
                         conflictFreeVacations.Add(item);
                     }
@@ -119,7 +119,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 foreach(Vacation conflictFreeVacation in conflictFreeVacations) {
                     VacationAllowanceViewModel updatedAllowance = VacationAllowances.FirstOrDefault(a => a.Vacation_Name == conflictFreeVacation.Name);
                     await _viewModel.UpdateVacationAllowance(conflictFreeVacation.User_Id_SAP, conflictFreeVacation.Vacation_Id, conflictFreeVacation.Date_Start.Year, updatedAllowance.Vacation_Days_Quantity);
-                    await App.API.AddVacationAsync(conflictFreeVacation);
+                    await App.VacationAPI.AddVacationAsync(conflictFreeVacation);
                 }
 
                 if(SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {

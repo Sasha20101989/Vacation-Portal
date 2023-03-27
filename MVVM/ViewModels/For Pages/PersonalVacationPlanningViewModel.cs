@@ -581,8 +581,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
 
         #region Task Lazy
         private async Task Initialize() {
-            IsNextCalendarUnblocked = App.API.CheckDateUnblockedCalendarAsync();
-            IsNextCalendarPlannedOpen = App.API.CheckNextCalendarPlanningUnlock();
+            IsNextCalendarUnblocked = App.CalendarAPI.CheckDateUnblockedCalendarAsync();
+            IsNextCalendarPlannedOpen = App.CalendarAPI.CheckNextCalendarPlanningUnlock();
             if(App.API.Person.Is_HR_GOD) {
                 PrepareDepartments();
             } else if(App.API.Person.Is_Accounting) {
@@ -712,10 +712,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         }
 
         public async Task UpdateVacationAllowance(int userIdSAP, int vacation_Id, int year, int count) {
-            await App.API.UpdateVacationAllowanceAsync(userIdSAP, vacation_Id, year, count);
+            await App.VacationAllowanceAPI.UpdateVacationAllowanceAsync(userIdSAP, vacation_Id, year, count);
         }
         public async Task DeleteVacation(Vacation vacation) {
-            await App.API.DeleteVacationAsync(vacation);
+            await App.VacationAPI.DeleteVacationAsync(vacation);
         }
         public void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs) {
             if(eventArgs.Parameter is bool parameter &&

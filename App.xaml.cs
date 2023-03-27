@@ -15,7 +15,15 @@ namespace Vacation_Portal {
     public sealed partial class App : Application {
         private readonly IHost _host;
         public static ILunchRepository API { get; private set; }
+        public static IStateRepository StateAPI { get; private set; }
+        public static IVacationRepository VacationAPI { get; private set; }
+        public static IVacationAllowanceRepository VacationAllowanceAPI { get; private set; }
+        public static IHolidayRepository HolidayAPI { get; private set; }
+        public static ICalendarRepository CalendarAPI { get; private set; }
+        public static IAssetsRepository AssetsAPI { get; private set; }
+        
         public static IInformationSplashScreenService SplashScreenService { get; private set; }
+        
         public static IDependencyDetector DependencyDetector { get; private set; }
         public static SplashScreen SplashScreen { get; set; }
         public static string SelectedMode { get; set; }
@@ -38,8 +46,14 @@ namespace Vacation_Portal {
             _host.Start();
 
             API = new LunchRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
+            StateAPI = new StateRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
+            VacationAPI = new VacationRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
+            VacationAllowanceAPI = new VacationAllowanceRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
+            HolidayAPI = new HolidayRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
+            CalendarAPI = new CalendarRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
+            AssetsAPI = new AssetsRepository(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
             SplashScreenService = new InformationSplashScreenService();
-            API.LoadHolidays.Execute(new object());
+            HolidayAPI.LoadHolidays.Execute(new object());
             DependencyDetector = new DependencyDetector(_host.Services.GetRequiredService<SqlDbConnectionFactory>());
 
             //DependencyDetector.StartDependencyPerson();

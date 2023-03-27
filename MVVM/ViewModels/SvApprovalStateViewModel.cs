@@ -21,7 +21,7 @@ namespace Vacation_Portal.MVVM.ViewModels
             {
                 _statusId = value;
                 OnPropertyChanged(nameof(StatusName));
-                Status status = App.API.AllStatuses.FirstOrDefault(s => s.Id == _statusId);
+                Status status = App.AssetsAPI.AllStatuses.FirstOrDefault(s => s.Id == _statusId);
                 if(status != null)
                 {
                     StatusName = status.Status_Name;

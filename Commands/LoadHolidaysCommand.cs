@@ -8,12 +8,12 @@ namespace Vacation_Portal.Commands {
         public DateTime CurrentDate { get; set; } = DateTime.Now;
         public override async void Execute(object parameter) {
             await foreach(HolidayViewModel item in FetchHolidaysAsync()) {
-                App.API.Holidays.Add(item);
+                App.HolidayAPI.Holidays.Add(item);
             }
-            App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
+            App.HolidayAPI.OnHolidaysChanged?.Invoke(App.HolidayAPI.Holidays);
         }
         public async IAsyncEnumerable<HolidayViewModel> FetchHolidaysAsync() {
-            IEnumerable<HolidayViewModel> holidays = await App.API.GetHolidaysAsync(CurrentDate.Year, CurrentDate.Year + 1);
+            IEnumerable<HolidayViewModel> holidays = await App.HolidayAPI.GetHolidaysAsync(CurrentDate.Year, CurrentDate.Year + 1);
 
             foreach(HolidayViewModel item in holidays) {
                 yield return item;

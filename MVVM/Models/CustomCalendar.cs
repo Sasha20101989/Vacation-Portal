@@ -74,7 +74,7 @@ namespace Vacation_Portal.MVVM.Models {
                             workDaysCount = days - dayOffCount;
                         }
 
-                        foreach(HolidayViewModel holiday in App.API.Holidays.Where(h => h.Date.Year == CurrentYear && h.Date.Month == j && h.Date.Day == i)) {
+                        foreach(HolidayViewModel holiday in App.HolidayAPI.Holidays.Where(h => h.Date.Year == CurrentYear && h.Date.Month == j && h.Date.Day == i)) {
                             switch(holiday.TypeOfHoliday) {
                                 case "Праздник":
                                     ucDays.Holiday(date);

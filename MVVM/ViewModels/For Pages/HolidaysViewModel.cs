@@ -162,15 +162,15 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             LoadHolidays = new AnotherCommandImplementation(
                  _ => {
                      IsLoading = true;
-                     App.API.LoadHolidays.Execute(new object());
+                     App.HolidayAPI.LoadHolidays.Execute(new object());
                      IsLoading = false;
                  });
 
-            App.API.OnHolidaysChanged += OnHolidaysChanged;
-            App.API.OnHolidayTypesChanged += onHolidayTypesChanged;
+            App.HolidayAPI.OnHolidaysChanged += OnHolidaysChanged;
+            App.HolidayAPI.OnHolidayTypesChanged += onHolidayTypesChanged;
 
-            App.API.LoadHolidays.Execute(new object());
-            App.API.LoadHolidayTypes.Execute(new object());
+            App.HolidayAPI.LoadHolidays.Execute(new object());
+            App.HolidayAPI.LoadHolidayTypes.Execute(new object());
         }
 
         private void OnHolidaysChanged(ObservableCollection<HolidayViewModel> holidays) {

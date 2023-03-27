@@ -8,7 +8,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             get => _dateUnblockNextCalendar;
             set {
                 _dateUnblockNextCalendar = value;
-                App.API.DateUnblockNextCalendar = _dateUnblockNextCalendar;
+                App.CalendarAPI.DateUnblockNextCalendar = _dateUnblockNextCalendar;
                 OnPropertyChanged(nameof(DateUnblockNextCalendar));
 
             }
@@ -23,8 +23,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             }
         }
         public AdminPageHrViewModel() {
-            DateUnblockNextCalendar = App.API.DateUnblockNextCalendar;
-            DateUnblockPlanningCalendar = App.API.DateUnblockPlanning;
+            DateUnblockNextCalendar = App.CalendarAPI.DateUnblockNextCalendar;
+            DateUnblockPlanningCalendar = App.CalendarAPI.DateUnblockPlanning;
         }
     }
 }

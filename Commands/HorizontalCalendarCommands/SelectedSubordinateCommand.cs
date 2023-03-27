@@ -37,7 +37,7 @@ namespace Vacation_Portal.Commands.HorizontalCalendarCommands
                     selectedSubordinate.CountStatesDecline > 0)
                 {
                     _view.DataContext = _viewModel;
-                    await _vacationListViewModel.LoadStatesAsync(selectedSubordinate);
+                    _vacationListViewModel.LoadStatesAsync(selectedSubordinate);
                     _viewModel.VacationListViewModel = _vacationListViewModel;
                     Task<object> openCheck = DialogHost.Show(_view, "RootDialog", _viewModel.ExtendedClosingEventHandler);
                 }

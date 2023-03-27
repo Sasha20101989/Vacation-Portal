@@ -34,12 +34,10 @@ namespace Vacation_Portal.Commands.HorizontalCalendarCommands
             }
         }
 
-        public async Task<ObservableCollection<SvApprovalStateViewModel>> LoadStatesAsync(Subordinate selectedSubordinate)
+        public ObservableCollection<SvApprovalStateViewModel> LoadStatesAsync(Subordinate selectedSubordinate)
         {
             Subordinate = selectedSubordinate;
-            App.API.PersonStates = await App.API.GetStateVacationsOnApproval(App.API.Person.Id_SAP);
-
-            States = new ObservableCollection<SvApprovalStateViewModel>(App.API.PersonStates.Where(s => s.Vacation.User_Id_SAP == Subordinate.Id_SAP).OrderBy(state => state.Vacation.Date_Start));
+            States = new ObservableCollection<SvApprovalStateViewModel>(App.StateAPI.PersonStates.Where(s => s.Vacation.User_Id_SAP == Subordinate.Id_SAP).OrderBy(state => state.Vacation.Date_Start));
             return States;
         }
     }

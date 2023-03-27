@@ -73,13 +73,15 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
         public ICommand SelectedSubordinateCommand { get; }
         public ICommand ApproveVacationCommand { get; }
         public ICommand DeclineVacationCommand { get; }
+        public ICommand ApproveStateCommand { get; }
         public HorizontalCalendarViewModel()
         {
             IsLoading = true;
             SelectedSubordinateCommand = new SelectedSubordinateCommand(this);
             ApproveVacationCommand = new ApproveVacationCommand(this);
             DeclineVacationCommand = new DeclineVacationCommand(this);
-            PersonStates = App.API.PersonStates;
+            ApproveStateCommand = new ApproveStateCommand(this);
+            PersonStates = App.StateAPI.PersonStates;
             Persons = App.API.Person.Subordinates;
 
             YearDays = new ObservableCollection<HorizontalDay>(Enumerable.Range(1, 365).Select(day => new HorizontalDay(new DateTime(DateTime.Now.Year, 1, 1).AddDays(day - 1), false, false, 0, 0)));

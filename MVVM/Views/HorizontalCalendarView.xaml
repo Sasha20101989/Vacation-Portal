@@ -384,10 +384,12 @@
         </ScrollViewer>
 
 
-        <Button Grid.Row="2" Content="Применить решения" HorizontalAlignment="Center">
+        <Button Grid.Row="2" Content="Применить решения" HorizontalAlignment="Center"
+                Command="{Binding ApproveStateCommand}"
+                CommandParameter="{Binding PersonStates}" Cursor="Hand">
             <Button.Style>
                 <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatAccentButton}">
-                    <Style.Triggers>
+                    <!--<Style.Triggers>
                         <DataTrigger Binding="{Binding CountStatesDecline,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Value="0">
                             <Setter Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
@@ -397,7 +399,7 @@
                         <DataTrigger Binding="{Binding CountStatesOnApproval,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Value="0">
                             <Setter Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
-                    </Style.Triggers>
+                    </Style.Triggers>-->
                 </Style>
             </Button.Style>
         </Button>

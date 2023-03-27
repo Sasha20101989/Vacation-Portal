@@ -34,7 +34,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             DeclineCommand = new RelayCommand(async (parameter) => await SetDeclinedStateAsync(), (parameter) => _isDeclineButtonEnabled);
 
             ReturnCommand = new ReturnToApprovalListCommand(this);
-            ProcessedVacations = App.API.ProcessedVacations;
+            ProcessedVacations = App.VacationAPI.ProcessedVacations;
             Calendar = new СustomizedCalendar();
             PersonsWithVacationsOnApproval = App.API.PersonsWithVacationsOnApproval;
         }
@@ -450,7 +450,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             VacationItem.VacationStatusKind = PackIconKind.CheckBold;
             VacationItem.BadgeBackground = Brushes.DarkSeaGreen;
             VacationItem.Vacation_Status_Id = (int) Statuses.Approved;
-            await App.API.UpdateVacationStatusAsync(VacationItem);
+            await App.VacationAPI.UpdateVacationStatusAsync(VacationItem.Vacation_Id, VacationItem.Vacation_Status_Id);
             await MergeVacationsApprovedStatusAsync();
 
 
@@ -478,7 +478,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             VacationItem.VacationStatusKind = PackIconKind.Close;
             VacationItem.BadgeBackground = Brushes.IndianRed;
             VacationItem.Vacation_Status_Id = (int) Statuses.NotAgreed;
-            await App.API.UpdateVacationStatusAsync(VacationItem);
+            await App.VacationAPI.UpdateVacationStatusAsync(VacationItem.Vacation_Id,VacationItem.Vacation_Status_Id);
             App.API.GetPersonsWithVacationsOnApproval();
             //ProcessedVacations.Add(VacationItem);
             VacationsOnApproval.Remove(VacationItem);
@@ -542,7 +542,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 var vacationsToMerge = GroupVacationsByDateRange(selectedSubordinate.Subordinate_Vacations);
 
                 foreach(var vacation in vacationsToMerge.SelectMany(group => group)) {
-                    await App.API.AddVacationAsync(vacation);
+                    await App.VacationAPI.AddVacationAsync(vacation);
                     selectedSubordinate.Subordinate_Vacations.Add(vacation);
                 }
 
@@ -566,7 +566,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 }
 
                 foreach(var vacation in vacationsToRemove) {
-                    await App.API.DeleteVacationAsync(vacation);
+                    await App.VacationAPI.DeleteVacationAsync(vacation);
                     selectedSubordinate.Subordinate_Vacations.Remove(vacation);
                 }
             }

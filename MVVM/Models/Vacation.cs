@@ -52,7 +52,7 @@ namespace Vacation_Portal.MVVM.Models {
             set {
                 _vacation_Status_Id = value;
                 OnPropertyChanged(nameof(Vacation_Status_Name));
-                Status status = App.API.AllStatuses.FirstOrDefault(s => s.Id == _vacation_Status_Id);
+                Status status = App.AssetsAPI.AllStatuses.FirstOrDefault(s => s.Id == _vacation_Status_Id);
                 if(status != null) {
                     Vacation_Status_Name = status.Status_Name;
                 }

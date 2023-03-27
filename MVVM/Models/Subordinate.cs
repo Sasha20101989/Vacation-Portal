@@ -84,11 +84,11 @@ namespace Vacation_Portal.MVVM.Models {
 
         public void UpdateStatesCount()
         {
-            if(App.API.PersonStates.Count > 0)
+            if(App.StateAPI.PersonStates.Count > 0)
             {
-                CountStatesOnApproval = App.API.PersonStates.Count(s => s.StatusId == (int) Statuses.OnApproval && s.Vacation.User_Id_SAP == Id_SAP);
-                CountStatesApproval = App.API.PersonStates.Count(s => s.StatusId == (int) Statuses.Approved && s.Vacation.User_Id_SAP == Id_SAP);
-                CountStatesDecline = App.API.PersonStates.Count(s => s.StatusId == (int) Statuses.NotAgreed && s.Vacation.User_Id_SAP == Id_SAP);
+                CountStatesOnApproval = App.StateAPI.PersonStates.Count(s => s.StatusId == (int) Statuses.OnApproval && s.Vacation.User_Id_SAP == Id_SAP);
+                CountStatesApproval = App.StateAPI.PersonStates.Count(s => s.StatusId == (int) Statuses.Approved && s.Vacation.User_Id_SAP == Id_SAP);
+                CountStatesDecline = App.StateAPI.PersonStates.Count(s => s.StatusId == (int) Statuses.NotAgreed && s.Vacation.User_Id_SAP == Id_SAP);
             }
         }
     }

@@ -61,7 +61,7 @@ namespace Vacation_Portal.Services.Providers {
                     }
                     break;
                     case ChangeType.Update: {
-                        App.API.OnHolidaysChanged?.Invoke(App.API.Holidays);
+                        App.HolidayAPI.OnHolidaysChanged?.Invoke(App.HolidayAPI.Holidays);
                     }
                     break;
                 };

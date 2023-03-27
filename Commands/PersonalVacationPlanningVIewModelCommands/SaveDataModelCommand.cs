@@ -61,7 +61,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
             foreach(Vacation item in VacationsToAproval) {
                 int countConflicts = 0;
                 Vacation plannedVacation = new Vacation(item.Id, item.Name, item.User_Id_SAP, item.User_Name, item.User_Surname, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Id, item.Creator_Id);
-                IEnumerable<VacationDTO> conflictingVacations = await App.API.GetConflictingVacationAsync(plannedVacation);
+                IEnumerable<VacationDTO> conflictingVacations = await App.VacationAPI.GetConflictingVacationAsync(plannedVacation);
 
                 foreach(VacationDTO vacationDTO in conflictingVacations) {
                     countConflicts++;
@@ -69,13 +69,13 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 if(countConflicts == 0) {
                     VacationAllowanceViewModel vacationAllowance = GetVacationAllowance(item.Name);
                     await _viewModel.UpdateVacationAllowance(item.User_Id_SAP, item.Vacation_Id, item.Date_Start.Year, vacationAllowance.Vacation_Days_Quantity);
-                    await App.API.AddVacationAsync(plannedVacation);
+                    await App.VacationAPI.AddVacationAsync(plannedVacation);
                 } else {
                     item.Vacation_Status_Id = (int) Statuses.OnApproval;
                     if(isSupervisorView) {
                         item.Vacation_Status_Id = (int) Statuses.Approved;
                     }
-                    await App.API.UpdateVacationStatusAsync(item);
+                    await App.VacationAPI.UpdateVacationStatusAsync(item.Vacation_Id, item.Vacation_Status_Id);
                 }
             }
             if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {

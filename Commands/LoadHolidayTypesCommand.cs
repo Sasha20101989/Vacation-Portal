@@ -6,12 +6,12 @@ namespace Vacation_Portal.Commands {
     public class LoadHolidayTypesCommand : CommandBase {
         public override async void Execute(object parameter) {
             await foreach(Holiday item in FetchHolidayTypesAsync()) {
-                App.API.HolidayTypes.Add(item);
+                App.HolidayAPI.HolidayTypes.Add(item);
             }
-            App.API.OnHolidayTypesChanged?.Invoke(App.API.HolidayTypes);
+            App.HolidayAPI.OnHolidayTypesChanged?.Invoke(App.HolidayAPI.HolidayTypes);
         }
         public async IAsyncEnumerable<Holiday> FetchHolidayTypesAsync() {
-            IEnumerable<Holiday> holidayTypes = await App.API.GetHolidayTypesAsync();
+            IEnumerable<Holiday> holidayTypes = await App.HolidayAPI.GetHolidayTypesAsync();
 
             foreach(Holiday item in holidayTypes) {
                 yield return item;

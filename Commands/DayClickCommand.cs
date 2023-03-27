@@ -23,7 +23,7 @@ namespace Vacation_Portal.Commands {
         }
 
         public override async Task ExecuteAsync(object parameter) {
-            if(App.API.IsCalendarPlannedOpen || _viewModel.CurrentYear == DateTime.Now.Year) {
+            if(App.CalendarAPI.IsCalendarPlannedOpen || _viewModel.CurrentYear == DateTime.Now.Year) {
                 if(_viewModel.SelectedItemAllowance != null) {
                     ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
                     ObservableCollection<Vacation> VacationsToApproval = new ObservableCollection<Vacation>();
@@ -86,8 +86,8 @@ namespace Vacation_Portal.Commands {
                             IEnumerable<DateTime> dateRange = _customCalendar.ReturnDateRange(_customCalendar.FirstSelectedDate, _customCalendar.SecondSelectedDate);
 
                             foreach(DateTime date in dateRange) {
-                                for(int h = 0; h < App.API.Holidays.Count; h++) {
-                                    if(date == App.API.Holidays[h].Date) {
+                                for(int h = 0; h < App.HolidayAPI.Holidays.Count; h++) {
+                                    if(date == App.HolidayAPI.Holidays[h].Date) {
                                         countHolidays++;
                                     }
                                 }
@@ -183,7 +183,7 @@ namespace Vacation_Portal.Commands {
                     _viewModel.ShowAlert("Выберете тип отпуска");
                 }
             } else {
-                _viewModel.ShowAlert($"Планирование будет доступно c {App.API.DateUnblockPlanning:dd.MM.yyyy}");
+                _viewModel.ShowAlert($"Планирование будет доступно c {App.CalendarAPI.DateUnblockPlanning:dd.MM.yyyy}");
             }
         }
     }
