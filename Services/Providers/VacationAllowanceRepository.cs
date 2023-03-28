@@ -45,8 +45,8 @@ namespace Vacation_Portal.Services.Providers
         private VacationAllowanceViewModel ToVacationAllowance(VacationAllowanceDTO dto)
         {
             BrushConverter converter = new System.Windows.Media.BrushConverter();
-            Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
-            return new VacationAllowanceViewModel(dto.User_Id_SAP, dto.Vacation_Name, dto.Vacation_Id, dto.Vacation_Year, dto.Vacation_Days_Quantity, brushColor);
+            Brush brushColor = (Brush) converter.ConvertFromString(dto.Color);
+            return new VacationAllowanceViewModel(dto.User_Id, dto.Name, dto.Vacation_Type_Id, dto.Vacation_Year, dto.Vacation_Days_Quantity, brushColor);
         }
         #endregion
 

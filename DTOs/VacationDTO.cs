@@ -5,14 +5,13 @@ namespace Vacation_Portal.DTOs {
     public class VacationDTO {
         public int Id { get; set; }
         public string Vacation_Name { get; set; }
-        public int User_Id_SAP { get; set; }
-        public int Vacation_Id { get; set; }
-        public int Vacation_Year { get; set; }
-        public string Vacation_Color { get; set; }
-        public DateTime Vacation_Start_Date { get; set; }
-        public DateTime Vacation_End_Date { get; set; }
-        public int Vacation_Status_Id { get; set; }
-        public string Vacation_Status_Name { get; set; }
+        public int User_Id { get; set; }
+        public int Type_Id { get; set; }
+        public int Year { get; set; }
+        public string Color { get; set; }
+        public DateTime Start_Date { get; set; }
+        public DateTime End_Date { get; set; }
+        public int Status_Id { get; set; }
         public string Creator_Id { get; set; }
         public int Count => GetCount();
 
@@ -24,7 +23,7 @@ namespace Vacation_Portal.DTOs {
 
         private int GetCount() {
             int count = 0;
-            IEnumerable<DateTime> dateRange = GetDateRange(Vacation_Start_Date, Vacation_End_Date);
+            IEnumerable<DateTime> dateRange = GetDateRange(Start_Date, End_Date);
             foreach(DateTime date in dateRange) {
                 count++;
             }

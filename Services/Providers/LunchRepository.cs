@@ -111,7 +111,7 @@ namespace Vacation_Portal.Services.Providers {
                 App.SplashScreen.progressBar.Value = 10;
                 App.SplashScreen.status.Text = "В поисках отпусков";
                 foreach(PersonDTO personDTO in fullPersonDTOs) {
-                    await foreach(Vacation vacation in FetchVacationsAsync(personDTO.User_Id_SAP)) {
+                    await foreach(Vacation vacation in FetchVacationsAsync(personDTO.Id)) {
                         
                         Brush brushColor;
                         if(vacation.Color == null) {
@@ -121,13 +121,13 @@ namespace Vacation_Portal.Services.Providers {
                         }
 
                         if(!App.VacationAPI.Vacations.Contains(vacation)) {
-                            vacation.User_Name = personDTO.User_Name;
-                            vacation.User_Surname = personDTO.User_Surname;
+                            vacation.User_Name = personDTO.Name;
+                            vacation.User_Surname = personDTO.Surname;
                             App.VacationAPI.Vacations.Add(vacation);
                         }
                     }
 
-                    await foreach(VacationAllowanceViewModel vacationAllowance in FetchVacationAllowancesAsync(personDTO.User_Id_SAP)) {
+                    await foreach(VacationAllowanceViewModel vacationAllowance in FetchVacationAllowancesAsync(personDTO.Id)) {
                         VacationAllowanceViewModel vacationAllowanceViewModel = new VacationAllowanceViewModel(vacationAllowance.User_Id_SAP, vacationAllowance.Vacation_Name, vacationAllowance.Vacation_Id, vacationAllowance.Vacation_Year, vacationAllowance.Vacation_Days_Quantity, vacationAllowance.Vacation_Color);
                         if(!App.VacationAllowanceAPI.VacationAllowances.Contains(vacationAllowanceViewModel)) {
                             App.VacationAllowanceAPI.VacationAllowances.Add(vacationAllowanceViewModel);
@@ -141,12 +141,12 @@ namespace Vacation_Portal.Services.Providers {
                     ObservableCollection<Vacation> VacationsForPerson = new ObservableCollection<Vacation>();
                     ObservableCollection<VacationAllowanceViewModel> VacationAllowancesForPerson = new ObservableCollection<VacationAllowanceViewModel>();
                     foreach(Vacation vacationForPerson in App.VacationAPI.Vacations) {
-                        if(vacationForPerson.User_Id_SAP == item.User_Id_SAP) {
+                        if(vacationForPerson.User_Id_SAP == item.Id) {
                             VacationsForPerson.Add(vacationForPerson);
                         }
                     }
                     foreach(VacationAllowanceViewModel vacationAllowanceForPerson in App.VacationAllowanceAPI.VacationAllowances) {
-                        if(vacationAllowanceForPerson.User_Id_SAP == item.User_Id_SAP) {
+                        if(vacationAllowanceForPerson.User_Id_SAP == item.Id) {
                             if(!VacationAllowancesForPerson.Contains(vacationAllowanceForPerson)) {
                                 VacationAllowancesForPerson.Add(vacationAllowanceForPerson);
                             }
@@ -154,15 +154,15 @@ namespace Vacation_Portal.Services.Providers {
                     }
                     VacationAllowancesForPerson = new ObservableCollection<VacationAllowanceViewModel>(VacationAllowancesForPerson.OrderBy(i => i.Vacation_Id));
 
-                    Person person = new Person(item.User_Id_SAP, item.User_Id_Account, item.User_Name, item.User_Surname,
-                                               item.User_Patronymic_Name, item.User_Department_Id, item.Department_Name, item.User_Virtual_Department_Id,
-                                               item.Virtual_Department_Name, item.User_Sub_Department_Id, item.Role_Name, item.User_App_Color,
-                                               item.User_Supervisor_Id_SAP, item.Position, VacationsForPerson, VacationAllowancesForPerson);
+                    Person person = new Person(item.Id, item.Account_Id, item.Name, item.Surname,
+                                               item.Patronymic_Name, item.Department_Id, item.Department_Name, item.Virtual_Department_Id,
+                                               item.Virtual_Department_Name, item.Sub_Department_Id, item.Role_Name, item.App_Color,
+                                               item.Supervisor_Id, item.Position, VacationsForPerson, VacationAllowancesForPerson);
                     Brush brushColor;
-                    if(item.User_App_Color == null) {
+                    if(item.App_Color == null) {
                         brushColor = Brushes.Gray;
                     } else {
-                        brushColor = (Brush) converter.ConvertFromString(item.User_App_Color);
+                        brushColor = (Brush) converter.ConvertFromString(item.App_Color);
                     }
                     if(!FullPersons.Contains(person)) {
                         FullPersons.Add(person);
@@ -218,10 +218,10 @@ namespace Vacation_Portal.Services.Providers {
                 OnLoginSuccess?.Invoke(Person);
                 return Person;
             } catch(Exception ex) {
-                MessageBox.Show(ex.Message);
                 Application.Current.Dispatcher.Invoke((Action) delegate {
-                    App.SplashScreen.status.Text = "Вас нет в базе данных";
+                    App.SplashScreen.status.Text = ex.Message;
                     App.SplashScreen.status.Foreground = Brushes.Red;
+                    //App.SplashScreen.Close();
                 });
                 return null;
             }

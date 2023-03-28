@@ -78,6 +78,7 @@ namespace Vacation_Portal {
                           } else
                           {
                               status.Text = "Вас нет в базе данных";
+                              Close();
                           }
                       });
               });

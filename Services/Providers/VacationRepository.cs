@@ -96,8 +96,8 @@ namespace Vacation_Portal.Services.Providers
         private Vacation ToVacation(VacationDTO dto)
         {
             BrushConverter converter = new BrushConverter();
-            Brush brushColor = (Brush) converter.ConvertFromString(dto.Vacation_Color);
-            return new Vacation(dto.Id, dto.Vacation_Name, dto.User_Id_SAP, ReturnUserName(dto.User_Id_SAP), ReturnUserSurname(dto.User_Id_SAP), dto.Vacation_Id, dto.Count, brushColor, dto.Vacation_Start_Date, dto.Vacation_End_Date, dto.Vacation_Status_Id, dto.Creator_Id);
+            Brush brushColor = (Brush) converter.ConvertFromString(dto.Color);
+            return new Vacation(dto.Id, dto.Vacation_Name, dto.User_Id, ReturnUserName(dto.User_Id), ReturnUserSurname(dto.User_Id), dto.Type_Id, dto.Count, brushColor, dto.Start_Date, dto.End_Date, dto.Status_Id, dto.Creator_Id);
         }
         private string ReturnUserName(int sapId)
         {
