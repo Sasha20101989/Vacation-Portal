@@ -20,6 +20,7 @@ namespace Vacation_Portal.Services.Providers
         private readonly SqlDbConnectionFactory _sqlDbConnectionFactory;
 
         public ObservableCollection<SvApprovalStateViewModel> PersonStates { get; set; } = new ObservableCollection<SvApprovalStateViewModel>();
+        public Action<ObservableCollection<SvApprovalStateViewModel>> PersonStatesChanged { get; set; }
 
         public StateRepository(SqlDbConnectionFactory sqlDbConnectionFactory)
         {
@@ -69,18 +70,35 @@ namespace Vacation_Portal.Services.Providers
             }
         }
 
-        public async Task UpdateStateStatusAsync(SvApprovalStateViewModel state)
+        public async Task UpdateStateStatusAsync(SvApprovalStateViewModel state, int statusId)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
 
-            object parameters = new
-            {
-                Id = state.Id,
-                Status_Id = state.StatusId
-            };
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", state.Id);
+            parameters.Add("@Status_Id", statusId);
+            parameters.Add("@UpdatedStatusId", dbType: DbType.Int32, direction: ParameterDirection.Output);
             try
             {
                 await database.QueryAsync("usp_Update_Sv_Approval_State_By_Id", parameters, commandType: CommandType.StoredProcedure);
+                state.StatusId = parameters.Get<int>("@UpdatedStatusId");
+                state.Vacation.VacationStatusId = parameters.Get<int>("@UpdatedStatusId");
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        public async Task DeleteStateAsync(int id)
+        {
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            object parameters = new
+            {
+                Id = id
+            };
+            try
+            {
+                _ = await database.QueryAsync("usp_Delete_State", parameters, commandType: CommandType.StoredProcedure);
             } catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);

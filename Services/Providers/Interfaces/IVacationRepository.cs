@@ -17,8 +17,10 @@ namespace Vacation_Portal.Services.Providers.Interfaces
         ObservableCollection<Vacation> VacationsOnApproval { get; set; }
         Task<Vacation> AddVacationAsync(Vacation vacation);
         Task DeleteVacationAsync(Vacation vacation);
+        Task SpendVacation(Vacation vacation);
         Task<IEnumerable<Vacation>> LoadVacationsAsync(int UserIdSAP);
         Task<IEnumerable<VacationDTO>> GetConflictingVacationAsync(Vacation vacation);
-        Task UpdateVacationStatusAsync(int vacationId, int statusId);
+        Task UpdateVacationStatusAsync(object obj, int statusId);
+        Task TransferVacationAsync(Vacation vacation);
     }
 }

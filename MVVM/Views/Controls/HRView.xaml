@@ -11,6 +11,7 @@
              d:DataContext="{d:DesignInstance vm:PersonalVacationPlanningViewModel}" Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <ResourceDictionary>
+            <ext:NonZeroConverter x:Key="NonZeroConverter" />
             <ext:VacationStatusNameToVisibilityConverter x:Key="VacationStatusNameToVisibilityConverter" />
             <ext:CountToBoolConverter x:Key="CountToBoolConverter"/>
 
@@ -382,7 +383,7 @@
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="IsSelected" Value="True"/>
                                         </Trigger>
-                                        <DataTrigger Binding="{Binding Vacation_Status_Name}" Value="Not Agreed">
+                                        <DataTrigger Binding="{Binding VacationStatusName}" Value="Not Agreed">
                                             <Setter Property="Foreground" Value="red" />
                                             <Setter Property="Background" Value="#ffeeeeee" />
                                         </DataTrigger>
@@ -393,9 +394,9 @@
                                 <GridView>
                                     <GridViewColumn Width="140" DisplayMemberBinding="{Binding Name}" Header="Тип отпуска"></GridViewColumn>
                                     <GridViewColumn Width="95" DisplayMemberBinding="{Binding Count}" Header="Дней"></GridViewColumn>
-                                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
-                                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_end,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
-                                    <GridViewColumn Width="115" DisplayMemberBinding="{Binding Vacation_Status_Name}" Header="Статус"></GridViewColumn>
+                                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding DateStart,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
+                                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding DateEnd,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
+                                    <GridViewColumn Width="115" DisplayMemberBinding="{Binding VacationStatusName}" Header="Статус"></GridViewColumn>
                                     <GridViewColumn Width="40" Header="">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
@@ -445,9 +446,8 @@
                                     Margin="30 0 3 6"
                                     Style="{DynamicResource MaterialDesignOutlinedLightButton}"
                                     Command="{Binding CheckVacations}" Content="Проверить и согласовать"
-                                    IsEnabled="{Binding VacationsToAprovalForSubordinate.Count, 
-                                                Converter={StaticResource CountToBoolConverter},
-                                                ConverterParameter=1,
+                                    IsEnabled="{Binding CountAllowancesForSubordinate, 
+                                                Converter={StaticResource NonZeroConverter},
                                                 UpdateSourceTrigger=PropertyChanged}">
                             </Button>
 

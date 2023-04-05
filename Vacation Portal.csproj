@@ -25,6 +25,7 @@
 		<PackageReference Include="MaterialDesignThemes" Version="4.8.0" />
 		<PackageReference Include="MaterialDesignThemes.Wpf" Version="1.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+		<PackageReference Include="PropertyWithPropChangeMethodSnippet" Version="2.0.0" />
 		<PackageReference Include="SqlTableDependency" Version="8.5.8" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
 	</ItemGroup>

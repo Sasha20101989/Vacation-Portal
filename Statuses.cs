@@ -12,17 +12,19 @@ namespace Vacation_Portal {
         PassedToHR = 4,
         [Description("Completed")]
         Completed = 5,
-        [Description("Canceled")]
-        Canceled = 6,
+        [Description("Transfered")]
+        Transfered = 6,
         [Description("Planned")]
         Planned = 7,
         [Description("Compensated")]
         Compensated = 8,
         [Description("On Compensation")]
         OnCompensation = 9,
-        [Description("To Cancel")]
-        ToCancel = 10,
+        [Description("For Tranfser")]
+        ForTranfser = 10,
         [Description("Not Agreed")]
-        NotAgreed = 11
+        NotAgreed = 11,
+        [Description("Being Transfered")]
+        BeingTransfered = 12
     }
 }

@@ -37,7 +37,7 @@ namespace Vacation_Portal.Commands.HorizontalCalendarCommands
         public ObservableCollection<SvApprovalStateViewModel> LoadStatesAsync(Subordinate selectedSubordinate)
         {
             Subordinate = selectedSubordinate;
-            States = new ObservableCollection<SvApprovalStateViewModel>(App.StateAPI.PersonStates.Where(s => s.Vacation.User_Id_SAP == Subordinate.Id_SAP).OrderBy(state => state.Vacation.Date_Start));
+            States = new ObservableCollection<SvApprovalStateViewModel>(App.StateAPI.PersonStates.Where(s => s.Vacation.UserId == Subordinate.Id_SAP).OrderBy(state => state.Vacation.DateStart));
             return States;
         }
     }

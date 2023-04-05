@@ -196,13 +196,13 @@
 
                                                     </BlockUIContainer>
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[0].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay,FallbackValue=23/23/2323}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[0].DateStart, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay,FallbackValue=23/23/2323}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="1 1 1 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[0].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[0].DateEnd, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
@@ -216,13 +216,13 @@
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="0 1 0 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].DateStart, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="1 1 1 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].DateEnd, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
@@ -236,13 +236,13 @@
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="0 1 0 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].DateStart, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="1 1 1 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].DateEnd, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
@@ -256,13 +256,13 @@
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="0 1 0 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].DateStart, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="1 1 1 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].DateEnd, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
@@ -276,13 +276,13 @@
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="0 1 0 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].DateStart, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="1 1 1 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].DateEnd, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
@@ -367,13 +367,13 @@
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="0 1 0 0">
                                                     <BlockUIContainer>
-                                                        <DatePicker SelectedDate="{Binding NewVacations[0].Date_Start}"/>
+                                                        <DatePicker SelectedDate="{Binding NewVacations[0].DateStart}"/>
                                                     </BlockUIContainer>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="1 1 1 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[0].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[0].DateEnd, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
@@ -387,13 +387,13 @@
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="0 1 0 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].DateStart, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="1 1 1 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[1].DateEnd, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
@@ -407,13 +407,13 @@
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="0 1 0 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].DateStart, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="1 1 1 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[2].DateEnd, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
@@ -427,13 +427,13 @@
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="0 1 0 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].DateStart, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="1 1 1 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[3].DateEnd, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
@@ -447,13 +447,13 @@
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="0 1 0 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].DateStart, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"
                                                            BorderThickness="1 1 1 0">
                                                     <Paragraph>
-                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
+                                                        <TextBlock Text="{Binding SelectedToShiftVacations[4].DateEnd, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay}"/>
                                                     </Paragraph>
                                                 </TableCell>
                                                 <TableCell BorderBrush="Black"

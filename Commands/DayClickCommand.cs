@@ -31,14 +31,14 @@ namespace Vacation_Portal.Commands {
                         if(_viewModel.SelectedSubordinate != null) {
                             VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                             _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
-                            VacationsToApproval = new ObservableCollection<Vacation>(_viewModel.SelectedSubordinate.Subordinate_Vacations.Where(f => f.Date_Start.Year == _customCalendar.CurrentYear));
+                            VacationsToApproval = new ObservableCollection<Vacation>(_viewModel.SelectedSubordinate.Subordinate_Vacations.Where(f => f.DateStart.Year == _customCalendar.CurrentYear && f.VacationStatusId != (int)Statuses.ForTranfser));
                         } else {
                             _viewModel.ShowAlert("Сначала выберете подчинённого!");
                         }
                     } else if(App.SelectedMode == WindowMode.Personal) {
                         VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                             App.API.Person.User_Vacation_Allowances.Where(f => f.Vacation_Year == _viewModel.CurrentYear));
-                        VacationsToApproval = new ObservableCollection<Vacation>(App.API.Person.User_Vacations.Where(f => f.Date_Start.Year == _customCalendar.CurrentYear));
+                        VacationsToApproval = new ObservableCollection<Vacation>(App.API.Person.User_Vacations.Where(f => f.DateStart.Year == _customCalendar.CurrentYear && f.VacationStatusId != (int) Statuses.ForTranfser));
                     }
                     for(int i = 0; i < VacationAllowances.Count; i++) {
                         if(VacationAllowances[i].Vacation_Days_Quantity > 0) {
@@ -69,11 +69,11 @@ namespace Vacation_Portal.Commands {
                                 if(_customCalendar.SelectedNameDay != "Праздник") {
                                     _customCalendar.DayAddition = _customCalendar.GetDayAddition(_customCalendar.CountSelectedDays);
                                     _viewModel.PlannedVacationString = _customCalendar.DayAddition + ": " + _customCalendar.FirstSelectedDate.ToString("d.MM.yyyy");
-                                    int statusId = (int) Vacation_Portal.Statuses.BeingPlanned;
+                                    int statusId = (int) Statuses.BeingPlanned;
                                     if(App.SelectedMode == WindowMode.Personal) {
-                                        _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, _customCalendar.CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, _customCalendar.FirstSelectedDate, _customCalendar.FirstSelectedDate, statusId, Environment.UserName);
+                                        _viewModel.PlannedItem = new Vacation("Draft", 0, _viewModel.SelectedItemAllowance.Vacation_Name, App.API.Person.Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, _customCalendar.CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, _customCalendar.FirstSelectedDate, _customCalendar.FirstSelectedDate, statusId, Environment.UserName);
                                     } else if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
-                                        _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, _customCalendar.CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, _customCalendar.FirstSelectedDate, _customCalendar.FirstSelectedDate, statusId, Environment.UserName);
+                                        _viewModel.PlannedItem = new Vacation("Draft", 0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, _customCalendar.CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, _customCalendar.FirstSelectedDate, _customCalendar.FirstSelectedDate, statusId, Environment.UserName);
                                     }
                                 } else {
                                     _viewModel.ShowAlert("Этот день является праздничным, начните планирование отпуска с другого дня");
@@ -88,10 +88,29 @@ namespace Vacation_Portal.Commands {
                             foreach(DateTime date in dateRange) {
                                 for(int h = 0; h < App.HolidayAPI.Holidays.Count; h++) {
                                     if(date == App.HolidayAPI.Holidays[h].Date) {
-                                        countHolidays++;
+                                        //TODO: Что делать если праздник выходной баг issue#141
+                                        // 6 не залетает
+                                        //if(date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
+                                        //{
+                                            countHolidays++;
+                                       // }
                                     }
                                 }
                             }
+                            //foreach(DateTime date in dateRange)
+                            //{
+                            //    for(int h = 0; h < App.HolidayAPI.Holidays.Count; h++)
+                            //    {
+                            //        if(date == App.HolidayAPI.Holidays[h].Date)
+                            //        {
+                            //            //TODO: Что делать если праздник выходной баг issue#141
+                            //            //if(date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
+                            //            //{
+                            //            countHolidays++;
+                            //            //}
+                            //        }
+                            //    }
+                            //}
                             if(_customCalendar.SecondSelectedDate > _customCalendar.FirstSelectedDate) {
                                 _customCalendar.CountSelectedDays = _customCalendar.SecondSelectedDate.Subtract(_customCalendar.FirstSelectedDate).Days + 1;
                                 availableQuantity = _customCalendar.CountSelectedDays - countHolidays;
@@ -100,11 +119,11 @@ namespace Vacation_Portal.Commands {
                                         _customCalendar.DayAddition = _customCalendar.GetDayAddition(_customCalendar.CountSelectedDays);
                                         _viewModel.PlannedVacationString = _customCalendar.DayAddition + ": " + _customCalendar.FirstSelectedDate.ToString("dd.MM.yyyy") + " - " + _customCalendar.SecondSelectedDate.ToString("dd.MM.yyyy");
 
-                                        int statusId = (int) Vacation_Portal.Statuses.BeingPlanned;
+                                        int statusId = (int) Statuses.BeingPlanned;
                                         if(App.SelectedMode == WindowMode.Personal) {
-                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, _customCalendar.CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, _customCalendar.FirstSelectedDate, _customCalendar.SecondSelectedDate, statusId, Environment.UserName);
+                                            _viewModel.PlannedItem = new Vacation("Draft", 0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, _customCalendar.CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, _customCalendar.FirstSelectedDate, _customCalendar.SecondSelectedDate, statusId, Environment.UserName);
                                         } else if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
-                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, _customCalendar.CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, _customCalendar.FirstSelectedDate, _customCalendar.SecondSelectedDate, statusId, Environment.UserName);
+                                            _viewModel.PlannedItem = new Vacation("Draft", 0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, _customCalendar.CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, _customCalendar.FirstSelectedDate, _customCalendar.SecondSelectedDate, statusId, Environment.UserName);
                                         }
                                     } else {
                                         _viewModel.ShowAlert("Этот день является праздничным, закончите планирование отпуска другим днём");
@@ -121,11 +140,11 @@ namespace Vacation_Portal.Commands {
                                         _customCalendar.DayAddition = _customCalendar.GetDayAddition(_customCalendar.CountSelectedDays);
                                         _viewModel.PlannedVacationString = _customCalendar.DayAddition + ": " + _customCalendar.SecondSelectedDate.ToString("dd.MM.yyyy") + " - " + _customCalendar.FirstSelectedDate.ToString("dd.MM.yyyy");
 
-                                        int statusId = (int) Vacation_Portal.Statuses.BeingPlanned;
+                                        int statusId = (int) Statuses.BeingPlanned;
                                         if(App.SelectedMode == WindowMode.Personal) {
-                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, _customCalendar.CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, _customCalendar.SecondSelectedDate, _customCalendar.FirstSelectedDate, statusId, Environment.UserName);
+                                            _viewModel.PlannedItem = new Vacation("Draft", 0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedItemAllowance.User_Id_SAP, App.API.Person.Name, App.API.Person.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, _customCalendar.CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, _customCalendar.SecondSelectedDate, _customCalendar.FirstSelectedDate, statusId, Environment.UserName);
                                         } else if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
-                                            _viewModel.PlannedItem = new Vacation(0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, _customCalendar.CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, _customCalendar.SecondSelectedDate, _customCalendar.FirstSelectedDate, statusId, Environment.UserName);
+                                            _viewModel.PlannedItem = new Vacation("Draft", 0, _viewModel.SelectedItemAllowance.Vacation_Name, _viewModel.SelectedSubordinate.Id_SAP, _viewModel.SelectedSubordinate.Name, _viewModel.SelectedSubordinate.Surname, _viewModel.SelectedItemAllowance.Vacation_Id, _customCalendar.CountSelectedDays, _viewModel.SelectedItemAllowance.Vacation_Color, _customCalendar.SecondSelectedDate, _customCalendar.FirstSelectedDate, statusId, Environment.UserName);
                                         }
                                     } else {
                                         _viewModel.ShowAlert("Этот день является праздничным, закончите планирование отпуска с другим днём");

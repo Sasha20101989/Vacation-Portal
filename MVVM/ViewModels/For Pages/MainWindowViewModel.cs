@@ -100,7 +100,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public string SearchKeyword {
             get => _searchKeyword;
             set {
-                if(SetProperty(ref _searchKeyword, value)) {
+                _searchKeyword = value;
+                if(_searchKeyword != null) {
                     MenuItemsView.Refresh();
                 }
                 OnPropertyChanged(nameof(SearchKeyword));
@@ -112,7 +113,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             get => _selectedItem;
             set {
 
-                SetProperty(ref _selectedItem, value);
+                _selectedItem = value;
                 OnPropertyChanged(nameof(SelectedItem));
                 if(_selectedItem != null) {
                     Title = _selectedItem.Name;
@@ -128,7 +129,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public int SelectedIndex {
             get => _selectedIndex;
             set {
-                SetProperty(ref _selectedIndex, value);
+                _selectedIndex = value;
                 OnPropertyChanged(nameof(SelectedIndex));
             }
         }

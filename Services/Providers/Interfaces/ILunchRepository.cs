@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Vacation_Portal.DTOs;
@@ -11,12 +12,13 @@ namespace Vacation_Portal.Services.Providers.Interfaces {
     public interface ILunchRepository {
         ICommand Login { get; }
         Action<Person> OnLoginSuccess { get; set; }
+        Action<Person> PersonUpdated { get; set; }
         Person Person { get; set; }
         ObservableCollection<Person> FullPersons { get; set; }
         ObservableCollection<Subordinate> PersonsWithVacationsOnApproval { get; set; }
         
         void GetPersonsWithVacationsOnApproval();
         Task<Person> LoginAsync(string account);
-        
+        Task<Person> GetPersonAsync(string account);
     }
 }

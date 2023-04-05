@@ -112,6 +112,7 @@ namespace Vacation_Portal.MVVM.Models {
         }
 
         public async Task UpdateColorAsync(ObservableCollection<Vacation> VacationsToApproval) {
+            ObservableCollection<Vacation> VacationsToApprovalWithoutForTransfer = new ObservableCollection<Vacation>(VacationsToApproval.Where(v => v.VacationStatusId != (int) Statuses.ForTranfser));
             await Task.Run(() => {
                 App.Current.Dispatcher.Invoke(() => {
                     foreach(DayControl month in Year.SelectMany(x => x)) {
@@ -119,7 +120,7 @@ namespace Vacation_Portal.MVVM.Models {
                         IEnumerable<Button> buttons = parentItem.Children.OfType<Button>();
                         foreach(Button button in buttons) {
                             button.Background = Brushes.Transparent;
-                            FillPlanedDays(button, VacationsToApproval);
+                            FillPlanedDays(button, VacationsToApprovalWithoutForTransfer);
                         }
                     }
                 });

@@ -143,7 +143,9 @@
                 </Setter>
             </Style>
             <!--#endregion-->
-
+            
+            <ext:NonZeroConverter x:Key="NonZeroConverter" />
+            <ext:StringEqualityToVisibilityConverter x:Key="StringEqualityToVisibilityConverter" />
             <ext:VacationStatusNameToVisibilityConverter x:Key="VacationStatusNameToVisibilityConverter" />
             <ext:CountToBoolConverter x:Key="CountToBoolConverter"/>
             <ResourceDictionary.MergedDictionaries>
@@ -248,7 +250,7 @@
                                                     <RowDefinition Height="auto"/>
                                                 </Grid.RowDefinitions>
                                                 <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Vacation_Name}"
-                                                           Width="190"
+                                                           Width="200"
                                                            TextAlignment="Center"
                                                            FontSize="16"/>
                                                 <Rectangle Margin="8 0 0 0" Grid.Column="0" Grid.Row="1" Width="9" Height="9" Fill="{Binding Vacation_Color}" RadiusX="10" RadiusY="10"/>
@@ -304,7 +306,7 @@
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="IsSelected" Value="True"/>
                                         </Trigger>
-                                        <DataTrigger Binding="{Binding Vacation_Status_Name}" Value="Not Agreed">
+                                        <DataTrigger Binding="{Binding VacationStatusName}" Value="Not Agreed">
                                             <Setter Property="Foreground" Value="red" />
                                             <Setter Property="Background" Value="#ffeeeeee" />
                                         </DataTrigger>
@@ -315,28 +317,65 @@
                                 <GridView>
                                     <GridViewColumn Width="140" DisplayMemberBinding="{Binding Name}" Header="Тип отпуска"></GridViewColumn>
                                     <GridViewColumn Width="95" DisplayMemberBinding="{Binding Count}" Header="Дней"></GridViewColumn>
-                                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
-                                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_end,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
-                                    <GridViewColumn Width="115" DisplayMemberBinding="{Binding Vacation_Status_Name}" Header="Статус"></GridViewColumn>
-                                    <GridViewColumn Width="40" Header="">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="Red" Width="24" Height="24"
+                                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding DateStart,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
+                                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding DateEnd,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
+                                    <GridViewColumn Width="115" DisplayMemberBinding="{Binding VacationStatusName}" Header="Статус"></GridViewColumn>
+                                    <GridViewColumn Width="120" Header="">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <!--<md:PopupBox Grid.Column="2"
+                                                             PlacementMode="BottomAndAlignRightEdges"
+                                                             StaysOpen="False">
+                                                    <StackPanel Orientation="Vertical">
+                                                        <Button Content="Компенсировать" Margin="5 0 5 0"
+                                                                Style="{StaticResource MaterialDesignFlatLightButton}" 
+                                                                Command="{Binding RelativeSource={
+                                                                    RelativeSource AncestorType=ListView},
+                                                                    Path=DataContext.CompensateVacation}"
+                                                                    CommandParameter="{Binding RelativeSource={
+                                                                    RelativeSource AncestorType=ListView},
+                                                                    Path=SelectedItem}"
+                                                                Visibility="{Binding Converter={StaticResource VacationStatusNameToVisibilityConverter}}">
+                                                        </Button>
+                                                        <Button Content="Перенести" Margin="5 0 5 0"
+                                                                Style="{StaticResource MaterialDesignFlatLightButton}" 
+                                                                Command="{Binding RelativeSource={
+                                                                      RelativeSource AncestorType=ListView},
+                                                                      Path=DataContext.CompensateVacation}"
+                                                                    CommandParameter="{Binding RelativeSource={
+                                                                      RelativeSource AncestorType=ListView},
+                                                                      Path=SelectedItem}"
+                                                                Visibility="{Binding VacationStatusName, Converter={StaticResource StringEqualityToVisibilityConverter}, ConverterParameter=Planned}">
+                                                        </Button>
+                                                        <Separator Margin="5"/>
+                                                        <Button Content="Удалить" Margin="5 0 5 0"
+                                                                Style="{StaticResource MaterialDesignFlatLightButton}" 
+                                                                Foreground="Red"
+                                                                Command="{Binding RelativeSource={
+                                                                  RelativeSource AncestorType=ListView},
+                                                                  Path=DataContext.CancelVacation}"
+                                                                CommandParameter="{Binding RelativeSource={
+                                                                    RelativeSource AncestorType=ListView},
+                                                                    Path=SelectedItem}">
+                                                        </Button>
+                                                    </StackPanel>
+                                                </md:PopupBox>-->
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}" 
+                                                            Margin="10 0 0 0"
+                                                            Foreground="Red" Width="24" Height="24"
                                                             Command="{Binding RelativeSource={
                                                             RelativeSource AncestorType=ListView},
                                                             Path=DataContext.CancelVacation}"
                                                             CommandParameter="{Binding RelativeSource={
                                                             RelativeSource AncestorType=ListView},
-                                                            Path=SelectedItem}">
+                                                            Path=SelectedItem}"
+                                                            Visibility="{Binding VacationStatusName, 
+                                                              Converter={StaticResource StringEqualityToVisibilityConverter}, 
+                                                              ConverterParameter='Being Planned,Approved'}">
                                                         <md:PackIcon Kind="Close"  Width="20" Height="20"></md:PackIcon>
                                                     </Button>
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                    <GridViewColumn Width="40" Header="">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Button Style="{StaticResource MaterialDesignIconForegroundButton}" 
+                                                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}" 
                                                         Foreground="ForestGreen" 
                                                         Width="20" 
                                                         Height="20"
@@ -348,16 +387,45 @@
                                                             Path=SelectedItem}"
                                                         Visibility="{Binding Converter={StaticResource VacationStatusNameToVisibilityConverter}}"
                                                         ToolTip="Компенсация отпуска">
-                                                    <md:PackIcon Kind="CurrencyRub"  Width="20" Height="20"></md:PackIcon>
-                                                </Button>
+                                                        <md:PackIcon Kind="CurrencyRub"  Width="20" Height="20"></md:PackIcon>
+                                                    </Button>
+                                                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}" 
+                                                        Foreground="ForestGreen" 
+                                                        Width="20" 
+                                                        Height="20"
+                                                        Command="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=DataContext.TransferVacationCommand}"
+                                                            CommandParameter="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=SelectedItem}"
+                                                        Visibility="{Binding VacationStatusName, Converter={StaticResource StringEqualityToVisibilityConverter}, ConverterParameter=Planned}"
+                                                        ToolTip="Перенос отпуска">
+                                                        <md:PackIcon Kind="SwapHorizontalBold"  Width="20" Height="20"></md:PackIcon>
+                                                    </Button>
+                                                    <Button Style="{StaticResource MaterialDesignIconForegroundButton}" 
+                                                            Margin="10 0 0 0"
+                                                            Foreground="Red" Width="24" Height="24"
+                                                            Command="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=DataContext.CancelTransferVacationCommand}"
+                                                            CommandParameter="{Binding RelativeSource={
+                                                            RelativeSource AncestorType=ListView},
+                                                            Path=SelectedItem}"
+                                                            Visibility="{Binding VacationStatusName, Converter={StaticResource StringEqualityToVisibilityConverter}, ConverterParameter='For Tranfser'}"
+                                                            ToolTip="Отменить перенос">
+                                                        <md:PackIcon Kind="SwapHorizontalBold"  Width="20" Height="20"></md:PackIcon>
+                                                    </Button>
+                                                </StackPanel>
+
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
                                 </GridView>
                                 </ListView.View>
                             </ListView>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Stretch">
-                            <Button VerticalAlignment="Bottom" 
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <!--<Button VerticalAlignment="Bottom" 
                                     HorizontalAlignment="Left"
                                     Margin="3 0 3 6"
                                     Style="{DynamicResource MaterialDesignOutlinedLightButton}"
@@ -366,14 +434,13 @@
                                     IsEnabled="{Binding VacationsToAprovalForPerson.Count, 
                                                 Converter={StaticResource CountToBoolConverter},
                                                 ConverterParameter=1,
-                                                UpdateSourceTrigger=PropertyChanged}"/>
+                                                UpdateSourceTrigger=PropertyChanged}"/>-->
                             <Button Width="280" VerticalAlignment="Bottom"
                                     Margin="30 0 3 6"
                                     Style="{DynamicResource MaterialDesignOutlinedLightButton}"
                                     Command="{Binding CheckVacations}" Content="Проверить и отправить"
-                                    IsEnabled="{Binding VacationsToAprovalForPerson.Count, 
-                                                Converter={StaticResource CountToBoolConverter},
-                                                ConverterParameter=1,
+                                    IsEnabled="{Binding CountAllowancesForPerson, 
+                                                Converter={StaticResource NonZeroConverter},
                                                 UpdateSourceTrigger=PropertyChanged}">
                             </Button>
                             

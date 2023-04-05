@@ -10,7 +10,7 @@ namespace Vacation_Portal.Extensions {
             if(value is Vacation vacation) {
                 if(vacation.Name == MyEnumExtensions.ToDescriptionString(VacationName.Experience) ||
                     vacation.Name == MyEnumExtensions.ToDescriptionString(VacationName.Irregularity)) {
-                    if(vacation.Vacation_Status_Name == MyEnumExtensions.ToDescriptionString(Statuses.Approved)) {
+                    if(vacation.VacationStatusName == MyEnumExtensions.ToDescriptionString(Statuses.Planned)) {
                         return Visibility.Visible;
                     }
                 }

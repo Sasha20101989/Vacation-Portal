@@ -40,7 +40,7 @@ namespace Vacation_Portal.MVVM.Models {
                 StartDayOfWeek = 6;
             }
             int countVacationDays = vacationItem.Count;
-            DateTime centerVacationDate = vacationItem.Date_end.AddDays(-countVacationDays / 2);
+            DateTime centerVacationDate = vacationItem.DateEnd.AddDays(-countVacationDays / 2);
             int week = ISOWeek.GetWeekOfYear(centerVacationDate);
 
             int daysToShowFromPrevMonth = StartDayOfWeek;
@@ -49,7 +49,7 @@ namespace Vacation_Portal.MVVM.Models {
 
             Days = new List<Day>();
             if(intersectingVacations.Count == 0) {
-                vacationsOnApproval = new ObservableCollection<Vacation>(vacationsOnApproval.OrderBy(x => x.Date_Start));
+                vacationsOnApproval = new ObservableCollection<Vacation>(vacationsOnApproval.OrderBy(x => x.DateStart));
 
                 for(int i = 0; i < daysToShowFromPrevMonth; i++) {
                     DateTime day = firstDayOfMonth.AddDays(-(daysToShowFromPrevMonth - i));
@@ -64,7 +64,7 @@ namespace Vacation_Portal.MVVM.Models {
                                         if(dateOnApproval == date) {
                                             if(date == newDay.Date) {
                                                 newDay.IsNotConflict = true;
-                                                newDay.ToolTipText = $"{vacationOnApproval.User_Name} {vacationOnApproval.User_Surname}";
+                                                newDay.ToolTipText = $"{vacationOnApproval.UserName} {vacationOnApproval.UserSurname}";
                                             }
                                             if(!Days.Contains(newDay)) {
                                                 if(newDay.Date.DayOfWeek == DayOfWeek.Saturday || newDay.Date.DayOfWeek == DayOfWeek.Sunday) {
@@ -96,7 +96,7 @@ namespace Vacation_Portal.MVVM.Models {
                                         if(dateOnApproval == date) {
                                             if(date == newDay.Date) {
                                                 newDay.IsNotConflict = true;
-                                                newDay.ToolTipText = $"{vacationOnApproval.User_Name} {vacationOnApproval.User_Surname}";
+                                                newDay.ToolTipText = $"{vacationOnApproval.UserName} {vacationOnApproval.UserSurname}";
                                             }
                                             if(!Days.Contains(newDay)) {
                                                 if(newDay.Date.DayOfWeek == DayOfWeek.Saturday || newDay.Date.DayOfWeek == DayOfWeek.Sunday) {
@@ -128,7 +128,7 @@ namespace Vacation_Portal.MVVM.Models {
                                         if(dateOnApproval == date) {
                                             if(date == newDay.Date) {
                                                 newDay.IsNotConflict = true;
-                                                newDay.ToolTipText = $"{vacationOnApproval.User_Name} {vacationOnApproval.User_Surname}";
+                                                newDay.ToolTipText = $"{vacationOnApproval.UserName} {vacationOnApproval.UserSurname}";
                                             }
                                             if(!Days.Contains(newDay)) {
                                                 if(newDay.Date.DayOfWeek == DayOfWeek.Saturday || newDay.Date.DayOfWeek == DayOfWeek.Sunday) {
@@ -148,7 +148,7 @@ namespace Vacation_Portal.MVVM.Models {
                     }
                 }
             } else {
-                intersectingVacations = new ObservableCollection<Vacation>(intersectingVacations.OrderBy(x => x.Date_Start));
+                intersectingVacations = new ObservableCollection<Vacation>(intersectingVacations.OrderBy(x => x.DateStart));
 
                 for(int i = 0; i < daysToShowFromPrevMonth; i++) {
                     DateTime day = firstDayOfMonth.AddDays(-(daysToShowFromPrevMonth - i));
@@ -163,7 +163,7 @@ namespace Vacation_Portal.MVVM.Models {
                                         if(dateOnApproval == date) {
                                             if(date == newDay.Date) {
                                                 newDay.IsAlreadyScheduledVacation = true;
-                                                newDay.ToolTipText = $"{vacation.User_Name} {vacation.User_Surname}";
+                                                newDay.ToolTipText = $"{vacation.UserName} {vacation.UserSurname}";
                                             }
                                             if(!Days.Contains(newDay)) {
                                                 if(newDay.Date.DayOfWeek == DayOfWeek.Saturday || newDay.Date.DayOfWeek == DayOfWeek.Sunday) {
@@ -195,7 +195,7 @@ namespace Vacation_Portal.MVVM.Models {
                                         if(dateOnApproval == date) {
                                             if(date == newDay.Date) {
                                                 newDay.IsAlreadyScheduledVacation = true;
-                                                newDay.ToolTipText = $"{vacation.User_Name} {vacation.User_Surname}";
+                                                newDay.ToolTipText = $"{vacation.UserName} {vacation.UserSurname}";
                                             }
                                             if(!Days.Contains(newDay)) {
                                                 if(newDay.Date.DayOfWeek == DayOfWeek.Saturday || newDay.Date.DayOfWeek == DayOfWeek.Sunday) {
@@ -228,7 +228,7 @@ namespace Vacation_Portal.MVVM.Models {
                                         if(dateOnApproval == date) {
                                             if(date == newDay.Date) {
                                                 newDay.IsAlreadyScheduledVacation = true;
-                                                newDay.ToolTipText = $"{vacation.User_Name} {vacation.User_Surname}";
+                                                newDay.ToolTipText = $"{vacation.UserName} {vacation.UserSurname}";
                                             }
                                             if(!Days.Contains(newDay)) {
                                                 if(newDay.Date.DayOfWeek == DayOfWeek.Saturday || newDay.Date.DayOfWeek == DayOfWeek.Sunday) {

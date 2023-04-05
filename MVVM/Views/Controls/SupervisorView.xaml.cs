@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using Vacation_Portal.MVVM.Models;
 
 namespace Vacation_Portal.MVVM.Views.Controls {
     /// <summary>
@@ -9,11 +11,12 @@ namespace Vacation_Portal.MVVM.Views.Controls {
         public SupervisorView() {
             InitializeComponent();
         }
-        private void UserControl_Loaded(object sender, RoutedEventArgs e) {
-            if(ListView.Height is double.NaN) {
-                //ListView.Height = ListView.ActualHeight * App.API.Person.Vacations.Count / 3.3;
-                ListView.Height = 433;
-            }
-        }
+
+        //private void UserControl_Loaded(object sender, RoutedEventArgs e) {
+        //    if(ListView.Height is double.NaN) {
+        //        //ListView.Height = ListView.ActualHeight * App.API.Person.Vacations.Count / 3.3;
+        //        ListView.Height = 433;
+        //    }
+        //}
     }
 }

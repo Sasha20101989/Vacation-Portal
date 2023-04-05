@@ -63,9 +63,9 @@
                       FontSize="12" Style="{StaticResource MaterialDesignListView}">
                     <ListView.View>
                     <GridView>
-                        <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
-                           <GridViewColumn Width="110" DisplayMemberBinding="{Binding Date_end,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
-                           <GridViewColumn Width="115" DisplayMemberBinding="{Binding Vacation_Status_Name}" Header="Статус"></GridViewColumn>
+                        <GridViewColumn Width="110" DisplayMemberBinding="{Binding DateStart,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
+                           <GridViewColumn Width="110" DisplayMemberBinding="{Binding DateEnd,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
+                           <GridViewColumn Width="115" DisplayMemberBinding="{Binding VacationStatusName}" Header="Статус"></GridViewColumn>
                            <GridViewColumn Width="40" Header="">
                                <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -200,14 +200,14 @@
                                 <StackPanel Orientation="Horizontal">
                                     <md:PackIcon Kind="Calendar" Width="20" Height="20"/>
                                     <TextBlock Text="с" FontSize="15" Margin="5 0 0 0"/>
-                                    <TextBlock Text="{Binding VacationItem.Date_Start, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="15" Margin="10 0 0 0"/>
+                                    <TextBlock Text="{Binding VacationItem.DateStart, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="15" Margin="10 0 0 0"/>
                                 </StackPanel>
                             </Viewbox>
                             <Viewbox Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Left">
                                 <StackPanel Orientation="Horizontal">
                                     <md:PackIcon Kind="Calendar" Width="20" Height="20"/>
                                     <TextBlock Text="по" FontSize="15" Margin="5 0 0 0"/>
-                                    <TextBlock Text="{Binding VacationItem.Date_end, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="15" Margin="10 0 0 0"/>
+                                    <TextBlock Text="{Binding VacationItem.DateEnd, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontSize="15" Margin="10 0 0 0"/>
                                 </StackPanel>
                             </Viewbox>
                         </Grid>
@@ -257,9 +257,9 @@
                                                 <TextBlock Margin="0 5 0 0" Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" FontSize="10"/>
                                             </StackPanel>
                                             <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="5 0 0 0">
-                                                <TextBlock Margin="0 5 0 0" Text="{Binding Vacation_Status_Name, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
-                                                <TextBlock Margin="0 5 0 0" Text="{Binding Date_Start, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
-                                                <TextBlock Margin="0 5 0 0" Text="{Binding Date_end, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
+                                                <TextBlock Margin="0 5 0 0" Text="{Binding VacationStatusName, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
+                                                <TextBlock Margin="0 5 0 0" Text="{Binding DateStart, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
+                                                <TextBlock Margin="0 5 0 0" Text="{Binding DateEnd, Converter={StaticResource DateConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
                                             </StackPanel>
                                         </StackPanel>
 
