@@ -18,11 +18,9 @@ namespace Vacation_Portal.Commands.HorizontalCalendarCommands
         {
             if(parameter is SvApprovalStateViewModel state)
             {
-                state.StatusId = (int) Statuses.Approved;
-                state.Vacation.Vacation_Status_Id = state.StatusId;
-                await App.StateAPI.UpdateStateStatusAsync(state);
+                await App.StateAPI.UpdateStateStatusAsync(state, (int) Statuses.Approved);
                 _horizontalCalendarViewModel.VacationListViewModel.LoadStatesAsync(_horizontalCalendarViewModel.SelectedSubordinate);
-                _horizontalCalendarViewModel.SelectedSubordinate.UpdateStatesCount();
+                _horizontalCalendarViewModel.SelectedSubordinate.UpdateStatesCount(false);
             }
         }
     }

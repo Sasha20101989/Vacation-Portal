@@ -22,8 +22,8 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
         public override async Task ExecuteAsync(object parameter) {
             _viewModel.IsSaving = true;
             _viewModel.IsEnabled = false;
-            bool isPersonalView = App.SelectedMode == WindowMode.Personal;
-            bool isSupervisorView = App.SelectedMode == WindowMode.Subordinate;
+            bool isPersonalView = App.SelectedMode == WindowMode.Personal || App.SelectedMode == WindowMode.Accounting;
+            bool isSupervisorView = App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD;
             switch(App.SelectedMode) {
                 case WindowMode.Subordinate:
                 case WindowMode.HR_GOD:
@@ -48,7 +48,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 await Task.Delay(timerInterval);
             }
 
-            VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAproval.OrderBy(i => i.Date_Start));
+            VacationsToAproval = new ObservableCollection<Vacation>(VacationsToAproval.OrderBy(i => i.DateStart));
 
             _viewModel.IsSaveComplete = true;
             _viewModel.IsSaving = false;
@@ -60,7 +60,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
 
             foreach(Vacation item in VacationsToAproval) {
                 int countConflicts = 0;
-                Vacation plannedVacation = new Vacation(item.Id, item.Name, item.User_Id_SAP, item.User_Name, item.User_Surname, item.Vacation_Id, item.Count, item.Color, item.Date_Start, item.Date_end, item.Vacation_Status_Id, item.Creator_Id);
+                Vacation plannedVacation = new Vacation(item.Source, item.Id, item.Name, item.UserId, item.UserName, item.UserSurname, item.VacationId, item.Count, item.Color, item.DateStart, item.DateEnd, item.VacationStatusId, item.CreatorId);
                 IEnumerable<VacationDTO> conflictingVacations = await App.VacationAPI.GetConflictingVacationAsync(plannedVacation);
 
                 foreach(VacationDTO vacationDTO in conflictingVacations) {
@@ -68,21 +68,18 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                 }
                 if(countConflicts == 0) {
                     VacationAllowanceViewModel vacationAllowance = GetVacationAllowance(item.Name);
-                    await _viewModel.UpdateVacationAllowance(item.User_Id_SAP, item.Vacation_Id, item.Date_Start.Year, vacationAllowance.Vacation_Days_Quantity);
+                    await _viewModel.UpdateVacationAllowance(item.UserId, item.VacationId, item.DateStart.Year, vacationAllowance.Vacation_Days_Quantity);
                     await App.VacationAPI.AddVacationAsync(plannedVacation);
                 } else {
-                    item.Vacation_Status_Id = (int) Statuses.OnApproval;
                     if(isSupervisorView) {
-                        item.Vacation_Status_Id = (int) Statuses.Approved;
+                        await App.VacationAPI.UpdateVacationStatusAsync(item, (int) Statuses.PassedToHR);
+                    } else
+                    {
+                        await App.VacationAPI.UpdateVacationStatusAsync(item, (int) Statuses.OnApproval);
                     }
-                    await App.VacationAPI.UpdateVacationStatusAsync(item.Vacation_Id, item.Vacation_Status_Id);
                 }
             }
-            if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
-                await _viewModel.UpdateDataForSubordinateAsync();
-            } else if(App.SelectedMode == WindowMode.Personal) {
-                _viewModel.UpdateDataForPerson();
-            }
+            App.API.PersonUpdated?.Invoke(null);
             App.API.GetPersonsWithVacationsOnApproval();
         }
 

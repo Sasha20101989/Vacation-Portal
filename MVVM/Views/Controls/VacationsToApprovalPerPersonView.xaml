@@ -38,8 +38,8 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="95" DisplayMemberBinding="{Binding Vacation.Count}" Header="Дней"></GridViewColumn>
-                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding Vacation.Date_Start,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
-                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding Vacation.Date_end,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
+                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding Vacation.DateStart,StringFormat=dd.MM.yyyy}" Header="Начало"></GridViewColumn>
+                    <GridViewColumn Width="110" DisplayMemberBinding="{Binding Vacation.DateEnd,StringFormat=dd.MM.yyyy}" Header="Конец"></GridViewColumn>
                     <GridViewColumn Width="115" DisplayMemberBinding="{Binding StatusName, UpdateSourceTrigger=PropertyChanged}" Header="Статус"></GridViewColumn>
                     <GridViewColumn Width="205">
                         <GridViewColumn.CellTemplate>

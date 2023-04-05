@@ -43,7 +43,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             List<List<Day>> allWeeks = GetWeeksInYear(2023);
             //AllStatuses = App.API.GetStatuses();
             int weeksToShow = 5;
-            int vacationWeeks = ISOWeek.GetWeekOfYear(VacationItem.Date_end) - ISOWeek.GetWeekOfYear(VacationItem.Date_Start) + 1;
+            int vacationWeeks = ISOWeek.GetWeekOfYear(VacationItem.DateEnd) - ISOWeek.GetWeekOfYear(VacationItem.DateStart) + 1;
 
             if(vacationWeeks >= weeksToShow) {
                 weeksToShow = Math.Min(vacationWeeks, weeksToShow);
@@ -68,8 +68,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                         currentWeekIndex = allWeeks.Count;
                     } else {
                         int weeksToAdd = (weeksToShow - vacationWeeks) / 2;
-                        int vacationStartWeek = ISOWeek.GetWeekOfYear(VacationItem.Date_Start);
-                        int vacationEndWeek = ISOWeek.GetWeekOfYear(VacationItem.Date_end);
+                        int vacationStartWeek = ISOWeek.GetWeekOfYear(VacationItem.DateStart);
+                        int vacationEndWeek = ISOWeek.GetWeekOfYear(VacationItem.DateEnd);
                         int startIndex = Math.Max(vacationStartWeek - weeksToAdd, 1);
                         int endIndex = Math.Min(vacationEndWeek + weeksToAdd, 53 - weeksToShow + 1);
 
@@ -103,7 +103,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                     foreach(DateTime vacationDate in vacation.DateRange) {
                         if(vacationDate == date) {
                             day.IsInSelectedVacation = true;
-                            day.ToolTipText ??= vacation.User_Surname;
+                            day.ToolTipText ??= vacation.UserSurname;
 
                             break;
                         }
@@ -113,7 +113,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 foreach(Vacation vacation in IntersectingVacations) {
                     if(vacation.DateRange.Contains(date)) {
                         day.IsAlreadyScheduledVacation = true;
-                        day.ToolTipText = vacation.User_Surname;
+                        day.ToolTipText = vacation.UserSurname;
                         break;
                     }
                 }
@@ -144,7 +144,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 foreach(Subordinate subordinate in App.API.Person.Subordinates) {
                     foreach(Vacation vacation in subordinate.Subordinate_Vacations) {
                         foreach(DateTime dateVacation in vacation.DateRange) {
-                            if(VacationItemDate == dateVacation && vacation.User_Id_SAP != VacationItem.User_Id_SAP) {
+                            if(VacationItemDate == dateVacation && vacation.UserId != VacationItem.UserId) {
                                 if(!intersectingVacations.Contains(vacation)) {
                                     intersectingVacations.Add(vacation);
                                 }
@@ -154,19 +154,19 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 }
             }
             IntersectingVacations.Clear();
-            IntersectingVacations = new ObservableCollection<Vacation>(intersectingVacations.OrderBy(x => x.Date_end));
+            IntersectingVacations = new ObservableCollection<Vacation>(intersectingVacations.OrderBy(x => x.DateEnd));
 
         }
         private void GetVacationsOnApproval() {
             VacationsOnApproval.Clear();
             foreach(Vacation vacation in SelectedPersonWithVacationsOnApproval.Subordinate_Vacations) {
-                if(vacation.Vacation_Status_Name == MyEnumExtensions.ToDescriptionString(Statuses.OnApproval)) {
+                if(vacation.VacationStatusName == MyEnumExtensions.ToDescriptionString(Statuses.OnApproval)) {
                     if(!VacationsOnApproval.Contains(vacation)) {
                         VacationsOnApproval.Add(vacation);
                     }
                 }
             }
-            VacationsOnApproval = new ObservableCollection<Vacation>(VacationsOnApproval.OrderBy(x => x.Date_Start));
+            VacationsOnApproval = new ObservableCollection<Vacation>(VacationsOnApproval.OrderBy(x => x.DateStart));
         }
 
         #region Button settings
@@ -282,7 +282,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public Brush BadgeBackground {
             get => _badgeBackground;
             set {
-                SetProperty(ref _badgeBackground, value);
+                _badgeBackground = value;
                 OnPropertyChanged(nameof(BadgeBackground));
             }
         }
@@ -368,7 +368,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public Vacation VacationItem {
             get => _vacationItem;
             set {
-                SetProperty(ref _vacationItem, value);
+                _vacationItem = value;
                 OnPropertyChanged(nameof(VacationItem));
 
                 if(VacationItem == null) {
@@ -385,7 +385,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public int VacationIndex {
             get => _vacationIndex;
             set {
-                SetProperty(ref _vacationIndex, value);
+                _vacationIndex = value;
                 OnPropertyChanged(nameof(VacationIndex));
             }
         }
@@ -394,7 +394,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public Vacation ProcessedVacationItem {
             get => _processedVacationItem;
             set {
-                SetProperty(ref _processedVacationItem, value);
+                _processedVacationItem = value;
                 OnPropertyChanged(nameof(ProcessedVacationItem));
             }
         }
@@ -403,7 +403,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public int ProcessedVacationIndex {
             get => _processedVacationIndex;
             set {
-                SetProperty(ref _processedVacationIndex, value);
+                _processedVacationIndex = value;
                 OnPropertyChanged(nameof(ProcessedVacationIndex));
             }
         }
@@ -449,8 +449,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
 
             VacationItem.VacationStatusKind = PackIconKind.CheckBold;
             VacationItem.BadgeBackground = Brushes.DarkSeaGreen;
-            VacationItem.Vacation_Status_Id = (int) Statuses.Approved;
-            await App.VacationAPI.UpdateVacationStatusAsync(VacationItem.Vacation_Id, VacationItem.Vacation_Status_Id);
+            VacationItem.VacationStatusId = (int) Statuses.Approved;
+            await App.VacationAPI.UpdateVacationStatusAsync(VacationItem, VacationItem.VacationStatusId);
             await MergeVacationsApprovedStatusAsync();
 
 
@@ -477,8 +477,8 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             IsDeclinedButtonEnabled = true;
             VacationItem.VacationStatusKind = PackIconKind.Close;
             VacationItem.BadgeBackground = Brushes.IndianRed;
-            VacationItem.Vacation_Status_Id = (int) Statuses.NotAgreed;
-            await App.VacationAPI.UpdateVacationStatusAsync(VacationItem.Vacation_Id,VacationItem.Vacation_Status_Id);
+            VacationItem.VacationStatusId = (int) Statuses.NotAgreed;
+            await App.VacationAPI.UpdateVacationStatusAsync(VacationItem,VacationItem.VacationStatusId);
             App.API.GetPersonsWithVacationsOnApproval();
             //ProcessedVacations.Add(VacationItem);
             VacationsOnApproval.Remove(VacationItem);
@@ -530,12 +530,12 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         private async Task MergeVacationsApprovedStatusAsync() {
             Subordinate selectedSubordinate = null;
             foreach(Subordinate subordinate in App.API.Person.Subordinates) {
-                if(subordinate.Id_SAP == VacationItem.User_Id_SAP) {
+                if(subordinate.Id_SAP == VacationItem.UserId) {
                     selectedSubordinate = subordinate;
                 }
             }
             int count = selectedSubordinate.Subordinate_Vacations
-              .Where(v => v.Vacation_Status_Id == (int) Statuses.Approved && v.Name == VacationItem.Name)
+              .Where(v => v.VacationStatusId == (int) Statuses.Approved && v.Name == VacationItem.Name)
               .Count();
 
             if(count > 1) {
@@ -550,7 +550,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 var vacationsToRemove = new List<Vacation>();
 
                 foreach(var vacation in selectedSubordinate.Subordinate_Vacations) {
-                    if(vacation.Vacation_Status_Id == (int) Statuses.Approved && !vacation.UsedForMerging) {
+                    if(vacation.VacationStatusId == (int) Statuses.Approved && !vacation.UsedForMerging) {
                         vacationsToAdd.Add(vacation);
                     }
                 }
@@ -577,28 +577,29 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 vacation.UsedForMerging = false;
             }
             var groups = vacations
-                .Where(v => v.Vacation_Status_Id == (int) Statuses.Approved)
+                .Where(v => v.VacationStatusId == (int) Statuses.Approved)
                 .GroupBy(v => v.Name)
                 .Select(group => {
                     Vacation firstVacation = group.First();
                     var mergedVacation = new Vacation(
+                        firstVacation.Source,
                         firstVacation.Id,
                         firstVacation.Name,
-                        firstVacation.User_Id_SAP,
-                        firstVacation.User_Name,
-                        firstVacation.User_Surname,
-                        firstVacation.Vacation_Id,
+                        firstVacation.UserId,
+                        firstVacation.UserName,
+                        firstVacation.UserSurname,
+                        firstVacation.VacationId,
                         group.Sum(v => v.Count),
                         firstVacation.Color,
-                        group.Min(v => v.Date_Start),
-                        group.Max(v => v.Date_end),
-                        firstVacation.Vacation_Status_Id,
-                        firstVacation.Creator_Id
+                        group.Min(v => v.DateStart),
+                        group.Max(v => v.DateEnd),
+                        firstVacation.VacationStatusId,
+                        firstVacation.CreatorId
                     );
 
                     // Установить флаг, что отпуск использован при объединении
                     foreach(var vacation in group) {
-                        if(vacation.Date_Start <= VacationItem.Date_end || vacation.Date_end >= VacationItem.Date_Start) {
+                        if(vacation.DateStart <= VacationItem.DateEnd || vacation.DateEnd >= VacationItem.DateStart) {
                             vacation.UsedForMerging = true;
                         }
                     }

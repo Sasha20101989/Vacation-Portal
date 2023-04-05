@@ -16,6 +16,11 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
 {
     public class HorizontalCalendarViewModel : ViewModelBase
     {
+        public ICommand SelectedSubordinateCommand { get; }
+        public ICommand ApproveVacationCommand { get; }
+        public ICommand DeclineVacationCommand { get; }
+        public ICommand OpenApproveStateCommand { get; }
+
         private ObservableCollection<Subordinate> _persons = new ObservableCollection<Subordinate>();
         public ObservableCollection<Subordinate> Persons
         {
@@ -70,20 +75,37 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             }
         }
 
-        public ICommand SelectedSubordinateCommand { get; }
-        public ICommand ApproveVacationCommand { get; }
-        public ICommand DeclineVacationCommand { get; }
-        public ICommand ApproveStateCommand { get; }
+        private StateToApproveViewModel _stateToApproveViewModel;
+        public StateToApproveViewModel StateToApproveViewModel
+        {
+            get => _stateToApproveViewModel;
+            set
+            {
+                _stateToApproveViewModel = value;
+                OnPropertyChanged(nameof(StateToApproveViewModel));
+            }
+        }
+
+        private bool _canOpen;
+        public bool CanOpen
+        {
+            get => _canOpen;
+            set
+            {
+                _canOpen = value;
+                OnPropertyChanged(nameof(CanOpen));
+            }
+        }
+
         public HorizontalCalendarViewModel()
         {
-            IsLoading = true;
             SelectedSubordinateCommand = new SelectedSubordinateCommand(this);
             ApproveVacationCommand = new ApproveVacationCommand(this);
             DeclineVacationCommand = new DeclineVacationCommand(this);
-            ApproveStateCommand = new ApproveStateCommand(this);
             PersonStates = App.StateAPI.PersonStates;
+            CanOpen = PersonStates.Any(s => s.StatusId == (int) Statuses.Approved || s.StatusId == (int) Statuses.NotAgreed) && PersonStates.Count > 0;
             Persons = App.API.Person.Subordinates;
-
+            OpenApproveStateCommand = new OpenApproveStateCommand(this);
             YearDays = new ObservableCollection<HorizontalDay>(Enumerable.Range(1, 365).Select(day => new HorizontalDay(new DateTime(DateTime.Now.Year, 1, 1).AddDays(day - 1), false, false, 0, 0)));
 
             List<DateTime> vacationDays = new List<DateTime>();
@@ -109,25 +131,32 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             {
                 foreach(var vacation in person.Subordinate_Vacations)
                 {
-                    List<DateTime> days = Enumerable.Range(0, (vacation.Date_end - vacation.Date_Start).Days + 1)
-                                                    .Select(offset => vacation.Date_Start.AddDays(offset))
+                    List<DateTime> days = Enumerable.Range(0, (vacation.DateEnd - vacation.DateStart).Days + 1)
+                                                    .Select(offset => vacation.DateStart.AddDays(offset))
                                                     .ToList();
                     foreach(var day in YearDays)
                     {
                         if(days.Contains(day.Date))
                         {
                             day.IntersectionsCount++;
-                            day.HasOnApprovalStatus = vacation.Vacation_Status_Name == MyEnumExtensions.ToDescriptionString(Statuses.OnApproval);
+                            day.HasOnApprovalStatus = vacation.VacationStatusName == MyEnumExtensions.ToDescriptionString(Statuses.OnApproval);
                         }
                         day.HasIntersection = day.IntersectionsCount > 0;
                     }
                 }
             }
+            App.StateAPI.PersonStatesChanged += OnPersonStatesChanged;
+            
+        }
 
+        private void OnPersonStatesChanged(ObservableCollection<SvApprovalStateViewModel> personStates)
+        {
+            PersonStates = personStates;
         }
 
         public void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
         {
+            CanOpen = PersonStates.Any(s => s.StatusId == (int) Statuses.Approved || s.StatusId == (int) Statuses.NotAgreed) && PersonStates.Count > 0;
             if(eventArgs.Parameter is bool parameter &&
                 parameter == false)
             {
@@ -138,7 +167,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages
             Task.Delay(TimeSpan.FromSeconds(0.2))
                 .ContinueWith((t, _) => eventArgs.Session.Close(false), null,
                     TaskScheduler.FromCurrentSynchronizationContext());
-            IsLoading = false;
+            
             //Task.Delay(TimeSpan.FromSeconds(0.1))
             //    .ContinueWith((t, _) => eventArgs.Session.UpdateContent(new SampleError()), null,
             //        TaskScheduler.FromCurrentSynchronizationContext());

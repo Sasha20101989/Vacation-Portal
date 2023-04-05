@@ -33,7 +33,7 @@ namespace Vacation_Portal.Extensions
 
             foreach(var vacation in currentPersonVacations)
             {
-                currentPersonid = vacation.User_Id_SAP;
+                currentPersonid = vacation.UserId;
             }
 
             if(currentPersonid != 0)

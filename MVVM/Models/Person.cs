@@ -20,6 +20,7 @@ namespace Vacation_Portal.MVVM.Models {
         private static readonly string _accounting = "Страница табельщика";
         private static readonly string _horizontalCalendar = "Горизонтальный календарь";
         private static readonly string _personalVacationPlanning = "Страница персонального планирования отпуска";
+        private static readonly string _hrDashboard = "Перенос и подтверждение";
         #endregion
         public int Id_SAP { get; set; }
         public string Id_Account { get; set; }
@@ -86,6 +87,7 @@ namespace Vacation_Portal.MVVM.Models {
                     MenuItem supervisorItem = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _supervisorPage);
                     MenuItem supervisorItem_1 = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _approvalPage);
                     MenuItem supervisorItem_2 = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _horizontalCalendar);
+                    MenuItem supervisorItem_3 = _viewModel.MenuItems.FirstOrDefault(x => x.Name == _hrDashboard);
                     _viewModel.MainMenuItems = CreateMainMenuItems(supervisorItem, _viewModel);
                     _viewModel.MainMenuItems = CreateMainMenuItems(supervisorItem_2, _viewModel);
                 }
@@ -123,6 +125,14 @@ namespace Vacation_Portal.MVVM.Models {
             selectedIcon: PackIconKind.BagPersonalTag,
             unselectedIcon: PackIconKind.BagPersonalTagOutline,
             new PersonalVacationPlanningViewModel());
+
+            HrDashboardViewModel hrDashboardViewModel = new HrDashboardViewModel();
+            yield return new MenuItem(
+            _hrDashboard,
+            typeof(HrDashboardView),
+            selectedIcon: PackIconKind.BagPersonalTag,
+            unselectedIcon: PackIconKind.BagPersonalTagOutline,
+            hrDashboardViewModel, hrDashboardViewModel.LoadFiltersAsync());
 
             if(Is_Supervisor) {
                 yield return new MenuItem(

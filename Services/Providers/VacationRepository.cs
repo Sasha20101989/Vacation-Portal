@@ -97,7 +97,9 @@ namespace Vacation_Portal.Services.Providers
         {
             BrushConverter converter = new BrushConverter();
             Brush brushColor = (Brush) converter.ConvertFromString(dto.Color);
-            return new Vacation(dto.Id, dto.Vacation_Name, dto.User_Id, ReturnUserName(dto.User_Id), ReturnUserSurname(dto.User_Id), dto.Type_Id, dto.Count, brushColor, dto.Start_Date, dto.End_Date, dto.Status_Id, dto.Creator_Id);
+            Vacation vacation = new Vacation(dto.Source,dto.Id, dto.Vacation_Name, dto.User_Id, ReturnUserName(dto.User_Id), ReturnUserSurname(dto.User_Id), dto.Type_Id, dto.Count, brushColor, dto.Start_Date, dto.End_Date, dto.Status_Id, dto.Creator_Id);
+            vacation.Year = dto.Year;
+            return vacation;
         }
         private string ReturnUserName(int sapId)
         {
@@ -128,12 +130,12 @@ namespace Vacation_Portal.Services.Providers
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
 
             var parameters = new DynamicParameters();
-            parameters.Add("@User_Id_SAP", vacation.User_Id_SAP);
-            parameters.Add("@Vacation_Id", vacation.Vacation_Id);
-            parameters.Add("@Vacation_Year", vacation.Date_Start.Year);
-            parameters.Add("@Vacation_Start_Date", vacation.Date_Start);
-            parameters.Add("@Vacation_End_Date", vacation.Date_end);
-            parameters.Add("@Vacation_Status_Id", vacation.Vacation_Status_Id);
+            parameters.Add("@User_Id_SAP", vacation.UserId);
+            parameters.Add("@Vacation_Id", vacation.VacationId);
+            parameters.Add("@Vacation_Year", vacation.DateStart.Year);
+            parameters.Add("@Vacation_Start_Date", vacation.DateStart);
+            parameters.Add("@Vacation_End_Date", vacation.DateEnd);
+            parameters.Add("@Vacation_Status_Id", vacation.VacationStatusId);
             parameters.Add("@Creator_Id", App.API.Person.Id_Account);
             parameters.Add("@InsertedId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
@@ -174,12 +176,12 @@ namespace Vacation_Portal.Services.Providers
 
             object parameters = new
             {
-                User_Id_SAP = vacation.User_Id_SAP,
-                Vacation_Id = vacation.Vacation_Id,
-                Vacation_Year = vacation.Date_Start.Year,
-                Vacation_Date_Start = vacation.Date_Start,
-                Vacation_Date_End = vacation.Date_end,
-                Vacation_Status_Id = vacation.Vacation_Status_Id
+                User_Id_SAP = vacation.UserId,
+                Vacation_Id = vacation.VacationId,
+                Vacation_Year = vacation.DateStart.Year,
+                Vacation_Date_Start = vacation.DateStart,
+                Vacation_Date_End = vacation.DateEnd,
+                Vacation_Status_Id = vacation.VacationStatusId
             };
             try
             {
@@ -192,19 +194,73 @@ namespace Vacation_Portal.Services.Providers
             }
         }
 
-        public async Task UpdateVacationStatusAsync(int vacationId, int statusId)
+        public async Task UpdateVacationStatusAsync(object obj, int statusId)
+        {
+            if(obj is Vacation vacation)
+            {
+                using IDbConnection database = _sqlDbConnectionFactory.Connect();
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Id", vacation.Id);
+                parameters.Add("@Vacation_Status_Id", statusId);
+                parameters.Add("@UpdatedStatusId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                try
+                {
+                    await database.QueryAsync("usp_Update_Vacation_Status", parameters, commandType: CommandType.StoredProcedure);
+                    vacation.VacationStatusId = parameters.Get<int>("@UpdatedStatusId");
+                } catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            } else if(obj is SvApprovalStateViewModel state)
+            {
+                using IDbConnection database = _sqlDbConnectionFactory.Connect();
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Id", state.VacationRecordId);
+                parameters.Add("@Vacation_Status_Id", statusId);
+                parameters.Add("@UpdatedStatusId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                try
+                {
+                    await database.QueryAsync("usp_Update_Vacation_Status", parameters, commandType: CommandType.StoredProcedure);
+                    state.StatusId = parameters.Get<int>("@UpdatedStatusId");
+                } catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        public async Task SpendVacation(Vacation vacation)
         {
             using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", vacation.Id);
+            parameters.Add("@InsertedId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-            object parameters = new
-            {
-                Id = vacationId,
-                Vacation_Status_Id = statusId
-            };
             try
             {
-                await database.QueryAsync("usp_Update_Vacation_Status", parameters, commandType: CommandType.StoredProcedure);
+                await database.ExecuteAsync("usp_Move_Vacation_From_Draft_To_Planned", parameters, commandType: CommandType.StoredProcedure);
+                vacation.Id = parameters.Get<int>("@InsertedId");
             } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
+        }
+
+        public async Task TransferVacationAsync(Vacation vacation)
+        {
+            using IDbConnection database = _sqlDbConnectionFactory.Connect();
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", vacation.Id);
+            parameters.Add("@UpdatedStatusId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            try
+            {
+                await database.ExecuteAsync("usp_Swich_Vacation_Transfer_State", parameters, commandType: CommandType.StoredProcedure);
+                vacation.VacationStatusId = parameters.Get<int>("@UpdatedStatusId");
+            } 
+            catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }

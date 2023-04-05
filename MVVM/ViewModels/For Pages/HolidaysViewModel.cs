@@ -16,7 +16,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public Holiday SelectedItem {
             get => _selectedItem;
             set {
-                SetProperty(ref _selectedItem, value);
+                _selectedItem = value;
                 OnPropertyChanged(nameof(SelectedItem));
             }
         }
@@ -25,7 +25,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public int SelectedIndex {
             get => _selectedIndex;
             set {
-                SetProperty(ref _selectedIndex, value);
+               _selectedIndex = value;
                 OnPropertyChanged(nameof(SelectedIndex));
             }
         }
@@ -56,7 +56,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public HolidayViewModel SelectedCurrentYearHoliday {
             get => _selectedCurrentYearHoliday;
             set {
-                SetProperty(ref _selectedCurrentYearHoliday, value);
+                _selectedCurrentYearHoliday = value;
                 OnPropertyChanged(nameof(SelectedCurrentYearHoliday));
             }
         }
@@ -65,7 +65,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public int SelectedCurrentYearHolidayIndex {
             get => _selectedCurrentYearHolidayIndex;
             set {
-                SetProperty(ref _selectedCurrentYearHolidayIndex, value);
+                _selectedCurrentYearHolidayIndex = value;
                 OnPropertyChanged(nameof(SelectedCurrentYearHolidayIndex));
             }
         }
@@ -73,7 +73,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public HolidayViewModel SelectedNextYearHoliday {
             get => _selectedNextYearHoliday;
             set {
-                SetProperty(ref _selectedNextYearHoliday, value);
+                _selectedNextYearHoliday = value;
                 OnPropertyChanged(nameof(SelectedNextYearHoliday));
             }
         }
@@ -82,7 +82,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public int SelectedNextYearHolidayIndex {
             get => _selectedNextYearHolidayIndex;
             set {
-                SetProperty(ref _selectedNextYearHolidayIndex, value);
+                _selectedNextYearHolidayIndex = value;
                 OnPropertyChanged(nameof(SelectedNextYearHolidayIndex));
             }
         }

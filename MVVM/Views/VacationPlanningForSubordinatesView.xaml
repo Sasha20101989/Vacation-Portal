@@ -185,7 +185,7 @@
                         OpeningEffect="{md:TransitionEffect Kind=FadeIn, Duration=0:0:1.50}">
                     <StackPanel Grid.Row="0" Grid.Column="0">
                         <Viewbox>
-                            <controls:SupervisorView Margin="6,49,6,6"/>
+                            <controls:SupervisorView Margin="0 50 0 0"/>
                         </Viewbox>
                     </StackPanel>
                 </md:TransitioningContent>

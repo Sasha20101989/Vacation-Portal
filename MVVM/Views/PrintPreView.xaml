@@ -127,8 +127,8 @@
                             <Run Text="   На основании ст.126 ТК РФ прошу заменить мне дополнительный отпуск за"/> 
                             <Run FontWeight="Bold" Text="{Binding VacationToCompensate.Name, Mode=OneWay, FallbackValue=vacation_type,
                                         Converter={StaticResource FirstLetterToLowercaseConverter}}" />, запланированный с 
-                            <Run FontWeight="Bold" Text="{Binding VacationToCompensate.Date_Start, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay, FallbackValue=date_from}"/>  по
-                            <Run FontWeight="Bold" Text="{Binding VacationToCompensate.Date_end, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay, FallbackValue=date_to}"/>  в количестве 
+                            <Run FontWeight="Bold" Text="{Binding VacationToCompensate.DateStart, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay, FallbackValue=date_from}"/>  по
+                            <Run FontWeight="Bold" Text="{Binding VacationToCompensate.DateEnd, StringFormat='{}{0:dd.MM.yyyy}', Mode=OneWay, FallbackValue=date_to}"/>  в количестве 
                             <Run FontWeight="Bold" Text="{Binding VacationToCompensate.Count, Mode=OneWay, FallbackValue=days, StringFormat='{}{0}'}"/> дней, денежной компенсацией.
                         </TextBlock>
                     </Paragraph>

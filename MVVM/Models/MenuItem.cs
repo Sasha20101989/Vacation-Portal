@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using Vacation_Portal.MVVM.ViewModels.Base;
 
@@ -11,11 +12,19 @@ namespace Vacation_Portal.MVVM.Models {
         public object Content => _content ??= CreateContent();
         public string Name { get; set; }
         private Thickness _marginRequirement = new Thickness(16);
+        private Task _task;
+        public Task Task => _task ??= LoadTask();
 
-        public MenuItem(string name, Type contentType, PackIconKind selectedIcon, PackIconKind unselectedIcon, object dataContext = null) {
+        private async Task LoadTask()
+        {
+           await _task;
+        }
+
+        public MenuItem(string name, Type contentType, PackIconKind selectedIcon, PackIconKind unselectedIcon, object dataContext = null, Task task = null) {
             Name = name;
             _contentType = contentType;
             _dataContext = dataContext;
+            _task = task;
             SelectedIcon = selectedIcon;
             UnselectedIcon = unselectedIcon;
         }
@@ -51,7 +60,7 @@ namespace Vacation_Portal.MVVM.Models {
 
         public Thickness MarginRequirement {
             get => _marginRequirement;
-            set => SetProperty(ref _marginRequirement, value);
+            set => _marginRequirement = value;
         }
 
         private object CreateContent() {

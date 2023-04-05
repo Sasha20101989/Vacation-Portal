@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -27,7 +28,19 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 OnPropertyChanged(nameof(Calendar));
             }
         }
-
+        private bool _isFlipped;
+        public bool IsFlipped
+        {
+            get
+            {
+                return _isFlipped;
+            }
+            set
+            {
+                _isFlipped = value;
+                OnPropertyChanged(nameof(IsFlipped));
+            }
+        }
         private List<CustomCalendar> _calendars = new List<CustomCalendar>();
         public List<CustomCalendar> Calendars {
             get => _calendars;
@@ -136,7 +149,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 }
             }
         }
-
+        public object SelectedVacation { get; set; }
         private string _selectedPositionName;
         public string SelectedPositionName {
             get => _selectedPositionName;
@@ -217,7 +230,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 VacationAllowancesForSubordinate = Clone(DefaultVacationAllowances);
                 VacationsToAprovalForSubordinate.Clear();
                 if(SelectedSubordinate != null) {
-                    App.Current.Dispatcher.Invoke(async () => {
+                    Task.Run(async () => {
                         await UpdateDataForSubordinateAsync();
                     });
                 }
@@ -318,7 +331,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public VacationAllowanceViewModel SelectedItemAllowance {
             get => _selectedItemAllowance;
             set {
-                _ = SetProperty(ref _selectedItemAllowance, value);
+                _selectedItemAllowance = value;
                 OnPropertyChanged(nameof(SelectedItemAllowance));
                 if(SelectedItemAllowance != null) {
                     Calendar.CalendarClickable = SelectedItemAllowance.Vacation_Days_Quantity > 0;
@@ -339,7 +352,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public int SelectedIndexAllowance {
             get => _selectedIndexAllowance;
             set {
-                _ = SetProperty(ref _selectedIndexAllowance, value);
+               _selectedIndexAllowance = value;
                 OnPropertyChanged(nameof(SelectedIndexAllowance));
             }
         }
@@ -356,6 +369,30 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             }
         }
 
+        private int _countAllowancesForSubordinate; 
+        public int CountAllowancesForSubordinate
+        {
+            get => _countAllowancesForSubordinate;
+            set
+            {
+                _countAllowancesForSubordinate = value;
+                OnPropertyChanged(nameof(CountAllowancesForSubordinate));
+
+            }
+        }
+
+        private int _countAllowancesForPerson;
+        public int CountAllowancesForPerson
+        {
+            get => _countAllowancesForPerson;
+            set
+            {
+                _countAllowancesForPerson = value;
+                OnPropertyChanged(nameof(CountAllowancesForPerson));
+
+            }
+        }
+
         private ObservableCollection<Vacation> _vacationsToAprovalForPerson = new ObservableCollection<Vacation>();
         public ObservableCollection<Vacation> VacationsToAprovalForPerson {
             get => _vacationsToAprovalForPerson;
@@ -366,11 +403,36 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             }
         }
 
+        private ObservableCollection<Vacation> _vacationsTransferedForPerson = new ObservableCollection<Vacation>();
+        public ObservableCollection<Vacation> VacationsTransferedForPerson
+        {
+            get => _vacationsTransferedForPerson;
+            set
+            {
+                _vacationsTransferedForPerson = value;
+                OnPropertyChanged(nameof(VacationsTransferedForPerson));
+
+            }
+        }
+
+        private ObservableCollection<Vacation> _vacationsTransferedForSubordinate = new ObservableCollection<Vacation>();
+        public ObservableCollection<Vacation> VacationsTransferedForSubordinate
+        {
+            get => _vacationsTransferedForSubordinate;
+            set
+            {
+                _vacationsTransferedForSubordinate = value;
+                OnPropertyChanged(nameof(VacationsTransferedForSubordinate));
+
+            }
+        }
+
         private Vacation _plannedItem;
         public Vacation PlannedItem {
             get => _plannedItem;
             set {
-                SetProperty(ref _plannedItem, value);
+                _plannedItem= value;
+                SelectedVacation = value;
                 OnPropertyChanged(nameof(PlannedItem));
             }
         }
@@ -379,7 +441,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public int PlannedIndex {
             get => _plannedIndex;
             set {
-                SetProperty(ref _plannedIndex, value);
+                _plannedIndex = value;
                 OnPropertyChanged(nameof(PlannedIndex));
             }
         }
@@ -387,7 +449,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public Vacation PlannedPersonItem {
             get => _plannedPersonItem;
             set {
-                SetProperty(ref _plannedPersonItem, value);
+                _plannedPersonItem = value;
                 OnPropertyChanged(nameof(PlannedPersonItem));
             }
         }
@@ -396,7 +458,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public int PlannedPersonIndex {
             get => _plannedPersonIndex;
             set {
-                SetProperty(ref _plannedPersonIndex, value);
+                _plannedPersonIndex = value;
                 OnPropertyChanged(nameof(PlannedPersonIndex));
             }
         }
@@ -435,7 +497,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public Brush BorderColorVacation {
             get => _borderColorVacation;
             set {
-                SetProperty(ref _borderColorVacation, value);
+                _borderColorVacation = value;
                 OnPropertyChanged(nameof(BorderColorVacation));
             }
         }
@@ -444,7 +506,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public Brush BorderColorCalendar {
             get => _borderColorCalendar;
             set {
-                SetProperty(ref _borderColorCalendar, value);
+                _borderColorCalendar = value;
                 OnPropertyChanged(nameof(BorderColorCalendar));
             }
         }
@@ -453,7 +515,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public Brush BorderColorSelectedGap {
             get => _borderColorSelectedGap;
             set {
-                SetProperty(ref _borderColorSelectedGap, value);
+                _borderColorSelectedGap = value;
                 OnPropertyChanged(nameof(BorderColorSelectedGap));
             }
         }
@@ -462,7 +524,7 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public Brush BorderColorPLanedVacations {
             get => _borderColorPLanedVacations;
             set {
-                SetProperty(ref _borderColorPLanedVacations, value);
+                _borderColorPLanedVacations = value;
                 OnPropertyChanged(nameof(BorderColorPLanedVacations));
             }
         }
@@ -478,6 +540,12 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         public ICommand StartLearning { get; }
         public ICommand AddToApprovalList { get; }
         public ICommand CancelVacation { get; }
+        public ICommand OpenTransferWindow { get; }
+        public ICommand CloseTransferWindow { get; }
+        
+        public ICommand TransferVacationCommand { get; }
+        public ICommand CancelTransferVacationCommand { get; }
+
         public ICommand CompensateVacation { get; }
         public ICommand ShiftVacations { get; }
         public ICommand CheckVacations { get; }
@@ -499,6 +567,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
             StartLearning = new StartLearningCommand(this);
             AddToApprovalList = new AddToApprovalListCommand(this);
             CancelVacation = new CancelVacationCommand(this);
+            OpenTransferWindow = new OpenTransferWindowCommand(this);
+            CloseTransferWindow = new CloseTransferWindowCommand(this);
+            TransferVacationCommand = new TransferVacationCommand(this);
+            CancelTransferVacationCommand = new CancelTransferVacationCommand(this);
             CompensateVacation = new CompensateVacationCommand(this);
             ShiftVacations = new ShiftVacationsCommand(this);
 
@@ -576,6 +648,29 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
 
             _initializeLazy = new Lazy<Task>(() => Initialize());
             LoadModel.Execute(new object());
+            App.API.PersonUpdated += onPersonUpdated;
+            IsFlipped = false;
+        }
+
+        public async void onPersonUpdated(Person obj)
+        {
+            if(App.SelectedMode == WindowMode.Subordinate ||
+                       App.SelectedMode == WindowMode.HR_GOD ||
+                       App.SelectedMode == WindowMode.Accounting)
+            {
+                if(SelectedSubordinate != null)
+                {
+                    await Initialize();
+                    await UpdateDataForSubordinateAsync();
+                } else
+                {
+                    ShowAlert("Сначала выберете сотрудника");
+                }
+            } else if(App.SelectedMode == WindowMode.Personal)
+            {
+                await Initialize();
+                UpdateDataForPerson();
+            }
         }
         #endregion Constructor
 
@@ -601,8 +696,9 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 VacationAllowancesForSubordinate = Clone(DefaultVacationAllowances);
             }
 
-            VacationsToAprovalForSubordinate = new ObservableCollection<Vacation>(SelectedSubordinate.Subordinate_Vacations.Where(f => f.Date_Start.Year == CurrentYear).OrderBy(f => f.Date_Start));
+            VacationsToAprovalForSubordinate = new ObservableCollection<Vacation>(SelectedSubordinate.Subordinate_Vacations.Where(f => f.DateStart.Year == CurrentYear).OrderBy(f => f.DateStart));
             await Calendar.UpdateColorAsync(VacationsToAprovalForSubordinate);
+            CountAllowancesForSubordinate = VacationAllowancesForSubordinate.Sum(va => va.Vacation_Days_Quantity);
         }
 
         public void UpdateDataForPerson() {
@@ -612,7 +708,19 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
                 VacationAllowancesForPerson = Clone(DefaultVacationAllowances);
             }
             VacationsToAprovalForPerson = new ObservableCollection<Vacation>(
-                                                    App.API.Person.User_Vacations.Where(f => f.Date_Start.Year == CurrentYear).OrderBy(f => f.Date_Start));
+                                                    App.API.Person.User_Vacations.Where(f => f.DateStart.Year == CurrentYear).OrderBy(f => f.DateStart));
+            //VacationsToAprovalForPerson.CollectionChanged += async (sender, e) =>
+            //{
+            //    if(e.Action == NotifyCollectionChangedAction.Remove)
+            //    {
+            //        foreach(Vacation vacation in e.OldItems)
+            //        {
+            //            await App.VacationAPI.DeleteVacationAsync(vacation);
+            //        }
+            //        App.API.Person = await App.API.GetPersonAsync(Environment.UserName);
+            //    }
+            //};
+            CountAllowancesForPerson = VacationAllowancesForPerson.Sum(va => va.Vacation_Days_Quantity);
         }
         private void UpdatePositionNames() {
             FilteredPositionNames.Clear();
@@ -716,6 +824,10 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         }
         public async Task DeleteVacation(Vacation vacation) {
             await App.VacationAPI.DeleteVacationAsync(vacation);
+        }
+        public async Task TransferVacation(Vacation vacation)
+        {
+            await App.VacationAPI.TransferVacationAsync(vacation);
         }
         public void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs) {
             if(eventArgs.Parameter is bool parameter &&

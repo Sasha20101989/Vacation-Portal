@@ -1,4 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
+using System.Linq;
 using System.Threading.Tasks;
 using Vacation_Portal.Commands.BaseCommands;
 using Vacation_Portal.MVVM.Models;
@@ -26,6 +27,12 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands {
                                                               App.API.Person.Id_SAP,
                                                               vacationToCompensate);
                 } else if(App.SelectedMode == WindowMode.Subordinate || App.SelectedMode == WindowMode.HR_GOD) {
+                    
+                    if(_viewModel.SelectedSubordinate == null)
+                    {
+                        Subordinate subordinate = App.API.Person.Subordinates.FirstOrDefault(subordinate => subordinate.Id_SAP == vacationToCompensate.UserId);
+                        _viewModel.SelectedSubordinate = subordinate;
+                    }
                     printPreViewModel = new PrintPreViewModel(_viewModel.SelectedSubordinate.FullName,
                                                               _viewModel.SelectedSubordinate.Position,
                                                               _viewModel.SelectedSubordinate.Department_Name,
