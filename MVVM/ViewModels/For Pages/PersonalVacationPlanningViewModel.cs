@@ -5,6 +5,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Vacation_Portal.Commands.BaseCommands;
@@ -813,7 +815,40 @@ namespace Vacation_Portal.MVVM.ViewModels.For_Pages {
         #endregion OnStartup
 
         #region Utils
+        public void UpdateWorkingDays(Vacation plannedItem)
+        {
+            Calendar.WorkingDays.Clear();
+            foreach(DateTime date in plannedItem.DateRange)
+            {
+                foreach(ObservableCollection<DayControl> month in Calendar.Year)
+                {
+                    foreach(DayControl item in month)
+                    {
+                        Grid parentItem = item.Content as Grid;
+                        UIElementCollection buttons = parentItem.Children;
 
+                        for(int i = 0; i < buttons.Count; i++)
+                        {
+                            UIElement elem = buttons[i];
+                            Button button = elem as Button;
+                            TextBlock buttonTextBlock = button.Content as TextBlock;
+                            int buttonDay = Convert.ToInt32(buttonTextBlock.Text);
+                            int buttonMonth = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[0]);
+                            int buttonYear = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[1]);
+                            string buttonNameOfDay = buttonTextBlock.ToolTip.ToString();
+                            if((buttonNameOfDay == "Рабочий" || buttonNameOfDay == "Рабочий в выходной") &&
+                                date.Day == buttonDay &&
+                                date.Month == buttonMonth &&
+                                date.Year == buttonYear)
+                            {
+                                Calendar.WorkingDays.Add(true);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         public void ShowAlert(string alert) {
             _sampleError.ErrorName.Text = alert;
             Task<object> result = DialogHost.Show(_sampleError, "RootDialog", ExtendedClosingEventHandler);

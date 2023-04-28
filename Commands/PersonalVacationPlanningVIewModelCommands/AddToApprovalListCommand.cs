@@ -18,77 +18,42 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
     public class AddToApprovalListCommand : AsyncComandBase
     {
         private readonly PersonalVacationPlanningViewModel _viewModel;
-        public List<Vacation> VacationsToAprovalClone { get; set; } = new List<Vacation>();
-        public ObservableCollection<Vacation> VacationsToApproval = new ObservableCollection<Vacation>();
-        public ObservableCollection<Vacation> PlannedSourceVacations = new ObservableCollection<Vacation>();
-        public ObservableCollection<VacationAllowanceViewModel> VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
+        private ObservableCollection<Vacation> _vacationsToApproval = new ObservableCollection<Vacation>();
+        private ObservableCollection<Vacation> _plannedSourceVacations = new ObservableCollection<Vacation>();
+        private ObservableCollection<VacationAllowanceViewModel> _vacationAllowances = new ObservableCollection<VacationAllowanceViewModel>();
         public AddToApprovalListCommand(PersonalVacationPlanningViewModel viewModel)
         {
             _viewModel = viewModel;
         }
-        private void UpdateWorkingDays(Vacation plannedItem)
-        {
-            _viewModel.Calendar.WorkingDays.Clear();
-            foreach(DateTime date in plannedItem.DateRange)
-            {
-                foreach(ObservableCollection<DayControl> month in _viewModel.Calendar.Year)
-                {
-                    foreach(DayControl item in month)
-                    {
-                        Grid parentItem = item.Content as Grid;
-                        UIElementCollection buttons = parentItem.Children;
 
-                        for(int i = 0; i < buttons.Count; i++)
-                        {
-                            UIElement elem = buttons[i];
-                            Button button = elem as Button;
-                            TextBlock buttonTextBlock = button.Content as TextBlock;
-                            int buttonDay = Convert.ToInt32(buttonTextBlock.Text);
-                            int buttonMonth = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[0]);
-                            int buttonYear = Convert.ToInt32(buttonTextBlock.Tag.ToString().Split(".")[1]);
-                            string buttonNameOfDay = buttonTextBlock.ToolTip.ToString();
-                            if((buttonNameOfDay == "Рабочий" || buttonNameOfDay == "Рабочий в выходной") &&
-                                date.Day == buttonDay &&
-                                date.Month == buttonMonth &&
-                                date.Year == buttonYear)
-                            {
-                                _viewModel.Calendar.WorkingDays.Add(true);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
+        #region Methods
         private void SetVacationsAndVacationAllowances(string selectedMode, int currentYear, Vacation plannedItem)
         {
             if(selectedMode == WindowMode.Subordinate)
             {
-                VacationsToApproval = new ObservableCollection<Vacation>(
+                _vacationsToApproval = new ObservableCollection<Vacation>(
                     _viewModel.SelectedSubordinate.Subordinate_Vacations.Where(f => f.DateStart.Year == currentYear));
 
                 _viewModel.SelectedSubordinate.Subordinate_Vacations.Add(plannedItem);
 
-                VacationsToApproval = _viewModel.SelectedSubordinate.Subordinate_Vacations;
+                _vacationsToApproval = _viewModel.SelectedSubordinate.Subordinate_Vacations;
 
-                VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
+                _vacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                     _viewModel.SelectedSubordinate.Subordinate_Vacation_Allowances.Where(f => f.Vacation_Year == currentYear));
 
             } else if(selectedMode == WindowMode.Personal)
             {
-                VacationsToApproval = new ObservableCollection<Vacation>(
+                _vacationsToApproval = new ObservableCollection<Vacation>(
                     App.API.Person.User_Vacations.Where(f => f.DateStart.Year == currentYear));
 
                 App.API.Person.User_Vacations.Add(plannedItem);
 
-                VacationsToApproval = App.API.Person.User_Vacations;
+                _vacationsToApproval = App.API.Person.User_Vacations;
 
-                VacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
+                _vacationAllowances = new ObservableCollection<VacationAllowanceViewModel>(
                     App.API.Person.User_Vacation_Allowances.Where(f => f.Vacation_Year == currentYear));
             }
         }
-
         private async Task<List<Vacation>> MergeVacationsAsync(ObservableCollection<Vacation> vacationsToApproval)
         {
             List<Vacation> mergedVacations = new List<Vacation>();
@@ -135,7 +100,6 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             }
             return mergedVacations.ToList();
         }
-
         private async Task<List<Vacation>> GetConflictingVacationsAsync(IEnumerable<Vacation> vacations)
         {
             List<Vacation> conflictFreeVacations = new List<Vacation>();
@@ -151,7 +115,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
         }
         private async Task UpdateVacationAllowanceAsync(int vacationId, int year, int vacationDaysQuantity)
         {
-            VacationAllowanceViewModel allowance = VacationAllowances.FirstOrDefault(va => va.Vacation_Id == vacationId && va.Vacation_Year == year);
+            VacationAllowanceViewModel allowance = _vacationAllowances.FirstOrDefault(va => va.Vacation_Id == vacationId && va.Vacation_Year == year);
             await App.VacationAllowanceAPI.UpdateVacationAllowanceAsync(allowance.User_Id_SAP, allowance.Vacation_Id, allowance.Vacation_Year, allowance.Vacation_Days_Quantity);
         }
         private async Task UpdateVacationDataAsync(string selectedMode, List<Vacation> freeVacations, ObservableCollection<Vacation> plannedSourceVacations, PersonalVacationPlanningViewModel viewModel)
@@ -169,6 +133,8 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 viewModel.UpdateDataForPerson();
             }
         }
+        #endregion
+
         public override async Task ExecuteAsync(object parameter)
         {
             //Метод содержит ряд шагов, необходимых для обновления данных отпусков в приложении, и,
@@ -178,14 +144,16 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
             //в список отпусков и обновляет соответствующие данные в приложении.
             //Если же рабочих дней нет, метод удаляет запланированный отпуск из списка и обновляет соответствующие данные в приложении
             string selectedMode = App.SelectedMode;
-            UpdateWorkingDays(_viewModel.PlannedItem);
+
+            _viewModel.UpdateWorkingDays(_viewModel.PlannedItem);
+
             SetVacationsAndVacationAllowances(selectedMode, _viewModel.CurrentYear, _viewModel.PlannedItem);
 
             _viewModel.SelectedItemAllowance.Vacation_Days_Quantity -= _viewModel.Calendar.CountSelectedDays;
 
-            List<Vacation> mergedVacations = await MergeVacationsAsync(VacationsToApproval);
+            List<Vacation> mergedVacations = await MergeVacationsAsync(_vacationsToApproval);
 
-            PlannedSourceVacations = new ObservableCollection<Vacation>(mergedVacations.Where(f => f.Source == "Planned"));
+            _plannedSourceVacations = new ObservableCollection<Vacation>(mergedVacations.Where(f => f.Source == "Planned"));
 
             if(_viewModel.Calendar.WorkingDays.Contains(true))
             {
@@ -193,12 +161,12 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
                 foreach(Vacation conflictFreeVacation in freeVacations)
                 {
-                    var updatedAllowance = VacationAllowances.FirstOrDefault(va => va.Vacation_Name == conflictFreeVacation.Name);
+                    var updatedAllowance = _vacationAllowances.FirstOrDefault(va => va.Vacation_Name == conflictFreeVacation.Name);
                     await UpdateVacationAllowanceAsync(conflictFreeVacation.VacationId, conflictFreeVacation.DateStart.Year, updatedAllowance.Vacation_Days_Quantity);
                     await App.VacationAPI.AddVacationAsync(conflictFreeVacation);
                 }
                
-                await UpdateVacationDataAsync(selectedMode, freeVacations, PlannedSourceVacations, _viewModel);
+                await UpdateVacationDataAsync(selectedMode, freeVacations, _plannedSourceVacations, _viewModel);
 
                 _viewModel.PlannedIndex = 0;
                 _viewModel.PlannedVacationString = "";
@@ -206,7 +174,7 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
 
                 if(_viewModel.SelectedItemAllowance.Vacation_Days_Quantity == 0)
                 {
-                    VacationAllowanceViewModel selectedAllowance = VacationAllowances.FirstOrDefault(a => a.Vacation_Days_Quantity > 0);
+                    VacationAllowanceViewModel selectedAllowance = _vacationAllowances.FirstOrDefault(a => a.Vacation_Days_Quantity > 0);
                     if(selectedAllowance != null)
                     {
                         _viewModel.SelectedItemAllowance = selectedAllowance;
@@ -231,6 +199,5 @@ namespace Vacation_Portal.Commands.PersonalVacationPlanningVIewModelCommands
                 }
             }
         }
-
     }
 }
